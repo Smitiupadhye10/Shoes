@@ -9,7 +9,12 @@ const Footer = () => {
 
         {/* --- Company Info --- */}
         <div>
-          <h2 className="text-xl font-semibold text-white mb-4">Glasses Store</h2>
+          <img
+            src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762174634/20251103_182346_rujtql.png"
+            alt="LensLogic Logo"
+            className="h-16 w-auto mb-4 object-contain drop-shadow"
+            style={{ maxWidth: 220 }}
+          />
           <p className="text-sm leading-6">
             Discover premium eyeglasses, sunglasses, and contact lenses at unbeatable prices.
             Style your vision with the latest trends and comfort-focused designs.
@@ -22,8 +27,7 @@ const Footer = () => {
           <ul className="space-y-2 text-sm">
             <li><Link to="/" className="hover:text-white">Home</Link></li>
             <li><Link to="/about" className="hover:text-white">About Us</Link></li>
-            <li><Link to="/services" className="hover:text-white">Services</Link></li>
-            <li><Link to="/contact" className="hover:text-white">Contact Us</Link></li>
+            <li><Link to="/shop" className="hover:text-white">Shop</Link></li>
           </ul>
         </div>
 
@@ -42,7 +46,7 @@ const Footer = () => {
         <div>
           <h2 className="text-lg font-semibold text-white mb-4">Get in Touch</h2>
           <ul className="space-y-3 text-sm">
-            <li className="flex items-center gap-2"><MapPin size={16}/> Office No. 618, Gera Imperium, Hinjawadi Phase II </li>
+            <li className="flex items-center gap-2"><MapPin size={16}/> Office No. 618, Gera Imperium Rise, Hinjawadi Phase II </li>
             <li className="flex items-center gap-2"><Phone size={16}/> +91 75583 38015</li>
             <li className="flex items-center gap-2"><Mail size={16}/> support@lenslogic.com</li>
           </ul>

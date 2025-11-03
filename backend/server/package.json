@@ -1,6 +1,7 @@
 {
   "name": "titan-clone-server",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
@@ -15,7 +16,9 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.3.1",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "qrcode": "^1.5.4",
+    "razorpay": "^2.9.6"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

@@ -3,7 +3,7 @@ import { categories } from "../data/categories";
 import { useNavigate } from "react-router-dom";
 
 const CategoryBar = () => {
-  const [activeCategory, setActiveCategory] = useState("eyeglasses");
+  const [activeCategory, setActiveCategory] = useState(null);
   const navigate = useNavigate();
   const barRef = useRef(null);
 
