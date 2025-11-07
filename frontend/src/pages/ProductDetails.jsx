@@ -107,7 +107,7 @@ const ProductDetails = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-sky-600 to-indigo-700 text-white py-8">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-100 text-white py-8">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold">{product.title}</h2>

@@ -27,13 +27,13 @@ const Navbar = () => {
         <img
           src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762174634/20251103_182346_rujtql.png"
           alt="LensLogic Logo"
-          className="h-16 w-auto object-contain drop-shadow"
+          className="h-18 w-auto object-contain drop-shadow"
           style={{ maxWidth: 200 }}
         />
       </div>
 
       {/* Center: Navigation Links */}
-      <ul className="hidden md:flex gap-6">
+      <ul className="hidden md:flex text-lg gap-6">
         <li>
           <Link to="/home" className="hover:text-blue-300">Home</Link>
         </li>

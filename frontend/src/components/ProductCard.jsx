@@ -39,7 +39,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="relative flex flex-col border rounded-2xl p-4 shadow hover:shadow-lg transition duration-300">
+    <div className="relative flex flex-col border rounded-2xl p-4 shadow bg-gray-100 in-hover:hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
       {/* Heart icon overlay */}
       <div className="absolute top-3 right-3 z-10 cursor-pointer" onClick={toggleWishlist}>
         <Heart color={isWishlisted ? "red" : "gray"} fill={isWishlisted ? "red" : "none"} size={24} />

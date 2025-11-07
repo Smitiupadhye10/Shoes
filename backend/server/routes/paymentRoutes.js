@@ -4,7 +4,17 @@ import crypto from 'crypto';
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
-import { verifyToken } from '../middleware/authMiddleware.js';
+import ContactLens from '../models/ContactLens.js';
+import { verifyToken, requireAdmin } from '../middleware/authMiddleware.js';
+
+async function resolveItem(productId) {
+  // Try Product first, then ContactLens
+  const prod = await Product.findById(productId).lean();
+  if (prod) return { ...prod, _type: 'product' };
+  const lens = await ContactLens.findById(productId).lean();
+  if (lens) return { ...lens, _type: 'contactLens' };
+  return null;
+}
 
 const router = express.Router();
 
@@ -16,18 +26,31 @@ router.post('/create-order', verifyToken, async (req, res) => {
   try {
     const { amount, shippingAddress } = req.body;
 
-    // Fetch user's cart and populate product details to get price
-    const cart = await Cart.findOne({ userId: req.user.id }).populate('items.productId');
+    // Fetch user's cart
+    const cart = await Cart.findOne({ userId: req.user.id });
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
 
-    // Build items array with product, quantity and price
-    const items = cart.items.map(i => ({
-      product: i.productId._id,
-      quantity: i.quantity,
-      price: i.productId.price || 0
-    }));
+    // Resolve each cart item from either collection and build items array
+    const items = [];
+    for (const it of cart.items) {
+      const resolved = await resolveItem(it.productId);
+      if (!resolved) continue; // skip dangling ids
+      items.push({
+        product: it.productId, // keep original id
+        quantity: it.quantity,
+        price: resolved.price || 0
+      });
+    }
+
+    if (items.length === 0) {
+      return res.status(400).json({ success: false, message: 'No valid items found in cart' });
+    }
+
+    // Compute amount from items if not provided or invalid
+    const computedAmount = items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+    const finalAmount = Number.isFinite(Number(amount)) && Number(amount) > 0 ? Number(amount) : computedAmount;
 
     // Ensure Razorpay keys are available
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
@@ -43,7 +66,7 @@ router.post('/create-order', verifyToken, async (req, res) => {
 
     // Create Razorpay order
     const razorpayOrder = await razorpay.orders.create({
-      amount: Math.round(amount * 100), // Convert to paisa
+      amount: Math.round(finalAmount * 100), // Convert to paise
       currency: 'INR'
     });
 
@@ -52,7 +75,7 @@ router.post('/create-order', verifyToken, async (req, res) => {
       user: req.user.id,
       items,
       shippingAddress,
-      totalAmount: amount,
+      totalAmount: finalAmount,
       paymentDetails: {
         razorpayOrderId: razorpayOrder.id,
         paymentMethod: req.body.paymentMethod || 'card' // Default to card if not specified
@@ -137,13 +160,68 @@ router.get('/my-orders', verifyToken, async (req, res) => {
       .populate('items.product')
       .sort('-createdAt');
 
-    res.json({
-      success: true,
-      orders
-    });
+    res.json({ success: true, orders });
   } catch (error) {
     console.error('Error fetching orders:', error);
     res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ---- Admin order management ----
+// List orders (paginate, optional search by user id or order id, and status filter)
+router.get('/admin/orders', verifyToken, requireAdmin, async (req, res) => {
+  try {
+    const { page = 1, limit = 20, status, q } = req.query;
+    const p = Math.max(parseInt(page) || 1, 1);
+    const l = Math.max(parseInt(limit) || 20, 1);
+    const skip = (p - 1) * l;
+
+    const filter = {};
+    if (status) filter.status = status;
+    if (q) {
+      const text = String(q).trim();
+      // Allow find by order _id or by user _id
+      filter.$or = [
+        { _id: text.match(/^[a-f0-9]{24}$/i) ? text : undefined },
+        { user: text.match(/^[a-f0-9]{24}$/i) ? text : undefined },
+      ].filter(Boolean);
+      if (filter.$or.length === 0) delete filter.$or;
+    }
+
+    const [items, total] = await Promise.all([
+      Order.find(filter).sort('-createdAt').skip(skip).limit(l),
+      Order.countDocuments(filter),
+    ]);
+
+    return res.json({
+      items,
+      pagination: {
+        currentPage: p,
+        totalPages: Math.ceil(total / l) || 0,
+        totalItems: total,
+        perPage: l,
+      },
+    });
+  } catch (err) {
+    console.error('Error listing orders:', err);
+    return res.status(500).json({ message: 'Error listing orders', error: err?.message || String(err) });
+  }
+});
+
+// Update order status: pending | processing | delivered | completed | cancelled
+router.patch('/admin/orders/:id/status', verifyToken, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body || {};
+    const ALLOWED = new Set(['pending', 'processing', 'delivered', 'completed', 'cancelled']);
+    if (!ALLOWED.has(String(status))) return res.status(400).json({ message: 'Invalid status' });
+
+    const order = await Order.findByIdAndUpdate(id, { status }, { new: true });
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+    return res.json({ success: true, order });
+  } catch (err) {
+    console.error('Error updating order status:', err);
+    return res.status(400).json({ message: 'Error updating order status', error: err?.message || String(err) });
   }
 });
 
@@ -169,18 +247,22 @@ router.post('/create-upi-qrcode', verifyToken, async (req, res) => {
     }
 
     // Create order in DB with pending UPI payment
-    // Fetch user's cart and populate product details
-    const cart = await Cart.findOne({ userId: req.user.id }).populate('items.productId');
+    // Fetch user's cart and resolve product details
+    const cart = await Cart.findOne({ userId: req.user.id });
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
 
-    // Build items array with product, quantity and price
-    const items = cart.items.map(i => ({
-      product: i.productId._id,
-      quantity: i.quantity,
-      price: i.productId.price || 0
-    }));
+    const items = [];
+    for (const it of cart.items) {
+      const resolved = await resolveItem(it.productId);
+      if (!resolved) continue;
+      items.push({ product: it.productId, quantity: it.quantity, price: resolved.price || 0 });
+    }
+
+    if (items.length === 0) {
+      return res.status(400).json({ success: false, message: 'No valid items found in cart' });
+    }
 
     const order = new Order({
       user: req.user.id,

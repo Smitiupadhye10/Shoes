@@ -18,7 +18,8 @@ const Products = () => {
       try {
         const res = await fetch("http://localhost:4000/api/all-products");
         const data = await res.json();
-        setProducts(data);
+        // Handle both array and object responses
+        setProducts(Array.isArray(data) ? data : data.products || []);
       } catch (err) {
         console.error(err);
       } finally {

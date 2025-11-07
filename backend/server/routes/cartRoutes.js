@@ -2,27 +2,36 @@ import express from 'express';
 import { verifyToken } from '../middleware/authMiddleware.js';
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
+import ContactLens from '../models/ContactLens.js';
 
 const router = express.Router();
+
+// Helper to resolve product info from either collection
+async function resolveItem(productId) {
+  let doc = await Product.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'product' };
+  doc = await ContactLens.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'contactLens' };
+  return null;
+}
 
 // Get user's cart
 router.get('/', verifyToken, async (req, res) => {
   try {
-    let cart = await Cart.findOne({ userId: req.user.id })
-      .populate('items.productId');
-    
+    let cart = await Cart.findOne({ userId: req.user.id });
     if (!cart) {
       cart = await Cart.create({ userId: req.user.id, items: [] });
     }
 
-    const cartItems = cart.items.map(item => ({
-      ...item.productId._doc,
-      quantity: item.quantity
-    }));
+    const items = [];
+    for (const it of cart.items) {
+      const resolved = await resolveItem(it.productId);
+      if (resolved) items.push({ ...resolved, quantity: it.quantity });
+    }
 
-  res.json({ items: cartItems });
+    return res.json({ items });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching cart', error: error.message });
+    return res.status(500).json({ message: 'Error fetching cart', error: error.message });
   }
 });
 
@@ -31,13 +40,20 @@ router.post('/add', verifyToken, async (req, res) => {
   try {
     const { productId } = req.body;
 
+    // Validate existence in either collection
+    const existsInProduct = await Product.exists({ _id: productId });
+    const existsInContact = !existsInProduct && await ContactLens.exists({ _id: productId });
+    if (!existsInProduct && !existsInContact) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
     let cart = await Cart.findOne({ userId: req.user.id });
     if (!cart) {
       cart = new Cart({ userId: req.user.id, items: [] });
     }
 
     const existingItem = cart.items.find(
-      item => item.productId.toString() === productId
+      item => item.productId.toString() === String(productId)
     );
 
     if (existingItem) {
@@ -46,13 +62,17 @@ router.post('/add', verifyToken, async (req, res) => {
       cart.items.push({ productId, quantity: 1 });
     }
 
-  await cart.save();
-  // return populated items
-  const populated = await Cart.findOne({ userId: req.user.id }).populate('items.productId');
-  const items = populated.items.map(i => ({ ...i.productId._doc, quantity: i.quantity }));
-  res.status(200).json({ items });
+    await cart.save();
+
+    const items = [];
+    for (const it of cart.items) {
+      const resolved = await resolveItem(it.productId);
+      if (resolved) items.push({ ...resolved, quantity: it.quantity });
+    }
+
+    return res.status(200).json({ items });
   } catch (error) {
-    res.status(500).json({ message: 'Error adding to cart', error: error.message });
+    return res.status(500).json({ message: 'Error adding to cart', error: error.message });
   }
 });
 
@@ -67,7 +87,7 @@ router.post('/decrease', verifyToken, async (req, res) => {
     }
 
     const itemIndex = cart.items.findIndex(
-      item => item.productId.toString() === productId
+      item => item.productId.toString() === String(productId)
     );
 
     if (itemIndex > -1) {
@@ -79,11 +99,15 @@ router.post('/decrease', verifyToken, async (req, res) => {
       await cart.save();
     }
 
-    const populated = await Cart.findOne({ userId: req.user.id }).populate('items.productId');
-    const items = populated.items.map(i => ({ ...i.productId._doc, quantity: i.quantity }));
-    res.status(200).json({ items });
+    const items = [];
+    for (const it of cart.items) {
+      const resolved = await resolveItem(it.productId);
+      if (resolved) items.push({ ...resolved, quantity: it.quantity });
+    }
+
+    return res.status(200).json({ items });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating quantity', error: error.message });
+    return res.status(500).json({ message: 'Error updating quantity', error: error.message });
   }
 });
 
@@ -97,15 +121,20 @@ router.delete('/remove/:productId', verifyToken, async (req, res) => {
     }
 
     cart.items = cart.items.filter(
-      item => item.productId.toString() !== req.params.productId
+      item => item.productId.toString() !== String(req.params.productId)
     );
 
     await cart.save();
-    const populated = await Cart.findOne({ userId: req.user.id }).populate('items.productId');
-    const items = populated ? populated.items.map(i => ({ ...i.productId._doc, quantity: i.quantity })) : [];
-    res.status(200).json({ items });
+
+    const items = [];
+    for (const it of cart.items) {
+      const resolved = await resolveItem(it.productId);
+      if (resolved) items.push({ ...resolved, quantity: it.quantity });
+    }
+
+    return res.status(200).json({ items });
   } catch (error) {
-    res.status(500).json({ message: 'Error removing from cart', error: error.message });
+    return res.status(500).json({ message: 'Error removing from cart', error: error.message });
   }
 });
 

@@ -18,3 +18,13 @@ export const verifyToken = (req, res, next) => {
     return res.status(403).json({ message: "Invalid token" });
   }
 };
+
+export const requireAdmin = (req, res, next) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ message: "Unauthorized" });
+  const emails = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase()).filter(Boolean);
+  const okByRole = String(user.role || "").toLowerCase() === "admin";
+  const okByEmail = user.email && emails.includes(String(user.email).toLowerCase());
+  if (okByRole || okByEmail) return next();
+  return res.status(403).json({ message: "Admin access required" });
+};

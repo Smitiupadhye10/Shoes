@@ -15,6 +15,31 @@ import Checkout from "../pages/Checkout.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx"; 
 import CategoryPage from "../pages/CategoryPage.jsx";
 import { useUser } from "../context/UserContext.jsx";
+import { useCart } from "../context/CartContext.jsx";
+import AdminLayout from "../pages/admin/AdminLayout";
+import AdminProducts from "../pages/admin/AdminProducts";
+import AdminOrders from "../pages/admin/AdminOrders";
+
+// Individual wrapper components to provide cart functions
+const HomeWithCart = () => {
+  const { addToCart, addToWishlist } = useCart();
+  return <Home addToCart={addToCart} addToWishlist={addToWishlist} />;
+};
+
+const ShopWithCart = () => {
+  const { addToCart, addToWishlist } = useCart();
+  return <Shop addToCart={addToCart} addToWishlist={addToWishlist} />;
+};
+
+const ProductDetailWithCart = () => {
+  const { addToCart, addToWishlist } = useCart();
+  return <ProductDetail addToCart={addToCart} addToWishlist={addToWishlist} />;
+};
+
+const CategoryPageWithCart = () => {
+  const { addToCart, addToWishlist } = useCart();
+  return <CategoryPage addToCart={addToCart} addToWishlist={addToWishlist} />;
+};
 
 const router = () =>
   createBrowserRouter(
@@ -25,11 +50,18 @@ const router = () =>
 
         {/* Public layout for browsing */}
         <Route element={<OutletLayout />}>
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" element={<HomeWithCart />} />
           <Route path="/about" element={<About />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/category/:category" element={<CategoryPage />} />
+          <Route path="/shop" element={<ShopWithCart />} />
+          <Route path="/product/:id" element={<ProductDetailWithCart />} />
+          <Route path="/category/:category" element={<CategoryPageWithCart />} />
+        </Route>
+
+        {/* Admin Panel */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminProducts />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
         </Route>
 
         {/* Auth pages (public) */}
@@ -59,7 +91,8 @@ const router = () =>
           <Route path="/orders" element={<MyOrders />} />
         </Route>
       </>
-    )
+    ),
+    { future: { v7_startTransition: true } }
   );
 
 // Prevent authenticated users from accessing login/signup pages

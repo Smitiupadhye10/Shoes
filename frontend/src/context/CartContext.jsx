@@ -3,10 +3,20 @@ import { useUser } from './UserContext';
 
 export const CartContext = createContext();
 
+// Custom hook to use cart context
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+};
+
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState(null);
   const { user } = useUser();
 
   // Fetch cart and wishlist when user logs in
@@ -75,9 +85,17 @@ export const CartProvider = ({ children }) => {
 
       if (response.ok) {
         await fetchCart();
+        setToast({ type: 'success', message: 'Added to cart' });
+        setTimeout(() => setToast(null), 2000);
+      } else {
+        const err = await response.json().catch(() => ({}));
+        setToast({ type: 'error', message: err?.message || 'Failed to add to cart' });
+        setTimeout(() => setToast(null), 2500);
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
+      setToast({ type: 'error', message: 'Error adding to cart' });
+      setTimeout(() => setToast(null), 2500);
     }
   };
 
@@ -139,9 +157,17 @@ export const CartProvider = ({ children }) => {
 
       if (response.ok) {
         await fetchWishlist();
+        setToast({ type: 'success', message: 'Added to wishlist' });
+        setTimeout(() => setToast(null), 2000);
+      } else {
+        const err = await response.json().catch(() => ({}));
+        setToast({ type: 'error', message: err?.message || 'Failed to add to wishlist' });
+        setTimeout(() => setToast(null), 2500);
       }
     } catch (error) {
       console.error('Error adding to wishlist:', error);
+      setToast({ type: 'error', message: 'Error adding to wishlist' });
+      setTimeout(() => setToast(null), 2500);
     }
   };
 
@@ -200,6 +226,13 @@ export const CartProvider = ({ children }) => {
       }}
     >
       {children}
+      {toast && (
+        <div className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4 py-3 rounded shadow-lg text-sm md:text-base transition-opacity duration-300 
+          ${toast.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}`}
+        >
+          {toast.message}
+        </div>
+      )}
     </CartContext.Provider>
   );
 };
