@@ -17,7 +17,7 @@ const About = () => {
           <div className="absolute top-20 right-20 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
           <div className="absolute bottom-10 left-1/3 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
         </div>
-        
+
         <div className="relative container mx-auto px-6 py-24 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
@@ -77,39 +77,14 @@ const About = () => {
             <div className="flex justify-center lg:justify-end">
               <div className="relative">
                 <div className="bg-white/10 backdrop-blur-sm p-12 rounded-3xl shadow-2xl">
-                  <svg
-                    width="400"
-                    height="280"
-                    viewBox="0 0 400 280"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect rx="24" width="400" height="280" fill="white" opacity="0.05" />
-                    <g
-                      transform="translate(30,50)"
-                      stroke="white"
-                      strokeWidth="8"
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                    >
-                      <path d="M15 60c0-30 25-50 55-50s55 20 55 50" strokeOpacity="0.95" />
-                      <path d="M315 60c0-30-25-50-55-50s-55 20-55 50" strokeOpacity="0.95" />
-                      <rect
-                        x="90"
-                        y="42"
-                        width="100"
-                        height="36"
-                        rx="10"
-                        fill="white"
-                        opacity="0.08"
-                      />
-                      <path d="M125 60h30" strokeOpacity="0.9" />
-                      <line x1="0" y1="60" x2="20" y2="60" />
-                      <line x1="380" y1="60" x2="360" y2="60" />
-                      <circle cx="70" cy="60" r="8" fill="white" opacity="0.1" />
-                      <circle cx="260" cy="60" r="8" fill="white" opacity="0.1" />
-                    </g>
-                  </svg>
+                  <img
+                    src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762756168/women_1262x519_xsp8do.webp"
+                    alt="Sunglasses Banner"
+                    width={400}
+                    height={280}
+                    className="object-cover rounded-lg shadow-md"
+                  />
+
                 </div>
 
                 {/* Floating Labels */}
@@ -215,15 +190,15 @@ const About = () => {
                   Our specialists are happy to help — free consultation and lens recommendations.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <a 
-                    href="mailto:support@lenslogic.example" 
+                  <a
+                    href="mailto:support@lenslogic.example"
                     className="inline-flex items-center gap-2 px-6 py-3 bg-white text-sky-700 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-300 shadow-lg"
                   >
                     <Mail className="w-5 h-5" />
                     Email Us
                   </a>
-                  <Link 
-                    to="/shop" 
+                  <Link
+                    to="/shop"
                     className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white/30 text-white rounded-xl font-semibold hover:bg-white/10 transition-all duration-300"
                   >
                     Browse Frames

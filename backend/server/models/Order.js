@@ -42,6 +42,14 @@ const orderSchema = new mongoose.Schema(
       zipCode: String,
       phone: String,
     },
+    paymentDetails: {
+      razorpayOrderId: String,
+      razorpayPaymentId: String,
+      razorpaySignature: String,
+      paymentMethod: String,
+      upi: String,
+      verifiedAt: Date,
+    },
   },
   { timestamps: true }
 );

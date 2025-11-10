@@ -47,20 +47,29 @@ const Shop = ({ addToCart, addToWishlist }) => {
     const start = Math.max(1, current - 2);
     const end = Math.min(total, start + 4);
     for (let i = start; i <= end; i++) pages.push(i);
+    if (total <= 1) return null;
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center gap-2 mt-10 mb-6">
         <button
           onClick={() => goToPage(current - 1)}
           disabled={current <= 1}
-          className={`px-3 py-1 rounded border ${current <= 1 ? "text-gray-400 border-gray-200" : "text-gray-700 hover:bg-gray-50"}`}
+          className={`px-4 py-2 rounded-lg border-2 font-medium transition-all duration-200 ${
+            current <= 1 
+              ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
+              : "text-gray-700 border-gray-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-400 hover:shadow-md"
+          }`}
         >
-          Previous
+          ← Previous
         </button>
         {pages.map((p) => (
           <button
             key={p}
             onClick={() => goToPage(p)}
-            className={`px-3 py-1 rounded border ${p === current ? "bg-gray-900 text-white border-gray-900" : "text-gray-700 hover:bg-gray-50"}`}
+            className={`px-4 py-2 rounded-lg border-2 font-semibold transition-all duration-200 ${
+              p === current 
+                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-lg transform scale-110" 
+                : "text-gray-700 border-gray-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-400 hover:shadow-md"
+            }`}
           >
             {p}
           </button>
@@ -68,9 +77,13 @@ const Shop = ({ addToCart, addToWishlist }) => {
         <button
           onClick={() => goToPage(current + 1)}
           disabled={current >= total}
-          className={`px-3 py-1 rounded border ${current >= total ? "text-gray-400 border-gray-200" : "text-gray-700 hover:bg-gray-50"}`}
+          className={`px-4 py-2 rounded-lg border-2 font-medium transition-all duration-200 ${
+            current >= total 
+              ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
+              : "text-gray-700 border-gray-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-400 hover:shadow-md"
+          }`}
         >
-          Next
+          Next →
         </button>
       </div>
     );
@@ -85,59 +98,112 @@ const Shop = ({ addToCart, addToWishlist }) => {
   }, {});
 
   const getCategoryIcon = (category) => {
+    const iconClass = "w-6 h-6";
     switch(category?.toLowerCase()) {
-      case 'Eyeglasses': return <Eye className="w-5 h-5" />;
-      case 'Sunglasses': return <Sun className="w-5 h-5" />;
-      case 'Computer glasses': return <Monitor className="w-5 h-5" />;
-      case 'Contact lenses': return <Phone className="w-5 h-5" />;
-      default: return <Eye className="w-5 h-5" />;
+      case 'eyeglasses': return <Eye className={iconClass} />;
+      case 'sunglasses': return <Sun className={iconClass} />;
+      case 'computer glasses': return <Monitor className={iconClass} />;
+      case 'contact lenses': return <Phone className={iconClass} />;
+      default: return <Eye className={iconClass} />;
     }
   };
 
-  return (
-    <section className="max-w-7xl mx-auto px-6 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-900">All Products</h1>
+  const getCategoryGradient = (category) => {
+    switch(category?.toLowerCase()) {
+      case 'eyeglasses': return 'from-blue-500 to-cyan-500';
+      case 'sunglasses': return 'from-orange-500 to-yellow-500';
+      case 'computer glasses': return 'from-purple-500 to-pink-500';
+      case 'contact lenses': return 'from-green-500 to-emerald-500';
+      default: return 'from-gray-500 to-gray-600';
+    }
+  };
 
-      {loading ? (
-        <div className="text-center py-12 text-gray-500">Loading...</div>
-      ) : error ? (
-        <div className="text-center py-12 text-red-600">{error}</div>
-      ) : (
-        <>
-          {Object.entries(groupedProducts).map(([category, categoryProducts]) => (
-            <div key={category} className="mb-12">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-sky-100 text-sky-600 rounded-lg">
-                  {getCategoryIcon(category)}
+  const ProductSkeleton = () => (
+    <div className="animate-pulse bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
+      <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl mb-4"></div>
+      <div className="h-5 bg-gray-200 rounded-lg mb-3 w-3/4"></div>
+      <div className="h-4 bg-gray-200 rounded-lg mb-2 w-1/2"></div>
+      <div className="h-10 bg-gray-200 rounded-lg mt-4"></div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+            Shop All Products
+          </h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Discover our complete collection of eyewear and contact lenses. Find the perfect style for every occasion.
+          </p>
+          {pagination.totalProducts > 0 && (
+            <div className="mt-4 text-gray-500 font-medium">
+              {pagination.totalProducts} {pagination.totalProducts === 1 ? 'product' : 'products'} available
+            </div>
+          )}
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ProductSkeleton key={i} />
+            ))}
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-8 text-center max-w-2xl mx-auto">
+            <div className="text-red-600 font-semibold text-lg mb-2">⚠️ Error loading products</div>
+            <div className="text-red-500">{error}</div>
+          </div>
+        ) : (
+          <>
+            {Object.entries(groupedProducts).map(([category, categoryProducts]) => (
+              <div key={category} className="mb-16">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className={`p-3 bg-gradient-to-r ${getCategoryGradient(category)} rounded-xl shadow-lg text-white`}>
+                    {getCategoryIcon(category)}
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900">
+                      {category}
+                    </h2>
+                    <p className="text-gray-600 font-medium">
+                      {categoryProducts.length} {categoryProducts.length === 1 ? 'product' : 'products'} in this category
+                    </p>
+                  </div>
                 </div>
-                <h2 className="text-2xl font-semibold text-gray-900">
-                  {category} ({categoryProducts.length})
-                </h2>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {categoryProducts.map((product) => (
+                    <div 
+                      key={product._id}
+                      className="transform transition-all duration-300 hover:scale-[1.02]"
+                    >
+                      <ProductCard
+                        product={product}
+                        addToCart={() => addToCart(product)}
+                        addToWishlist={() => addToWishlist(product)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {categoryProducts.map((product) => (
-                  <ProductCard
-                    key={product._id}
-                    product={product}
-                    addToCart={() => addToCart(product)}
-                    addToWishlist={() => addToWishlist(product)}
-                  />
-                ))}
+            ))}
+            {pagination.totalPages > 1 && renderPageNumbers()}
+            {products.length === 0 && (
+              <div className="text-center py-16 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-gray-200 shadow-lg">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">No products found</h3>
+                <p className="text-gray-600">
+                  {search ? `No products match "${search}"` : "We couldn't find any products at the moment."}
+                </p>
               </div>
-            </div>
-          ))}
-          {pagination.totalPages > 1 && (
-            <div className="flex justify-center mt-8">{renderPageNumbers()}</div>
-          )}
-          {products.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No products found</p>
-            </div>
-          )}
-        </>
-      )}
-    </section>
+            )}
+          </>
+        )}
+      </section>
+    </div>
   );
 };
 

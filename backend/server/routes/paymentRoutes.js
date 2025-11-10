@@ -26,8 +26,19 @@ router.post('/create-order', verifyToken, async (req, res) => {
   try {
     const { amount, shippingAddress } = req.body;
 
+    // Get user ID (handle both id and _id)
+    const userId = req.user.id || req.user._id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
+
     // Fetch user's cart
-    const cart = await Cart.findOne({ userId: req.user.id });
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+      // Create empty cart if it doesn't exist
+      cart = new Cart({ userId, items: [] });
+      await cart.save();
+    }
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
@@ -70,17 +81,24 @@ router.post('/create-order', verifyToken, async (req, res) => {
       currency: 'INR'
     });
 
-    // Create order in database
+    // Create order in database - fix structure to match Order schema
     const order = new Order({
-      user: req.user.id,
-      items,
-      shippingAddress,
+      userId: userId,
+      items: items.map(item => ({
+        productId: item.product, // Convert 'product' to 'productId'
+        quantity: item.quantity,
+        price: item.price
+      })),
+      shippingAddress: shippingAddress || {},
       totalAmount: finalAmount,
-      paymentDetails: {
-        razorpayOrderId: razorpayOrder.id,
-        paymentMethod: req.body.paymentMethod || 'card' // Default to card if not specified
-      }
+      status: 'pending'
     });
+    
+    // Store payment details separately (not in schema, but we can add to order object)
+    order.paymentDetails = {
+      razorpayOrderId: razorpayOrder.id,
+      paymentMethod: req.body.paymentMethod || 'card'
+    };
 
     await order.save();
 
@@ -94,7 +112,12 @@ router.post('/create-order', verifyToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating order:', error);
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
@@ -131,13 +154,18 @@ router.post('/verify-payment', verifyToken, async (req, res) => {
       });
     }
 
+    // Initialize paymentDetails if it doesn't exist
+    if (!order.paymentDetails) {
+      order.paymentDetails = {};
+    }
     order.paymentDetails.razorpayPaymentId = razorpayPaymentId;
     order.paymentDetails.razorpaySignature = razorpaySignature;
     order.status = 'processing';
     await order.save();
 
     // Clear user's cart after successful payment
-    const cart = await Cart.findOne({ userId: req.user.id });
+    const userId = req.user.id || req.user._id;
+    const cart = await Cart.findOne({ userId });
     if (cart) {
       cart.items = [];
       await cart.save();
@@ -156,8 +184,9 @@ router.post('/verify-payment', verifyToken, async (req, res) => {
 // Get orders for current user
 router.get('/my-orders', verifyToken, async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id })
-      .populate('items.product')
+    const userId = req.user.id || req.user._id;
+    const orders = await Order.find({ userId })
+      .populate('items.productId')
       .sort('-createdAt');
 
     res.json({ success: true, orders });
@@ -180,10 +209,10 @@ router.get('/admin/orders', verifyToken, requireAdmin, async (req, res) => {
     if (status) filter.status = status;
     if (q) {
       const text = String(q).trim();
-      // Allow find by order _id or by user _id
+      // Allow find by order _id or by userId _id
       filter.$or = [
         { _id: text.match(/^[a-f0-9]{24}$/i) ? text : undefined },
-        { user: text.match(/^[a-f0-9]{24}$/i) ? text : undefined },
+        { userId: text.match(/^[a-f0-9]{24}$/i) ? text : undefined },
       ].filter(Boolean);
       if (filter.$or.length === 0) delete filter.$or;
     }
@@ -247,8 +276,19 @@ router.post('/create-upi-qrcode', verifyToken, async (req, res) => {
     }
 
     // Create order in DB with pending UPI payment
+    // Get user ID
+    const userId = req.user.id || req.user._id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
+    
     // Fetch user's cart and resolve product details
-    const cart = await Cart.findOne({ userId: req.user.id });
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+      // Create empty cart if it doesn't exist
+      cart = new Cart({ userId, items: [] });
+      await cart.save();
+    }
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
@@ -265,16 +305,22 @@ router.post('/create-upi-qrcode', verifyToken, async (req, res) => {
     }
 
     const order = new Order({
-      user: req.user.id,
-      items,
+      userId: userId,
+      items: items.map(item => ({
+        productId: item.product, // Convert 'product' to 'productId'
+        quantity: item.quantity,
+        price: item.price
+      })),
       shippingAddress: shippingAddress || {},
       totalAmount: amount,
-      paymentDetails: { 
-        upi,
-        paymentMethod: 'upi'
-      },
       status: 'pending'
     });
+    
+    // Store payment details separately
+    order.paymentDetails = {
+      upi,
+      paymentMethod: 'upi'
+    };
     await order.save();
 
     // Build UPI deep link - recommended fields: pa (payee address), pn (payee name), am (amount), cu (currency)
@@ -284,7 +330,13 @@ router.post('/create-upi-qrcode', verifyToken, async (req, res) => {
     // Generate QR data URL (PNG)
     const qrDataUrl = await QRCode.toDataURL(upiLink, { type: 'image/png', margin: 1 });
 
-    res.json({ success: true, orderId: order._id, upiLink, qrDataUrl });
+    res.json({ 
+      success: true, 
+      orderId: order._id, 
+      upiLink, 
+      qrDataUrl,
+      upiId: upi // Include UPI ID in response
+    });
   } catch (err) {
     console.error('Error creating UPI QR:', err);
     res.status(500).json({ success: false, message: err.message });
@@ -299,16 +351,20 @@ router.post('/confirm-upi-payment', verifyToken, async (req, res) => {
 
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
-    if (order.user.toString() !== req.user.id && order.user.toString() !== req.user._id) {
+    if (order.userId.toString() !== req.user.id && order.userId.toString() !== req.user._id) {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
 
     order.status = 'processing';
+    if (!order.paymentDetails) {
+      order.paymentDetails = {};
+    }
     order.paymentDetails.verifiedAt = new Date();
     await order.save();
 
     // Clear cart
-    const cart = await Cart.findOne({ userId: req.user.id });
+    const userId = req.user.id || req.user._id;
+    const cart = await Cart.findOne({ userId });
     if (cart) {
       cart.items = [];
       await cart.save();

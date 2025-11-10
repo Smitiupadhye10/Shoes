@@ -13,6 +13,8 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import contactLensRoutes from "./routes/contactLensRoutes.js";
 import allProductsRoutes from "./routes/allProductsRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import userRoutes from './routes/userRoutes.js';
+
 
 // Initialize express app
 const app = express();
@@ -59,7 +61,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/contact-lenses", contactLensRoutes);
 app.use("/api/all-products", allProductsRoutes);
 app.use("/api/admin", adminRoutes);
-
+app.use("/api/users", userRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

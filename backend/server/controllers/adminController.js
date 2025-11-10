@@ -57,7 +57,7 @@ export const updateProduct = async (req, res) => {
     res.json(product);
   } catch (error) {
     if (error?.code === 11000) {
-      return res.status(409).json({ message: "Product title must be unique" });
+      return res.status(409).json({ message: "Duplicate key error", error: error?.message });
     }
     res.status(400).json({ message: "Error updating product", error: error.message });
   }

@@ -21,7 +21,7 @@ function mapKeyToProductInfoPath(key) {
   if (lowerKey === "shape") return "product_info.frameShape";
   if (lowerKey === "style") return "product_info.rimDetails";
   if (lowerKey === "usage") return "product_info.usage";
-  if (lowerKey === "explore by disposability") return "product_info.disposability";
+  if (lowerKey === "explore by disposability") return "product_info.usageDuration";
   if (lowerKey === "explore by power") return "product_info.power";
   if (lowerKey === "explore by color") return "product_info.color";
   if (lowerKey === "solution") return "product_info.solution";
@@ -359,10 +359,6 @@ export const adminCreateProduct = async (req, res) => {
     const Model = /^contactlens/i.test(type) ? ContactLens : Product;
 
     // Basic unique check by title (case-insensitive) for Product only
-    if (Model === Product && body?.title) {
-      const existing = await Product.findOne({ title: body.title }).collation({ locale: 'en', strength: 2 });
-      if (existing) return res.status(409).json({ message: 'Product title must be unique' });
-    }
 
     // Normalize images similar to createProduct
     let imagesArray = [];
@@ -437,10 +433,6 @@ export const createProduct = async (req, res) => {
     const body = { ...req.body };
 
     // Case-insensitive existence check to prevent duplicates by title
-    const existing = await Product.findOne({ title: body.title }).collation({ locale: "en", strength: 2 });
-    if (existing) {
-      return res.status(409).json({ message: "Product title must be unique" });
-    }
 
     // Normalize images
     let imagesArray = [];
@@ -470,7 +462,7 @@ export const createProduct = async (req, res) => {
     return res.status(201).json(created);
   } catch (error) {
     if (error?.code === 11000) {
-      return res.status(409).json({ message: "Product title must be unique" });
+      return res.status(409).json({ message: "Duplicate key error", error: error?.message });
     }
     return res.status(400).json({ message: "Error creating product", error });
   }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext.jsx";
-import { Heart, X, Star, ArrowLeft } from "lucide-react";
+import { Heart, X, Star, ArrowLeft, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 
 // Normalize gender labels
 const mapGender = (val) => {
@@ -17,11 +17,12 @@ const ProductDetails = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
-  const [selectedImage, setSelectedImage] = useState("/placeholder.jpg");
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedPower, setSelectedPower] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const {
     addToCart,
@@ -33,22 +34,20 @@ const ProductDetails = () => {
   // Fetch product
   useEffect(() => {
     const fetchProduct = async () => {
+      setLoading(true);
       try {
         const res = await fetch(`http://localhost:4000/api/products/${id}`);
+        if (!res.ok) throw new Error("Product not found");
         const data = await res.json();
         setProduct(data);
-
-        if (Array.isArray(data.images) && data.images.length > 0) {
-          setSelectedImage(data.images[0]);
-        } else {
-          setSelectedImage("/placeholder.jpg");
-        }
 
         if (data.product_info?.powerOptions?.length > 0) {
           setSelectedPower(data.product_info.powerOptions[0]);
         }
       } catch (err) {
         console.error("Error fetching product:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProduct();
@@ -61,11 +60,16 @@ const ProductDetails = () => {
     }
   }, [product, wishlist]);
 
-  if (!product) {
-    return <div className="text-center text-gray-500 py-12">Loading...</div>;
-  }
+  const images = product ? (Array.isArray(product.images) ? product.images : []) : [];
+  const selectedImage = images[selectedImageIndex] || "/placeholder.jpg";
 
-  const images = Array.isArray(product.images) ? product.images : [];
+  const nextImage = () => {
+    setSelectedImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   const toggleWishlist = () => {
     if (!product) return;
@@ -80,6 +84,33 @@ const ProductDetails = () => {
 
   const openImageModal = () => setIsModalOpen(true);
   const closeImageModal = () => setIsModalOpen(false);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading product...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 text-lg mb-4">Product not found</p>
+          <button
+            onClick={() => navigate(-1)}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleAddToCart = () => {
     const item = { ...product, selectedPower, quantity };
@@ -105,39 +136,27 @@ const ProductDetails = () => {
     }).format(Number(num || 0));
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-100 text-white py-8">
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold">{product.title}</h2>
-            <p className="text-sm opacity-90">
-              {product.category} · {product.subCategory || ""}
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-24">
+      <div className="container mx-auto px-4 py-8">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-6 transition-colors duration-200"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="font-medium">Back</span>
+        </button>
 
-          {/* Back button with arrow */}
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
-          </button>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-10">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Section - Images (sticky) */}
-          <div className="lg:w-1/2 lg:sticky lg:top-4 lg:h-fit">
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              {/* Wishlist Heart Icon on top-right of the image card */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* Left Section - Image Carousel */}
+          <div className="lg:sticky lg:top-24 lg:h-fit">
+            <div className="bg-white rounded-2xl shadow-xl p-6">
+              {/* Wishlist Heart Icon */}
               <div className="flex justify-end mb-4">
                 <button
                   onClick={toggleWishlist}
                   aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  className="p-3 rounded-full bg-white/80 backdrop-blur-sm shadow-md hover:bg-white hover:scale-110 transition-all duration-200"
                 >
                   <Heart
                     className={`w-6 h-6 transition-colors ${
@@ -149,65 +168,115 @@ const ProductDetails = () => {
                 </button>
               </div>
 
-              {/* Main Image */}
-              <div className="relative">
-                <img
-                  src={selectedImage}
-                  alt={product.title}
-                  className="w-full h-96 object-contain rounded-xl bg-gray-50 cursor-pointer hover:opacity-90 transition"
-                  onClick={openImageModal}
-                />
-              </div>
+              {/* Image Carousel */}
+              <div className="relative mb-4">
+                {/* Main Image Container */}
+                <div className="relative w-full h-96 bg-gray-50 rounded-xl overflow-hidden group">
+                  <img
+                    src={selectedImage}
+                    alt={product.title}
+                    className="w-full h-full object-contain cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                    onClick={openImageModal}
+                  />
+                  
+                  {/* Navigation Arrows */}
+                  {images.length > 1 && (
+                    <>
+                      <button
+                        onClick={prevImage}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft className="w-6 h-6 text-gray-700" />
+                      </button>
+                      <button
+                        onClick={nextImage}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        aria-label="Next image"
+                      >
+                        <ChevronRight className="w-6 h-6 text-gray-700" />
+                      </button>
+                    </>
+                  )}
 
-              {/* Thumbnails */}
-              <div className="flex gap-3 mt-4 justify-center flex-wrap">
-                {images.length > 0 ? (
-                  images.map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setSelectedImage(img)}
-                      className={`w-20 h-20 p-1 rounded-lg border transition-all ${
-                        selectedImage === img
-                          ? "border-blue-600 shadow-md"
-                          : "border-gray-200 hover:border-gray-400"
-                      } bg-white`}
-                      aria-label={`Select image ${i + 1}`}
-                    >
-                      <img
-                        src={img}
-                        alt={`${product.title}-${i}`}
-                        className="w-full h-full object-contain"
-                      />
-                    </button>
-                  ))
-                ) : (
-                  <div className="text-gray-400">No images</div>
+                  {/* Image Counter */}
+                  {images.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                      {selectedImageIndex + 1} / {images.length}
+                    </div>
+                  )}
+                </div>
+
+                {/* Thumbnail Strip */}
+                {images.length > 1 && (
+                  <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+                    {images.map((img, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedImageIndex(i)}
+                        className={`flex-shrink-0 w-20 h-20 p-1 rounded-lg border-2 transition-all duration-200 ${
+                          selectedImageIndex === i
+                            ? "border-indigo-600 shadow-md scale-105"
+                            : "border-gray-200 hover:border-indigo-300"
+                        } bg-white`}
+                        aria-label={`Select image ${i + 1}`}
+                      >
+                        <img
+                          src={img}
+                          alt={`${product.title}-${i}`}
+                          className="w-full h-full object-contain rounded"
+                        />
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
 
-              {/* Actions */}
-              <div className="flex gap-4 mt-6">
+              {/* Action Buttons */}
+              <div className="space-y-3 mt-6">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={handleAddToCart}
+                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  >
+                    <ShoppingCart className="w-5 h-5" />
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={handleBuyNow}
+                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 py-3 rounded-xl font-semibold hover:from-gray-900 hover:to-black transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  >
+                    Buy Now
+                  </button>
+                </div>
                 <button
-                  onClick={handleAddToCart}
-                  className="flex-1 bg-gray-800 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors shadow-md"
+                  onClick={toggleWishlist}
+                  className="w-full flex items-center justify-center gap-2 border-2 border-indigo-600 text-indigo-600 px-6 py-3 rounded-xl font-semibold hover:bg-indigo-50 transition-all duration-200"
                 >
-                  Add to Cart
-                </button>
-                <button
-                  onClick={handleBuyNow}
-                  className="flex-1 bg-gray-800 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors shadow-md"
-                >
-                  Buy Now
+                  <Heart className={`w-5 h-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />
+                  {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Right Section - Cards */}
-          <div className="lg:w-1/2 space-y-6">
+          {/* Right Section - Product Info */}
+          <div className="space-y-6">
             {/* Card 1: Title / Ratings / Price */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">{product.title}</h1>
+              <div className="mb-3">
+                <span className="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-2">
+                  {product.category}
+                </span>
+                {product.subCategory && (
+                  <span className="inline-block ml-2 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+                    {product.subCategory}
+                  </span>
+                )}
+              </div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                {product.title}
+              </h1>
 
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center">
@@ -228,19 +297,19 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-6 mb-2">
+              <div className="flex items-center gap-4 mb-4">
                 <div>
-                  <div className="text-3xl font-bold text-sky-700">
+                  <div className="text-4xl font-bold text-indigo-600">
                     {formatINR(discountedPrice)}
                   </div>
                   {discount > 0 && (
-                    <div className="text-sm text-gray-500 line-through">
+                    <div className="text-lg text-gray-500 line-through mt-1">
                       {formatINR(priceNumber)}
                     </div>
                   )}
                 </div>
                 {discount > 0 && (
-                  <div className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold">
+                  <div className="px-4 py-2 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm font-bold shadow-md">
                     {discount}% OFF
                   </div>
                 )}

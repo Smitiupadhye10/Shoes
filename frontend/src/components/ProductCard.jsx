@@ -39,22 +39,38 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="relative flex flex-col border rounded-2xl p-4 shadow bg-gray-100 in-hover:hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+    <div className="relative flex flex-col border-2 border-gray-200 rounded-2xl p-5 shadow-md bg-gradient-to-br from-white to-gray-50 hover:shadow-xl hover:border-indigo-300 transition-all duration-300 group">
       {/* Heart icon overlay */}
-      <div className="absolute top-3 right-3 z-10 cursor-pointer" onClick={toggleWishlist}>
-        <Heart color={isWishlisted ? "red" : "gray"} fill={isWishlisted ? "red" : "none"} size={24} />
+      <div 
+        className="absolute top-4 right-4 z-10 cursor-pointer p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-md hover:bg-white hover:scale-110 transition-all duration-200" 
+        onClick={toggleWishlist}
+      >
+        <Heart 
+          color={isWishlisted ? "#ef4444" : "#6b7280"} 
+          fill={isWishlisted ? "#ef4444" : "none"} 
+          size={22}
+          className="transition-all duration-200"
+        />
       </div>
 
       {/* Product Image */}
-      <img
-        src={imageSrc}
-        alt={product.title}
-        className="w-full h-48 object-contain rounded-2xl cursor-pointer mb-3"
-        onClick={() => navigate(`/product/${product._id}`)}
-      />
+      <div className="relative overflow-hidden rounded-xl mb-4 bg-white group/image">
+        <img
+          src={imageSrc}
+          alt={product.title}
+          className="w-full h-52 object-contain cursor-pointer transition-transform duration-300 group-hover/image:scale-105"
+          onClick={() => navigate(`/product/${product._id}`)}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300"></div>
+      </div>
 
       {/* Title and meta */}
-      <h2 className="text-lg font-semibold leading-tight mb-1 truncate">{product.title}</h2>
+      <h2 
+        className="text-lg font-bold leading-tight mb-2 text-gray-900 group-hover:text-indigo-600 transition-colors duration-200 cursor-pointer line-clamp-2"
+        onClick={() => navigate(`/product/${product._id}`)}
+      >
+        {product.title}
+      </h2>
 
       {/* Meta for contact lenses */}
       {isContactLens ? (
@@ -90,30 +106,32 @@ const ProductCard = ({ product }) => {
       )}
 
       {/* Price and Discount (always visible) */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-indigo-600 font-bold text-lg">₹{discountedPrice}</span>
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-indigo-600 font-bold text-xl">₹{discountedPrice}</span>
         {product.discount > 0 && (
           <>
-            <span className="text-gray-400 line-through text-sm">₹{product.price}</span>
-            <span className="text-red-600 font-bold text-sm">{product.discount}% OFF</span>
+            <span className="text-gray-400 line-through text-sm font-medium">₹{product.price}</span>
+            <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              {product.discount}% OFF
+            </span>
           </>
         )}
       </div>
 
       {/* Buttons */}
-      <div className="flex gap-2 mt-auto">
+      <div className="flex gap-2.5 mt-auto">
         <button
           onClick={() => addToCart(product)}
-          className="flex-1 bg-gray-800 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors shadow-md flex items-center justify-center gap-2"
+          className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 8m5-8v8m4-8v8m4-8l2 8"/></svg>
           Add to Cart
         </button>
         <button
           onClick={handleBuyNow}
-          className="flex-1 bg-gray-800 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors shadow-md flex items-center justify-center gap-2"
+          className="flex-1 bg-gradient-to-r from-gray-800 to-gray-900 text-white px-5 py-3 rounded-xl font-semibold hover:from-gray-900 hover:to-black transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h4l3 8 4-16 3 8h4"/></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           Buy Now
         </button>
       </div>

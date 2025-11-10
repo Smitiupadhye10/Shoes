@@ -1,7 +1,4 @@
-import Slider from "react-slick"; 
-import fit1 from "../assets/images/sunglasses.jpeg"; 
-import fit2 from "../assets/images/eyeglass.jpeg";
-import fit3 from "../assets/images/computer.jpeg";
+import Slider from "react-slick";     
 import lens1 from "../assets/images/contact.png";
 import lens2 from "../assets/images/solution.jpeg";
 import { useEffect, useState } from "react";
@@ -46,13 +43,13 @@ const Home = ({ addToCart, addToWishlist }) => {
 
   const posters = ["https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762187614/Poster1_clwk43.jpg", 
     "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762280427/Gemini_Generated_Image_tx1v8btx1v8btx1v_guh1yj.png", 
-    "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762188613/lenses-solution_copy_f4vdgs.jpg"];
+    "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762765368/Gemini_Generated_Image_v8akptv8akptv8ak_iw2ynn.jpg"];
 
   const categories = [
-    { icon: Eye, name: "Eyeglasses", image: fit2, link: "/category/Eyeglasses", color: "bg-blue-50" },
-    { icon: Sun, name: "Sunglasses", image: fit1, link: "/category/Sunglasses", color: "bg-amber-50" },
-    { icon: Monitor, name: "Computer Glasses", image: fit3, link: "/category/Computer%20Glasses", color: "bg-green-50" },
-    { icon: Phone, name: "Contact Lenses", image: lens1, link: "/category/Contact%20Lenses", color: "bg-purple-50" }
+    { icon: Eye, name: "Eyeglasses", image: "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762757250/eyeglass_fuwwlt.webp", link: "/category/Eyeglasses", color: "bg-blue-50" },
+    { icon: Sun, name: "Sunglasses", image: "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762756833/sunglasses_x1svz3.jpg", link: "/category/Sunglasses", color: "bg-amber-50" },
+    { icon: Monitor, name: "Computer Glasses", image: "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762757347/computer_awjoxt.webp", link: "/category/Computer%20Glasses", color: "bg-green-50" },
+    { icon: Phone, name: "Contact Lenses", image: "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762756967/Contact_lenses_gncbmy.webp", link: "/category/Contact%20Lenses", color: "bg-purple-50" }
   ];
 
   const carouselSettings = {
@@ -122,6 +119,24 @@ const Home = ({ addToCart, addToWishlist }) => {
                 </div>
               </div>
             </div>
+            {/* Mobile/Tablet carousel */}
+            <div className="block lg:hidden">
+              <div className="relative mt-8">
+                <Slider {...carouselSettings} className="rounded-2xl overflow-hidden shadow-2xl">
+                  {posters.map((poster, index) => (
+                    <div key={index} className="outline-none">
+                      <img
+                        src={poster}
+                        alt={`Featured ${index + 1}`}
+                        className="w-full h-64 sm:h-80 object-cover"
+                      />
+                    </div>
+                  ))}
+                </Slider>
+              </div>
+            </div>
+
+            {/* Desktop carousel */}
             <div className="hidden lg:block">
               <div className="relative">
                 <Slider {...carouselSettings} className="rounded-2xl overflow-hidden shadow-2xl">
@@ -309,7 +324,7 @@ const Home = ({ addToCart, addToWishlist }) => {
                 </Link>
               </div>
               <div className="grid grid-cols-2 gap-6">
-                {[lens1, lens2].map((img, i) => (
+                {["https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762766654/Contact-lens_fa4zf1.jpg", lens2].map((img, i) => (
                   <div key={i} className="relative group">
                     <div className="absolute inset-0 bg-white/10 rounded-2xl group-hover:bg-white/20 transition-colors duration-300"></div>
                     <div className="relative overflow-hidden rounded-2xl shadow-xl">
