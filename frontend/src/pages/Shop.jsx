@@ -27,7 +27,8 @@ const Shop = ({ addToCart, addToWishlist }) => {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        setProducts(Array.isArray(data.products) ? data.products : []);
+        setProducts(Array.isArray(data) ? data  : []);
+        console.log(data);
         setPagination(data.pagination || { currentPage: page, totalPages: 0, totalProducts: 0, productsPerPage: limit });
       })
       .catch((err) => setError(err.message))
