@@ -35,7 +35,7 @@ const Shop = ({ addToCart, addToWishlist }) => {
 
         const { data } = await api.get(`/products?${qs.toString()}`);
 
-        setProducts(Array.isArray(data.products) ? data.products : []);
+        setProducts(Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []));
         setPagination(
           data.pagination || {
             currentPage: page,

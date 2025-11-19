@@ -16,6 +16,7 @@ const GENDERS = ["Men", "Women", "Unisex", "Kids"];
 const COLORS_FALLBACK = ["Blue", "Green", "Brown", "Gray", "Clear", "Hazel"]; // used if facets not loaded
 export default function CategoryPage({ addToCart, addToWishlist }) {
   const { category } = useParams();
+  const categoryParam = useMemo(() => decodeURIComponent(category || ""), [category]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 0, totalProducts: 0, productsPerPage: 18 });
@@ -38,14 +39,14 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     setError(null);
 
     const params = new URLSearchParams(searchParams);
-    if (category) params.set("category", category);
+    if (categoryParam) params.set("category", categoryParam);
     params.set("page", String(page));
     params.set("limit", String(limit));
 
     const fadeTimeout = setTimeout(async () => {
       try {
         const { data } = await api.get('/products', { params: Object.fromEntries(params) });
-        setProducts(Array.isArray(data.products) ? data.products : []);
+        setProducts(Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []));
         setPagination(
           data.pagination || { currentPage: page, totalPages: 0, totalProducts: 0, productsPerPage: limit }
         );
@@ -59,7 +60,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
 
     // Fetch facets (exclude page/limit to avoid affecting counts)
     const facetParams = new URLSearchParams(searchParams);
-    if (category) facetParams.set("category", category);
+    if (categoryParam) facetParams.set("category", categoryParam);
     facetParams.delete("page");
     facetParams.delete("limit");
     api.get('/products/facets', { params: Object.fromEntries(facetParams) })
