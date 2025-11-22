@@ -1,11 +1,20 @@
 import Product from "../models/Product.js";
 import Order from "../models/Order.js";
+import ContactLens from "../models/ContactLens.js";
 
 export const listAllProducts = async (req, res) => {
   try {
-    // Get ALL products from Product collection without pagination
-    const products = await Product.find({}).sort({ createdAt: -1 });
-    res.json(products);
+    // Get ALL products and contact lenses for admin dashboard
+    const [products, contactLenses] = await Promise.all([
+      Product.find({}).sort({ createdAt: -1 }).lean(),
+      ContactLens.find({}).sort({ createdAt: -1 }).lean(),
+    ]);
+
+    // Tag each item with a _type field so frontend can distinguish
+    const taggedProducts = products.map((p) => ({ ...p, _type: "product" }));
+    const taggedContactLenses = contactLenses.map((c) => ({ ...c, _type: "contactLens" }));
+
+    res.json([...taggedProducts, ...taggedContactLenses]);
   } catch (error) {
     res.status(500).json({ message: "Error fetching products", error: error.message });
   }

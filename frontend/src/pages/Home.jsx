@@ -283,8 +283,39 @@ const Home = ({ addToCart, addToWishlist }) => {
       {/* Contact Lenses Section */}
       <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl overflow-hidden shadow-2xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center p-6 sm:p-10 lg:p-16">
+          {/* Mobile simple layout (no big purple box) */}
+          <div className="sm:hidden rounded-2xl border bg-white p-4 shadow-sm">
+            <div className="flex flex-col gap-4">
+              <h2 className="text-2xl font-bold text-gray-900">Premium Contact Lenses</h2>
+              <p className="text-gray-600">
+                Discover our collection of premium contact lenses and solutions. Experience comfort and clarity like never before.
+              </p>
+              <div className="flex items-center gap-3 text-gray-700">
+                <Shield className="w-4 h-4 text-sky-600" />
+                <span>Medical-grade quality</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-700">
+                <Truck className="w-4 h-4 text-sky-600" />
+                <span>Fast delivery nationwide</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {["https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762766654/Contact-lens_fa4zf1.jpg", lens2].map((img, i) => (
+                  <img key={i} src={img} alt={`Contact Lens ${i + 1}`} className="w-full h-28 object-cover rounded-xl" />
+                ))}
+              </div>
+              <Link
+                to="/category/Contact%20Lenses"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-colors"
+              >
+                Shop Contact Lenses
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Tablet/Desktop gradient card */}
+          <div className="hidden sm:block bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl overflow-hidden shadow-2xl">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center p-6 sm:p-10 lg:py-16">
               <div className="space-y-8">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-medium">
                   <Phone className="w-4 h-4" />
