@@ -179,7 +179,7 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full z-50 sticky top-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <header className="w-full z-50  sticky bottom-10 top-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Top Navbar (cart/wishlist etc.) */}
       <Navbar cartCount={cart.length} wishlistCount={wishlist.length} />
 

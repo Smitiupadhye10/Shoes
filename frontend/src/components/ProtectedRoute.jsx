@@ -19,6 +19,12 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
+  // Check if user is trying to access admin routes
+  if (location.pathname.startsWith('/admin') && !user.isAdmin) {
+    // Redirect non-admin users to home
+    return <Navigate to="/home" replace />;
+  }
+
   return children;
 };
 

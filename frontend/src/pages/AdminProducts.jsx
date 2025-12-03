@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, Edit, Plus, ChevronLeft, ChevronRight, Package } from "lucide-react";
+import { Trash2, Edit, Plus, ChevronLeft, ChevronRight, Package, X } from "lucide-react";
 
 const AdminProducts = () => {
   const navigate = useNavigate();
@@ -344,6 +344,253 @@ const AdminProducts = () => {
           </>
         )}
       </div>
+
+      {/* Product Form Modal */}
+      {showProductForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="card-optic w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                {editingProduct ? 'Edit Product' : 'Add New Product'}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowProductForm(false);
+                  setEditingProduct(null);
+                  resetForm();
+                }}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                style={{ color: 'var(--text-secondary)' }}
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Price *</label>
+                  <input
+                    type="number"
+                    required
+                    step="0.01"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Description</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows={3}
+                  className="w-full p-3 rounded-lg border transition-colors"
+                  style={{
+                    backgroundColor: 'var(--bg-secondary)',
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)'
+                  }}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Category *</label>
+                  <select
+                    required
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Eyeglasses">Eyeglasses</option>
+                    <option value="Sunglasses">Sunglasses</option>
+                    <option value="Computer Glasses">Computer Glasses</option>
+                    <option value="Contact Lenses">Contact Lenses</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Sub Category</label>
+                  <input
+                    type="text"
+                    value={formData.subCategory}
+                    onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Brand</label>
+                  <input
+                    type="text"
+                    value={formData.brand}
+                    onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Gender</label>
+                  <select
+                    value={formData.gender}
+                    onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Unisex">Unisex</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Frame Material</label>
+                  <input
+                    type="text"
+                    value={formData.frameMaterial}
+                    onChange={(e) => setFormData({ ...formData, frameMaterial: e.target.value })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Image URL 1 *</label>
+                  <input
+                    type="url"
+                    required
+                    value={formData.images[0]}
+                    onChange={(e) => setFormData({ ...formData, images: [e.target.value, formData.images[1]] })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Image URL 2</label>
+                  <input
+                    type="url"
+                    value={formData.images[1]}
+                    onChange={(e) => setFormData({ ...formData, images: [formData.images[0], e.target.value] })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Discount (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.discount}
+                    onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Warranty</label>
+                  <input
+                    type="text"
+                    value={formData.warranty}
+                    onChange={(e) => setFormData({ ...formData, warranty: e.target.value })}
+                    className="w-full p-3 rounded-lg border transition-colors"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary flex-1"
+                >
+                  {loading ? 'Saving...' : (editingProduct ? 'Update Product' : 'Add Product')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowProductForm(false);
+                    setEditingProduct(null);
+                    resetForm();
+                  }}
+                  className="btn-secondary"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

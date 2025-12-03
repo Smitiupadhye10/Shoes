@@ -1,45 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
+import React from "react";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { Package, ShoppingCart, LayoutDashboard } from "lucide-react";
+import { useUser } from "../context/UserContext";
 
 const AdminLayout = () => {
-  const navigate = useNavigate();
   const location = useLocation();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { user } = useUser();
 
-  useEffect(() => {
-    const checkAdmin = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/signin");
-        return;
-      }
-      try {
-        const api = await import("../api/axios.js");
-        const res = await api.default.get("/auth/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (res.data) {
-          if (res.data.isAdmin) {
-            setIsAdmin(true);
-          } else {
-            alert("Admin access required");
-            navigate("/home");
-          }
-        } else {
-          navigate("/signin");
-        }
-      } catch (error) {
-        navigate("/signin");
-      }
-    };
-    checkAdmin();
-  }, [navigate]);
-
-  if (!isAdmin) {
-    return <div>Loading...</div>;
+  // Use user from context instead of separate API call
+  if (!user || !user.isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Access Denied</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Admin access required</p>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -86,10 +86,10 @@ const ProductDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading product...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: 'var(--accent-yellow)' }}></div>
+          <p className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Loading product...</p>
         </div>
       </div>
     );
@@ -97,12 +97,12 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <p className="text-red-600 text-lg mb-4">Product not found</p>
+          <p className="text-optic-body text-lg mb-4" style={{ color: 'var(--text-primary)' }}>Product not found</p>
           <button
             onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            className="btn-primary"
           >
             Go Back
           </button>
@@ -135,8 +135,8 @@ const ProductDetails = () => {
     }).format(Number(num || 0));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-24">
-      <div className="container mx-auto px-4 py-8">
+    <div className="py-0 md:py-0 pt-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="container mx-auto">
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
@@ -149,20 +149,22 @@ const ProductDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Left Section - Image Carousel */}
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <div className="bg-white rounded-2xl shadow-xl p-6">
+            <div className="card-optic p-6">
               {/* Wishlist Heart Icon */}
               <div className="flex justify-end mb-4">
                 <button
                   onClick={toggleWishlist}
                   aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                  className="p-3 rounded-full bg-white/80 backdrop-blur-sm shadow-md hover:bg-white hover:scale-110 transition-all duration-200"
+                  className="p-3 rounded-full shadow-md hover:scale-110 transition-all duration-200"
+                  style={{ backgroundColor: 'var(--bg-secondary)' }}
                 >
                   <Heart
                     className={`w-6 h-6 transition-colors ${
                       isWishlisted
                         ? "fill-red-500 text-red-500"
-                        : "text-gray-400 hover:text-red-500"
+                        : "hover:text-red-500"
                     }`}
+                    style={{ color: 'var(--text-secondary)' }}
                   />
                 </button>
               </div>
@@ -170,7 +172,7 @@ const ProductDetails = () => {
               {/* Image Carousel */}
               <div className="relative mb-4">
                 {/* Main Image Container */}
-                <div className="relative w-full h-64 sm:h-80 md:h-96 bg-gray-50 rounded-xl overflow-hidden group">
+                <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden group" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                   <img
                     src={selectedImage}
                     alt={product.title}
@@ -183,24 +185,26 @@ const ProductDetails = () => {
                     <>
                       <button
                         onClick={prevImage}
-                        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-2 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100"
                         aria-label="Previous image"
+                        style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
                       >
-                        <ChevronLeft className="w-6 h-6 text-gray-700" />
+                        <ChevronLeft className="w-6 h-6" />
                       </button>
                       <button
                         onClick={nextImage}
-                        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-2 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100"
                         aria-label="Next image"
+                        style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
                       >
-                        <ChevronRight className="w-6 h-6 text-gray-700" />
+                        <ChevronRight className="w-6 h-6" />
                       </button>
                     </>
                   )}
 
                   {/* Image Counter */}
                   {images.length > 1 && (
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
                       {selectedImageIndex + 1} / {images.length}
                     </div>
                   )}
@@ -215,9 +219,13 @@ const ProductDetails = () => {
                         onClick={() => setSelectedImageIndex(i)}
                         className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 p-1 rounded-lg border-2 transition-all duration-200 ${
                           selectedImageIndex === i
-                            ? "border-indigo-600 shadow-md scale-105"
-                            : "border-gray-200 hover:border-indigo-300"
-                        } bg-white`}
+                            ? "scale-105"
+                            : "hover:scale-105"
+                        }`}
+                        style={{
+                          backgroundColor: 'var(--bg-primary)',
+                          borderColor: selectedImageIndex === i ? 'var(--accent-yellow)' : 'var(--border-color)'
+                        }}
                         aria-label={`Select image ${i + 1}`}
                       >
                         <img
@@ -236,23 +244,34 @@ const ProductDetails = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={handleAddToCart}
-                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                    className="btn-primary flex-1"
                   >
                     <ShoppingCart className="w-5 h-5" />
                     Add to Cart
                   </button>
                   <button
                     onClick={handleBuyNow}
-                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 py-3 rounded-xl font-semibold hover:from-gray-900 hover:to-black transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                    className="btn-secondary flex-1"
                   >
                     Buy Now
                   </button>
                 </div>
                 <button
                   onClick={toggleWishlist}
-                  className="w-full flex items-center justify-center gap-2 border-2 border-indigo-600 text-indigo-600 px-6 py-3 rounded-xl font-semibold hover:bg-indigo-50 transition-all duration-200"
+                  className="w-full flex items-center justify-center gap-2 border-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200"
+                  style={{
+                    borderColor: 'var(--accent-yellow)',
+                    color: 'var(--text-primary)',
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--accent-yellow)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                  }}
                 >
-                  <Heart className={`w-5 h-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />
+                  <Heart className={`w-5 h-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} style={{ color: isWishlisted ? '#ef4444' : 'var(--text-primary)' }} />
                   {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
                 </button>
               </div>
@@ -262,18 +281,18 @@ const ProductDetails = () => {
           {/* Right Section - Product Info */}
           <div className="space-y-6">
             {/* Card 1: Title / Ratings / Price */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="card-optic p-6">
               <div className="mb-3">
-                <span className="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-2">
+                <span className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-2" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
                   {product.category}
                 </span>
                 {product.subCategory && (
-                  <span className="inline-block ml-2 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+                  <span className="inline-block ml-2 px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     {product.subCategory}
                   </span>
                 )}
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              <h1 className="text-optic-heading text-3xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
                 {product.title}
               </h1>
 
@@ -289,7 +308,7 @@ const ProductDetails = () => {
                       }`}
                     />
                   ))}
-                  <span className="ml-2 text-sm text-gray-600">
+                  <span className="ml-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                     ({(product.ratings || 0).toFixed ? (product.ratings || 0).toFixed(1) : Number(product.ratings || 0).toFixed(1)}
                     ) · {product.numReviews || 0} reviews
                   </span>
@@ -298,17 +317,17 @@ const ProductDetails = () => {
 
               <div className="flex items-center gap-4 mb-4">
                 <div>
-                  <div className="text-4xl font-bold text-indigo-600">
+                  <div className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
                     {formatINR(discountedPrice)}
                   </div>
                   {discount > 0 && (
-                    <div className="text-lg text-gray-500 line-through mt-1">
+                    <div className="text-lg line-through mt-1" style={{ color: 'var(--text-secondary)' }}>
                       {formatINR(priceNumber)}
                     </div>
                   )}
                 </div>
                 {discount > 0 && (
-                  <div className="px-4 py-2 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm font-bold shadow-md">
+                  <div className="px-4 py-2 rounded-full text-sm font-bold shadow-md" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
                     {discount}% OFF
                   </div>
                 )}
