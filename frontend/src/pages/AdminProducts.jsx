@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, Edit, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trash2, Edit, Plus, ChevronLeft, ChevronRight, Package } from "lucide-react";
 
 const AdminProducts = () => {
   const navigate = useNavigate();
@@ -223,18 +223,18 @@ const AdminProducts = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="container-optic p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Product Management</h1>
+          <h1 className="text-optic-heading text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>Product Management</h1>
           <button
             onClick={() => {
               setEditingProduct(null);
               resetForm();
               setShowProductForm(true);
             }}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+            className="btn-primary"
           >
             <Plus size={20} />
             Add Product
@@ -243,21 +243,27 @@ const AdminProducts = () => {
 
         {/* Error message */}
         {error && (
-          <div className="bg-red-100 text-red-700 p-4 mb-6 rounded-lg border border-red-300">
-            {error}
+          <div className="card-optic p-4 mb-6" style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}>
+            <p style={{ color: '#dc2626' }}>{error}</p>
           </div>
         )}
 
         {/* Product list */}
         {loading ? (
-          <div className="flex items-center justify-center py-12 text-xl text-gray-600">
-            Loading products...
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 mx-auto mb-4" style={{ borderTop: '4px solid var(--accent-yellow)', borderRight: '4px solid transparent' }}></div>
+              <p className="text-optic-body text-xl" style={{ color: 'var(--text-secondary)' }}>Loading products...</p>
+            </div>
           </div>
         ) : products.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-            <p className="text-xl text-gray-500 mb-4">No products found</p>
-            <p className="text-sm text-gray-400">
-              Click “Add Product” to create your first product.
+          <div className="card-optic p-12 text-center">
+            <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+              <Package className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
+            </div>
+            <p className="text-optic-body text-xl mb-4" style={{ color: 'var(--text-secondary)' }}>No products found</p>
+            <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>
+              Click "Add Product" to create your first product.
             </p>
           </div>
         ) : (
@@ -266,7 +272,7 @@ const AdminProducts = () => {
               {currentProducts.map((product) => (
                 <div
                   key={product._id}
-                  className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-100"
+                  className="card-optic p-6 hover:shadow-xl transition-all"
                 >
                   <img
                     src={
@@ -275,23 +281,25 @@ const AdminProducts = () => {
                         : product.images?.image1 || "/placeholder.jpg"
                     }
                     alt={product.title}
-                    className="w-full h-40 object-contain mb-4 rounded-lg bg-gray-50"
+                    className="w-full h-40 object-contain mb-4 rounded-lg"
+                    style={{ backgroundColor: 'var(--bg-secondary)' }}
                   />
-                  <h3 className="font-bold text-lg mb-2 text-gray-900">{product.title}</h3>
-                  <p className="text-xl font-bold text-blue-600 mb-1">₹{product.price}</p>
-                  <p className="text-sm text-gray-500 mb-4">{product.category}</p>
+                  <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>{product.title}</h3>
+                  <p className="text-xl font-bold mb-1" style={{ color: 'var(--accent-yellow)' }}>₹{product.price}</p>
+                  <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>{product.category}</p>
 
                   <div className="flex gap-3">
                     <button
                       onClick={() => handleEdit(product)}
-                      className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:from-blue-600 hover:to-blue-700 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+                      className="flex-1 btn-secondary text-sm flex items-center justify-center gap-2"
                     >
                       <Edit size={16} />
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(product._id)}
-                      className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg text-sm hover:from-red-600 hover:to-red-700 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+                      className="flex-1 px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2 transition-all"
+                      style={{ backgroundColor: '#ef4444', color: 'white' }}
                     >
                       <Trash2 size={16} />
                       Delete
@@ -307,17 +315,27 @@ const AdminProducts = () => {
                 <button
                   onClick={prevPage}
                   disabled={currentPage === 1}
-                  className="p-2 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                  className="p-2 rounded-lg transition-all disabled:opacity-50"
+                  style={{ 
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-secondary)',
+                    color: 'var(--text-primary)'
+                  }}
                 >
                   <ChevronLeft />
                 </button>
-                <span className="text-gray-700 font-medium">
+                <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                   Page {currentPage} of {totalPages}
                 </span>
                 <button
                   onClick={nextPage}
                   disabled={currentPage === totalPages}
-                  className="p-2 rounded-lg border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                  className="p-2 rounded-lg transition-all disabled:opacity-50"
+                  style={{ 
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-secondary)',
+                    color: 'var(--text-primary)'
+                  }}
                 >
                   <ChevronRight />
                 </button>

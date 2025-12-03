@@ -71,44 +71,25 @@ const Shop = ({ addToCart, addToWishlist }) => {
     for (let i = start; i <= end; i++) pages.push(i);
 
     return (
-      <div className="flex items-center gap-3 mt-10 justify-center">
-        <button
-          onClick={() => goToPage(current - 1)}
-          disabled={current <= 1}
-          className={`px-4 py-2 rounded-lg border ${
-            current <= 1
-              ? "text-gray-400 border-gray-200 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-50"
-          }`}
-        >
-          Previous
-        </button>
-
+      <div className="flex items-center gap-2">
         {pages.map((p) => (
           <button
             key={p}
             onClick={() => goToPage(p)}
-            className={`px-4 py-2 rounded-lg border ${
+            className={`w-10 h-10 rounded-full font-medium transition-all ${
               p === current
-                ? "bg-gray-900 text-white border-gray-900"
-                : "text-gray-700 hover:bg-gray-50"
+                ? "scale-110"
+                : "hover:scale-105"
             }`}
+            style={{ 
+              backgroundColor: p === current ? 'var(--text-primary)' : 'transparent',
+              color: p === current ? 'var(--bg-secondary)' : 'var(--text-primary)',
+              border: p === current ? 'none' : `2px solid var(--text-primary)`
+            }}
           >
             {p}
           </button>
         ))}
-
-        <button
-          onClick={() => goToPage(current + 1)}
-          disabled={current >= total}
-          className={`px-4 py-2 rounded-lg border ${
-            current >= total
-              ? "text-gray-400 border-gray-200 cursor-not-allowed"
-              : "text-gray-700 hover:bg-gray-50"
-          }`}
-        >
-          Next
-        </button>
       </div>
     );
   };
@@ -136,52 +117,84 @@ const Shop = ({ addToCart, addToWishlist }) => {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 sm:mb-10 text-center text-gray-900">
-        All Products
-      </h1>
+    <section>
+      <div style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="container-optic pt-0 pb-8">
+          <h1 className="text-optic-heading text-3xl md:text-4xl lg:text-5xl mb-16 text-center" style={{ color: 'var(--text-primary)' }}>
+            {category ? category : 'All Products'}
+          </h1>
 
-      {loading ? (
-        <div className="text-center py-20 text-gray-500 text-lg">
-          Loading products...
-        </div>
-      ) : error ? (
-        <div className="text-center py-20 text-red-600 text-lg">{error}</div>
-      ) : (
-        <>
-          {Object.entries(groupedProducts).map(([category, products]) => (
-            <div key={category} className="mb-16">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
-                  {getCategoryIcon(category)}
+          {loading ? (
+            <div className="text-center py-20 text-lg" style={{ color: 'var(--text-secondary)' }}>
+              Loading products...
+            Loading products...
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 text-lg text-red-600">{error}</div>
+        ) : (
+          <>
+            {/* Product Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
+              {products.map((product) => (
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  addToCart={() => addToCart(product)}
+                  addToWishlist={() => addToWishlist(product)}
+                />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {pagination.totalPages > 1 && (
+              <div className="flex justify-center">
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => goToPage(pagination.currentPage - 1)}
+                    disabled={pagination.currentPage <= 1}
+                    className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                      pagination.currentPage <= 1
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:scale-105"
+                    }`}
+                    style={{ 
+                      backgroundColor: pagination.currentPage <= 1 ? 'var(--border-color)' : 'var(--text-primary)',
+                      color: pagination.currentPage <= 1 ? 'var(--text-secondary)' : 'var(--bg-secondary)'
+                    }}
+                  >
+                    Previous
+                  </button>
+
+                  {renderPageNumbers()}
+
+                  <button
+                    onClick={() => goToPage(pagination.currentPage + 1)}
+                    disabled={pagination.currentPage >= pagination.totalPages}
+                    className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                      pagination.currentPage >= pagination.totalPages
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:scale-105"
+                    }`}
+                    style={{ 
+                      backgroundColor: pagination.currentPage >= pagination.totalPages ? 'var(--border-color)' : 'var(--text-primary)',
+                      color: pagination.currentPage >= pagination.totalPages ? 'var(--text-secondary)' : 'var(--bg-secondary)'
+                    }}
+                  >
+                    Next
+                  </button>
                 </div>
-                <h2 className="text-2xl font-semibold text-gray-900">
-                  {category} ({products.length})
-                </h2>
               </div>
+            )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                {products.map((product) => (
-                  <ProductCard
-                    key={product._id}
-                    product={product}
-                    addToCart={() => addToCart(product)}
-                    addToWishlist={() => addToWishlist(product)}
-                  />
-                ))}
+            {products.length === 0 && (
+              <div className="text-center py-20 text-lg" style={{ color: 'var(--text-secondary)' }}>
+                No products found.
               </div>
-            </div>
-          ))}
-
-          {pagination.totalPages > 1 && renderPageNumbers()}
-
-          {products.length === 0 && (
-            <div className="text-center py-20 text-gray-600 text-lg">
-              No products found.
-            </div>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
+      </div>
+      </div>
     </section>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import CategoryBar from "./CategoryBar";
 import { CartContext } from "../context/CartContext";
-import { Search, X, ChevronDown } from "lucide-react";
+import { Search, X, ChevronDown, ShoppingBag, Menu, Plus } from "lucide-react";
 import { categories } from "../data/categories";
 
 // Compact Category Dropdowns Component
@@ -51,7 +51,7 @@ const CategoryDropdowns = () => {
   const subCategories = currentCategory ? Object.entries(currentCategory.fields) : [];
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex items-center gap-3 flex-wrap">
       {/* Category Dropdown */}
       <div className="relative" ref={categoryRef}>
         <button
@@ -59,22 +59,24 @@ const CategoryDropdowns = () => {
             setIsCategoryOpen(!isCategoryOpen);
             setIsSubCategoryOpen(false);
           }}
-          className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-all duration-200 text-sm font-medium text-gray-700 shadow-sm min-w-[140px] justify-between"
+          className="group flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl hover:border-sky-400 hover:bg-sky-50 hover:shadow-lg transition-all duration-300 text-sm font-medium text-gray-700 shadow-sm min-w-[140px] justify-between"
         >
-          <span>{selectedCategory ? categories[selectedCategory].title : "Category"}</span>
-          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
+          <span className="group-hover:text-sky-700 transition-colors">{selectedCategory ? categories[selectedCategory].title : "Category"}</span>
+          <ChevronDown className={`w-4 h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
         </button>
         {isCategoryOpen && (
-          <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto">
-            {Object.keys(categories).map((key) => (
-              <button
-                key={key}
-                onClick={() => handleCategorySelect(key)}
-                className="w-full text-left px-4 py-2.5 hover:bg-sky-50 hover:text-sky-700 transition-colors duration-150 text-sm font-medium"
-              >
-                {categories[key].title}
-              </button>
-            ))}
+          <div className="absolute top-full left-0 mt-2 w-52 bg-white/95 backdrop-blur-lg border border-gray-200 rounded-xl shadow-2xl z-50 max-h-80 overflow-y-auto">
+            <div className="p-2">
+              {Object.keys(categories).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => handleCategorySelect(key)}
+                  className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-sky-50 hover:to-indigo-50 hover:text-sky-700 transition-all duration-200 text-sm font-medium rounded-lg group"
+                >
+                  <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">{categories[key].title}</span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -87,33 +89,37 @@ const CategoryDropdowns = () => {
               setIsSubCategoryOpen(!isSubCategoryOpen);
               setIsCategoryOpen(false);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-all duration-200 text-sm font-medium text-gray-700 shadow-sm min-w-[140px] justify-between"
+            className="group flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl hover:border-sky-400 hover:bg-sky-50 hover:shadow-lg transition-all duration-300 text-sm font-medium text-gray-700 shadow-sm min-w-[140px] justify-between"
           >
-            <span>
+            <span className="group-hover:text-sky-700 transition-colors">
               {selectedSubCategory
                 ? subCategories.find(([field]) => selectedSubCategory.startsWith(field))?.[0] || "Sub-Category"
                 : "Sub-Category"}
             </span>
-            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isSubCategoryOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 ${isSubCategoryOpen ? 'rotate-180' : ''}`} />
           </button>
           {isSubCategoryOpen && (
-            <div className="absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto">
-              {subCategories.map(([field, values]) => (
-                <div key={field} className="border-b border-gray-100 last:border-b-0">
-                  <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-600 uppercase">
-                    {field}
+            <div className="absolute top-full left-0 mt-2 w-64 bg-white/95 backdrop-blur-lg border border-gray-200 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto">
+              <div className="p-2">
+                {subCategories.map(([field, values]) => (
+                  <div key={field} className="mb-2 last:mb-0">
+                    <div className="px-4 py-2 bg-gradient-to-r from-gray-50 to-sky-50 text-xs font-semibold text-gray-600 uppercase rounded-lg mb-1">
+                      {field}
+                    </div>
+                    <div className="space-y-1">
+                      {values.map((value) => (
+                        <button
+                          key={value}
+                          onClick={() => handleSubCategorySelect(field, value)}
+                          className="w-full text-left px-6 py-2.5 hover:bg-gradient-to-r hover:from-sky-50 hover:to-indigo-50 hover:text-sky-700 transition-all duration-200 text-sm rounded-lg group"
+                        >
+                          <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">{value}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  {values.map((value) => (
-                    <button
-                      key={value}
-                      onClick={() => handleSubCategorySelect(field, value)}
-                      className="w-full text-left px-6 py-2 hover:bg-sky-50 hover:text-sky-700 transition-colors duration-150 text-sm"
-                    >
-                      {value}
-                    </button>
-                  ))}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -125,6 +131,7 @@ const CategoryDropdowns = () => {
 const Header = () => {
   const { cart, wishlist } = useContext(CartContext);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -172,61 +179,96 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full z-40 bg-white shadow-md sticky top-0">
+    <header className="w-full z-50 sticky top-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Top Navbar (cart/wishlist etc.) */}
       <Navbar cartCount={cart.length} wishlistCount={wishlist.length} />
 
-      {/* Unified Category + Search Section */}
-      <div className="w-full bg-gradient-to-r from-sky-50 to-indigo-50 border-b border-gray-200">
-        <div className="container mx-auto px-3 sm:px-4 py-3">
-          <div className="flex flex-col space-y-3 md:space-y-0 md:flex-row md:items-center md:justify-between gap-3">
-            <div className="w-full flex flex-col space-y-3 md:space-y-0 md:flex-row md:items-center md:space-x-3">
-              {/* Category Bar - Full width on mobile, flex-1 on larger screens */}
-              <div className="w-full md:flex-1">
-                <CategoryBar inline />
-              </div>
-              
-              {/* Search Form - Full width on mobile, max width on larger screens */}
-              <form onSubmit={handleSearch} className="w-full md:max-w-2xl">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                  </div>
-                  <input
-                    id="search"
-                    name="search"
-                    type="text"
-                    placeholder="Search products or categories..."
-                    className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-base sm:text-sm"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    aria-label="Search products or categories"
-                  />
-                  {searchTerm && (
-                    <button
-                      type="button"
-                      onClick={handleClearSearch}
-                      className="absolute inset-y-0 right-12 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                      aria-label="Clear search"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  )}
-                  <button
-                    type="submit"
-                    className="absolute inset-y-0 right-0 px-4 flex items-center bg-gradient-to-r from-sky-600 to-indigo-600 text-white rounded-r-xl hover:from-sky-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-sm"
-                  >
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Search</span>
-                    <span className="sm:hidden">
-                      <Search className="h-5 w-5 text-white" />
-                    </span>
-                  </button>
+
+      {/* Search and Category Section */}
+      <div className="border-b" style={{ borderColor: 'var(--border-color)' }}>
+        <div className="container-optic py-4">
+          <div className="flex flex-col lg:flex-row gap-4 items-center">
+            {/* Category Dropdowns */}
+            <CategoryDropdowns />
+            
+            {/* Search Form */}
+            <form onSubmit={handleSearch} className="flex-1 max-w-2xl">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5" style={{ color: 'var(--text-secondary)' }} />
                 </div>
-              </form>
-            </div>
+                <input
+                  id="search"
+                  name="search"
+                  type="text"
+                  placeholder="Search for eyewear, brands, or categories..."
+                  className="block w-full pl-12 pr-12 py-3 border rounded-xl focus:outline-none focus:ring-2 text-base placeholder-gray-400 transition-all duration-300"
+                  style={{ 
+                    backgroundColor: 'var(--bg-secondary)',
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)',
+                    focusRingColor: 'var(--accent-yellow)'
+                  }}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={handleClearSearch}
+                    className="absolute inset-y-0 right-4 flex items-center hover:opacity-70 transition-opacity"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </form>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t" style={{ borderColor: 'var(--border-color)' }}>
+          <div className="container-optic py-4">
+            <nav className="flex flex-col space-y-4">
+              <Link 
+                to="/" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-optic-body text-sm font-medium uppercase tracking-wider"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                HOME
+              </Link>
+              <Link 
+                to="/shop" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-optic-body text-sm font-medium uppercase tracking-wider"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                SHOP
+              </Link>
+              <Link 
+                to="/category/New" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-optic-body text-sm font-medium uppercase tracking-wider"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                NEW
+              </Link>
+              <Link 
+                to="/category/Sale" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-optic-body text-sm font-medium uppercase tracking-wider"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                SALE
+              </Link>
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

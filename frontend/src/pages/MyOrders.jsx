@@ -75,11 +75,11 @@ const MyOrders = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-sky-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading your orders...</p>
-          <p className="text-gray-500 text-sm mt-2">This will only take a moment</p>
+          <div className="animate-spin rounded-full h-16 w-16 mx-auto mb-4" style={{ borderTop: '4px solid var(--accent-yellow)', borderRight: '4px solid transparent' }}></div>
+          <p className="text-optic-body text-lg" style={{ color: 'var(--text-secondary)' }}>Loading your orders...</p>
+          <p className="text-optic-body text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>This will only take a moment</p>
         </div>
       </div>
     );
@@ -87,16 +87,16 @@ const MyOrders = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <XCircle className="w-8 h-8 text-red-600" />
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="card-optic p-8 max-w-md text-center">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+            <XCircle className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error Loading Orders</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="text-optic-heading text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Error Loading Orders</h2>
+          <p className="text-optic-body mb-6" style={{ color: 'var(--text-secondary)' }}>{error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="inline-flex items-center gap-2 bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-700 transition"
+            className="btn-primary"
           >
             <RefreshCw className="w-4 h-4" />
             Try Again
@@ -108,23 +108,23 @@ const MyOrders = () => {
 
   if (orders.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-indigo-50">
-        <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="container-optic py-8">
           <div className="text-center">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Package className="w-12 h-12 text-gray-400" />
+            <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+              <Package className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">No Orders Yet</h1>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+            <h1 className="text-optic-heading text-3xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>No Orders Yet</h1>
+            <p className="text-optic-body mb-8 max-w-md mx-auto" style={{ color: 'var(--text-secondary)' }}>
               You haven't placed any orders yet. Start shopping to see your order history here.
             </p>
-            <a 
-              href="/shop" 
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-sky-700 hover:to-indigo-700 transition-all"
+            <Link 
+              to="/shop" 
+              className="btn-primary"
             >
               Start Shopping
               <ArrowRight className="w-5 h-5" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -132,16 +132,16 @@ const MyOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-indigo-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="container-optic pt-0 pb-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
-          <p className="text-gray-600">Track and manage your orders</p>
+          <h1 className="text-optic-heading text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>My Orders</h1>
+          <p className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Track and manage your orders</p>
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div className="card-optic p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -149,7 +149,13 @@ const MyOrders = () => {
                 <input
                   type="text"
                   placeholder="Search orders by ID or product name..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                  style={{ 
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-secondary)',
+                    color: 'var(--text-primary)',
+                    focusRingColor: 'var(--accent-yellow)'
+                  }}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -157,7 +163,13 @@ const MyOrders = () => {
             </div>
             <div className="flex gap-2 flex-wrap">
               <select
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                className="px-4 py-3 rounded-lg focus:ring-2 focus:ring-opacity-50 focus:outline-none"
+                style={{ 
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--bg-secondary)',
+                  color: 'var(--text-primary)',
+                  focusRingColor: 'var(--accent-yellow)'
+                }}
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -173,26 +185,26 @@ const MyOrders = () => {
           {/* Order Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
-              <p className="text-sm text-gray-600">Total Orders</p>
+              <p className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{orders.length}</p>
+              <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Total Orders</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-yellow-600">
+              <p className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--accent-yellow)' }}>
                 {orders.filter(o => o.status === 'pending').length}
               </p>
-              <p className="text-sm text-gray-600">Pending</p>
+              <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Pending</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">
+              <p className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                 {orders.filter(o => o.status === 'processing').length}
               </p>
-              <p className="text-sm text-gray-600">Processing</p>
+              <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Processing</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--accent-yellow)' }}>
                 {orders.filter(o => o.status === 'completed').length}
               </p>
-              <p className="text-sm text-gray-600">Completed</p>
+              <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Completed</p>
             </div>
           </div>
         </div>

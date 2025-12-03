@@ -270,10 +270,16 @@ paymentRouter.post('/confirm-upi-payment', verifyToken, async (req, res) => {
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
 
-    order.status = 'processing';
-    order.paymentDetails.verifiedAt = new Date();
-
-    await order.save();
+    // Update only the fields we need without validating the entire document
+    await Order.updateOne(
+      { _id: orderId },
+      {
+        $set: {
+          status: 'processing',
+          'paymentDetails.verifiedAt': new Date()
+        }
+      }
+    );
 
     const cart = await Cart.findOne({ userId: req.user.id });
     if (cart) {
