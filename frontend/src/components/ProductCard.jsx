@@ -68,21 +68,21 @@ const ProductCard = ({ product }) => {
 
       {/* Product Info */}
       <h3 
-        className="text-optic-heading text-lg font-bold mb-2 cursor-pointer hover:opacity-80 transition-opacity"
+        className="text-optic-heading text-sm sm:text-base md:text-lg font-bold mb-2 cursor-pointer hover:opacity-80 transition-opacity line-clamp-2"
         style={{ color: 'var(--text-primary)' }}
         onClick={() => navigate(`/product/${product._id}`)}
       >
         {product.title}
       </h3>
       
-      <p className="text-optic-body text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
+      <p className="text-optic-body text-xs sm:text-sm mb-3 sm:mb-4" style={{ color: 'var(--text-secondary)' }}>
         {product.category || 'vision'}
       </p>
       
-      <div className="text-optic-heading text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+      <div className="text-optic-heading text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4" style={{ color: 'var(--text-primary)' }}>
         ₹{discountedPrice}
         {product.discount > 0 && (
-          <span className="text-sm font-normal line-through ml-2" style={{ color: 'var(--text-secondary)' }}>
+          <span className="text-xs sm:text-sm font-normal line-through ml-2" style={{ color: 'var(--text-secondary)' }}>
             ₹{product.price}
           </span>
         )}

@@ -63,7 +63,17 @@ const Home = ({ addToCart, addToWishlist }) => {
     <div className="space-y-0">
       {/* Hero Section - OPTIC Style */}
       <section className="relative" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="container-optic">
+        {/* Mobile: Full-width poster - breaks out of container padding */}
+        <div className="lg:hidden" style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)', width: '100vw', paddingLeft: 0, paddingRight: 0 }}>
+          <img 
+            src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765260875/EYE_GLASS_AD_POSTER_DESIGN_jw5yap.jpg" 
+            alt="Featured Sunglasses"
+            className="w-full h-auto object-cover block"
+          />
+        </div>
+        
+        {/* Desktop: Grid layout with text and image */}
+        <div className="container-optic hidden lg:block">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Left Content */}
             <div className="space-y-8">
@@ -113,9 +123,9 @@ const Home = ({ addToCart, addToWishlist }) => {
       </section>
 
       {/* Categories Section - OPTIC Style */}
-      <section className="relative pt-20 pb-10" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
+      <section className="relative pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12 sm:mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-sky-100 text-sky-700 rounded-full text-sm font-medium mb-4">
               <TrendingUp className="w-4 h-4" />
               Trending Categories
@@ -127,7 +137,7 @@ const Home = ({ addToCart, addToWishlist }) => {
               From classic frames to modern designs, find the perfect eyewear for every occasion
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {categories.map((cat, i) => (
               <Link 
                 key={i}
@@ -166,17 +176,17 @@ const Home = ({ addToCart, addToWishlist }) => {
         </div>
       </section>
       {/* Featured Products */}
-      <section className="relative pt-20" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative pt-12 sm:pt-16 md:pt-20" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-20">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-sm font-medium mb-6 border border-purple-200">
               <Star className="w-4 h-4" />
               Best Sellers
             </div>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6">
               Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Products</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
               Handpicked selection of our most popular and stylish eyewear
             </p>
           </div>
@@ -208,7 +218,7 @@ const Home = ({ addToCart, addToWishlist }) => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 ">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 ">
                 {products.slice(0, 6).map((product) => (
                   <ProductCard
                     key={product._id}
@@ -281,7 +291,7 @@ const Home = ({ addToCart, addToWishlist }) => {
             {/* Right Images */}
             <div className="relative">
               <div className="grid grid-cols-2 gap-4">
-                {["https://res.cloudinary.com/dfhjtmvrz/image/upload/v1764756390/CL_fftx0v.avif", "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1764756548/Colour_Contact_Lenses_UK_Buy_Online_qnm0oz.jpg"].map((img, i) => (
+                {["https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765263540/lenses_odr9qz.jpg", "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1764756548/Colour_Contact_Lenses_UK_Buy_Online_qnm0oz.jpg"].map((img, i) => (
                   <div key={i} className="relative group">
                     <div className="aspect-square rounded-2xl overflow-hidden">
                       <img 

@@ -132,7 +132,9 @@ const Header = () => {
   const { cart, wishlist } = useContext(CartContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
+  const searchRef = useRef(null);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -178,31 +180,60 @@ const Header = () => {
     setSearchTerm("");
   };
 
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        // Only close if search term is empty
+        if (!searchTerm.trim()) {
+          setIsSearchOpen(false);
+        }
+      }
+    };
+    if (isSearchOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isSearchOpen, searchTerm]);
+
+  // Focus input when search opens
+  useEffect(() => {
+    if (isSearchOpen && searchRef.current) {
+      const input = searchRef.current.querySelector('input');
+      if (input) {
+        setTimeout(() => input.focus(), 100);
+      }
+    }
+  }, [isSearchOpen]);
+
   return (
     <header className="w-full z-50  sticky bottom-10 top-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Top Navbar (cart/wishlist etc.) */}
-      <Navbar cartCount={cart.length} wishlistCount={wishlist.length} />
+      <Navbar cartCount={cart.length} wishlistCount={wishlist.length} onSearchClick={() => setIsSearchOpen(true)} />
 
 
       {/* Search and Category Section */}
-      <div className="border-b" style={{ borderColor: 'var(--border-color)' }}>
-        <div className="container-optic py-4">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
-            {/* Category Dropdowns */}
-            <CategoryDropdowns />
-            
-            {/* Search Form */}
-            <form onSubmit={handleSearch} className="flex-1 max-w-2xl">
+      {isSearchOpen && (
+        <div className="border-b" style={{ borderColor: 'var(--border-color)' }}>
+          <div className="container-optic py-3 sm:py-4">
+            <form 
+              onSubmit={(e) => {
+                handleSearch(e);
+                setIsSearchOpen(false);
+              }} 
+              className="w-full"
+              ref={searchRef}
+            >
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5" style={{ color: 'var(--text-secondary)' }} />
+                <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
+                  <Search className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: 'var(--text-secondary)' }} />
                 </div>
                 <input
                   id="search"
                   name="search"
                   type="text"
-                  placeholder="Search for eyewear, brands, or categories..."
-                  className="block w-full pl-12 pr-12 py-3 border rounded-xl focus:outline-none focus:ring-2 text-base placeholder-gray-400 transition-all duration-300"
+                  placeholder="Search for eyewear, brands..."
+                  className="block w-full pl-10 sm:pl-12 pr-20 sm:pr-20 py-2.5 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 text-sm sm:text-base placeholder-gray-400 transition-all duration-300"
                   style={{ 
                     backgroundColor: 'var(--bg-secondary)',
                     borderColor: 'var(--border-color)',
@@ -212,18 +243,42 @@ const Header = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                {searchTerm && (
+                <div className="absolute inset-y-0 right-0 flex items-center gap-1 pr-2">
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      onClick={handleClearSearch}
+                      className="p-1.5 hover:opacity-70 transition-opacity rounded-lg hover:bg-gray-100"
+                      style={{ color: 'var(--text-secondary)' }}
+                      aria-label="Clear search"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={handleClearSearch}
-                    className="absolute inset-y-0 right-4 flex items-center hover:opacity-70 transition-opacity"
+                    onClick={() => {
+                      setIsSearchOpen(false);
+                      setSearchTerm("");
+                    }}
+                    className="p-1.5 hover:opacity-70 transition-opacity rounded-lg hover:bg-gray-100"
                     style={{ color: 'var(--text-secondary)' }}
+                    aria-label="Close search"
                   >
                     <X className="h-4 w-4" />
                   </button>
-                )}
+                </div>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Category Section - Desktop Only */}
+      <div className="hidden md:block border-b" style={{ borderColor: 'var(--border-color)' }}>
+        <div className="container-optic py-3 sm:py-4">
+          <div className="flex justify-center">
+            <CategoryDropdowns />
           </div>
         </div>
       </div>

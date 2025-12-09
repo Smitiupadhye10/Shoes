@@ -146,10 +146,10 @@ const ProductDetails = () => {
           <span className="font-medium">Back</span>
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
           {/* Left Section - Image Carousel */}
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <div className="card-optic p-6">
+            <div className="card-optic p-4 sm:p-6">
               {/* Wishlist Heart Icon */}
               <div className="flex justify-end mb-4">
                 <button
@@ -281,7 +281,7 @@ const ProductDetails = () => {
           {/* Right Section - Product Info */}
           <div className="space-y-6">
             {/* Card 1: Title / Ratings / Price */}
-            <div className="card-optic p-6">
+            <div className="card-optic p-4 sm:p-6">
               <div className="mb-3">
                 <span className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-2" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
                   {product.category}
@@ -336,14 +336,14 @@ const ProductDetails = () => {
 
             {/* Card 2: Description */}
             {product.description && (
-              <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
                 <p className="text-gray-700 leading-relaxed">{product.description}</p>
               </div>
             )}
 
             {/* Card 3: Product Details */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h3>
               <div className="space-y-3">
                 {product.product_info?.brand && (
@@ -469,7 +469,7 @@ const ProductDetails = () => {
 
             {/* Power Options (if present) */}
             {product.product_info?.powerOptions && (
-              <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
                 <h4 className="text-lg font-semibold text-gray-900 mb-3">Select Power</h4>
                 <div className="flex flex-wrap gap-2">
                   {product.product_info.powerOptions.map((p, i) => (
@@ -490,7 +490,7 @@ const ProductDetails = () => {
             )}
 
             {/* Quantity */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
               <h4 className="text-lg font-semibold text-gray-900 mb-3">Quantity</h4>
               <div className="flex items-center gap-4">
                 <div className="flex items-center border border-gray-300 rounded-lg">
@@ -514,7 +514,7 @@ const ProductDetails = () => {
             </div>
 
             {/* Static Info Card */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 border border-blue-100">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">

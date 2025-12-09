@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import api from "../api/axios";
+import { Filter, X } from "lucide-react";
 
 const PRICE_RANGES = [
   "300-1000",
@@ -26,6 +27,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const [visible, setVisible] = useState(false);
   const [sort, setSort] = useState(searchParams.get("sort") || "relevance");
   const [expanded, setExpanded] = useState({ price: true, gender: true, color: true });
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const page = parseInt(searchParams.get("page") || "1", 10);
   const limit = parseInt(searchParams.get("limit") || "18", 10);
@@ -403,7 +405,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto">
         <Breadcrumb />
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-6 gap-4">
           <div>
@@ -431,16 +433,79 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
 
         <ActiveChips />
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Left sidebar */}
-          <div className="md:col-span-1">
-            <FiltersSidebar />
+        {/* Mobile Filter Button */}
+        <div className="md:hidden mb-4 flex items-center justify-between">
+          <button
+            onClick={() => setFiltersOpen(!filtersOpen)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 font-medium transition-all duration-200"
+            style={{
+              backgroundColor: filtersOpen ? 'var(--text-primary)' : 'var(--bg-secondary)',
+              color: filtersOpen ? 'var(--bg-secondary)' : 'var(--text-primary)',
+              borderColor: 'var(--border-color)'
+            }}
+          >
+            <Filter className="w-5 h-5" />
+            <span>Filters</span>
+            {filtersOpen && <X className="w-4 h-4" />}
+          </button>
+          {(activePrice || activeGender || activeColor) && (
+            <button
+              onClick={clearAll}
+              className="text-sm font-medium px-3 py-2 rounded-lg border transition-colors"
+              style={{
+                borderColor: 'var(--border-color)',
+                color: 'var(--text-primary)'
+              }}
+            >
+              Clear All
+            </button>
+          )}
+        </div>
+
+        {/* Mobile Filter Overlay */}
+        {filtersOpen && (
+          <div 
+            className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setFiltersOpen(false)}
+          ></div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 relative">
+          {/* Left sidebar - Hidden on mobile unless filtersOpen */}
+          <div className={`md:col-span-1 ${filtersOpen ? 'fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-white z-50 overflow-y-auto p-4 shadow-2xl transform transition-transform duration-300' : 'hidden md:block'}`}>
+            {filtersOpen && (
+              <div className="flex items-center justify-between mb-4 pb-4 border-b sticky top-0 bg-white z-10">
+                <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Filters</h3>
+                <button
+                  onClick={() => setFiltersOpen(false)}
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  aria-label="Close filters"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+            <div onClick={(e) => e.stopPropagation()}>
+              <FiltersSidebar />
+            </div>
+            {filtersOpen && (
+              <div className="sticky bottom-0 bg-white border-t pt-4 mt-4">
+                <button
+                  onClick={() => setFiltersOpen(false)}
+                  className="w-full py-3 px-4 rounded-lg font-semibold text-white transition-colors"
+                  style={{ backgroundColor: 'var(--text-primary)' }}
+                >
+                  Apply Filters
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Products grid */}
           <div className="md:col-span-3">
             <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-500 ease-in-out ${
+              className={`grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 transition-all duration-500 ease-in-out ${
                 visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
               }`}
             >

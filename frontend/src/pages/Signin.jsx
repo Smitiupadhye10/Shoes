@@ -31,27 +31,13 @@ const Signin = () => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Left Side - Branding */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
-        <div className="max-w-md text-center md:text-left">
-          <h1 className="text-4xl font-bold mb-4">Welcome Back!</h1>
-          <p className="text-xl mb-8 opacity-90">
-            Sign in to access your personalized dashboard, track orders, and explore exclusive offers.
-          </p>
-          <div className="space-y-6">
-            <div className="flex items-center space-x-4">
-              <div className="p-2 bg-white bg-opacity-20 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold">Secure & Private</h3>
-                <p className="text-sm opacity-80">Your data is always protected</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Left Side - Image */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-0 overflow-hidden">
+        <img 
+          src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765261167/zcpcbu8sfea2uy3urzr8.jpg" 
+          alt="Eyewear Collection"
+          className="w-full h-full object-cover hidden lg:block"
+        />
       </div>
 
       {/* Right Side - Login Form */}
