@@ -12,6 +12,8 @@ const Navbar = ({ onSearchClick }) => {
   const [accountOpen, setAccountOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [accessoriesOpen, setAccessoriesOpen] = useState(false);
+  const [skincareOpen, setSkincareOpen] = useState(false);
   const navRef = useRef(null);
   const menuRef = useRef(null);
 
@@ -24,6 +26,8 @@ const Navbar = ({ onSearchClick }) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
         setCategoriesOpen(false);
+        setAccessoriesOpen(false);
+        setSkincareOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -83,20 +87,7 @@ const Navbar = ({ onSearchClick }) => {
             >
               ABOUT US
             </Link>
-            <Link 
-              to="/category/New" 
-              className="text-optic-body text-sm font-medium uppercase tracking-wider hover:opacity-70 transition-opacity"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              NEW
-            </Link>
-            <Link 
-              to="/category/Sale" 
-              className="text-optic-body text-sm font-medium uppercase tracking-wider hover:opacity-70 transition-opacity"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              SALE
-            </Link>
+             
           </nav>
 
           {/* Right Side Actions */}
@@ -257,12 +248,12 @@ const Navbar = ({ onSearchClick }) => {
                     className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
                     style={{ color: 'var(--text-primary)' }}
                   >
-                    <span>CATEGORIES</span>
+                    <span>GLASSES</span>
                     <ChevronDown className={`w-4 h-4 transition-transform ${categoriesOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {categoriesOpen && (
                     <div className="pl-4 mt-2 space-y-1">
-                      {Object.entries(categories).map(([key, category]) => (
+                      {Object.entries(categories).filter(([key]) => key !== 'accessories').map(([key, category]) => (
                         <Link
                           key={key}
                           to={`/category/${encodeURIComponent(category.title)}`}
@@ -274,6 +265,87 @@ const Navbar = ({ onSearchClick }) => {
                           style={{ color: 'var(--text-secondary)' }}
                         >
                           {category.title}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Accessories Section */}
+                <div>
+                  <button
+                    onClick={() => {
+                      setAccessoriesOpen(!accessoriesOpen);
+                      setCategoriesOpen(false);
+                      setSkincareOpen(false);
+                    }}
+                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    <span>ACCESSORIES</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${accessoriesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {accessoriesOpen && (
+                    <div className="pl-4 mt-2 space-y-1">
+                      {["Men", "Women"].map((gender) => (
+                        <Link
+                          key={gender}
+                          to={`/category/Accessories?gender=${gender}`}
+                          onClick={() => {
+                            setMenuOpen(false);
+                            setAccessoriesOpen(false);
+        setSkincareOpen(false);
+                          }}
+                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+                          style={{ color: 'var(--text-secondary)' }}
+                        >
+                          {gender}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Skincare Section */}
+                <div>
+                  <button
+                    onClick={() => {
+                      setSkincareOpen(!skincareOpen);
+                      setCategoriesOpen(false);
+                      setAccessoriesOpen(false);
+        setSkincareOpen(false);
+                    }}
+                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    <span>SKINCARE</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${skincareOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {skincareOpen && (
+                    <div className="pl-4 mt-2 space-y-1">
+                      <Link
+                        to="/category/Skincare"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setSkincareOpen(false);
+                        }}
+                        className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+                        style={{ color: 'var(--text-secondary)' }}
+                      >
+                        All Skincare
+                      </Link>
+                      {["Moisturizer", "Serum", "Cleanser", "Facewash", "Sunscreen"].map((category) => (
+                        <Link
+                          key={category}
+                          to={`/category/Skincare?subCategory=${category.toLowerCase()}`}
+                          onClick={() => {
+                            setMenuOpen(false);
+                            setSkincareOpen(false);
+                          }}
+                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+                          style={{ color: 'var(--text-secondary)' }}
+                        >
+                          {category}
                         </Link>
                       ))}
                     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import api from "../api/axios";
@@ -34,25 +34,53 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
 
   const categoryLower = (category || "").toLowerCase();
   const isContactLenses = useMemo(() => /contact\s+lenses/i.test(category || ""), [category]);
+  const isAccessories = useMemo(() => /^accessories$/i.test(category || ""), [category]);
+  const isSkincare = useMemo(() => /^skincare$/i.test(category || ""), [category]);
+  
+  // Track previous category to detect category changes
+  const prevCategoryRef = useRef(categoryParam);
 
   useEffect(() => {
-    setVisible(false);
-    setLoading(true);
-    setError(null);
+    const hasFilters = searchParams.get("priceRange") || searchParams.get("gender") || searchParams.get("color");
+    const categoryChanged = prevCategoryRef.current !== categoryParam;
+    prevCategoryRef.current = categoryParam;
+    
+    // If category changed, always reload
+    if (categoryChanged) {
+      setVisible(false);
+      setLoading(true);
+      setError(null);
+    } else {
+      // Normal loading for filter changes
+      setVisible(false);
+      setLoading(true);
+      setError(null);
+    }
 
     const params = new URLSearchParams(searchParams);
     if (categoryParam) params.set("category", categoryParam);
     params.set("page", String(page));
     params.set("limit", String(limit));
+    // Include sort parameter if it exists and is not relevance (default)
+    if (sort && sort !== 'relevance') {
+      params.set("sort", sort);
+    }
 
     const fadeTimeout = setTimeout(async () => {
       try {
         const { data } = await api.get('/products', { params: Object.fromEntries(params) });
-        setProducts(Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []));
+        const newProducts = Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []);
+        setProducts(newProducts);
         setPagination(
           data.pagination || { currentPage: page, totalPages: 0, totalProducts: 0, productsPerPage: limit }
         );
-        setTimeout(() => setVisible(true), 80);
+        // Show products immediately if clearing filters (no active filters)
+        const hasActiveFilters = searchParams.get("priceRange") || searchParams.get("gender") || searchParams.get("color");
+        if (newProducts.length > 0 && !hasActiveFilters) {
+          setVisible(true);
+        } else {
+          setTimeout(() => setVisible(true), 80);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -96,7 +124,13 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     const params = new URLSearchParams(searchParams);
     ["priceRange", "gender", "color"].forEach((k) => params.delete(k));
     params.set("page", "1");
-    setSearchParams(params);
+    // Keep products visible when clearing filters - don't trigger loading state
+    setSearchParams(params, { replace: true });
+    // Immediately show products if they exist
+    if (products.length > 0) {
+      setVisible(true);
+      setLoading(false);
+    }
   };
 
   const clearKey = (k) => setParam(k, null);
@@ -237,10 +271,50 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           </div>
         </Section>
 
-        {!isContactLenses && (
+        {!isContactLenses && !isAccessories && (
           <Section title="Gender" id="gender">
             <div className="flex flex-col gap-2.5">
               {GENDERS.map((g) => {
+                const count = genderCounts[g.toUpperCase()] || 0;
+                const disabled = count === 0;
+                return (
+                  <button
+                    key={g}
+                    onClick={() => !disabled && setParam("gender", activeGender === g ? null : g)}
+                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
+                      activeGender === g 
+                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                        : disabled 
+                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
+                          : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                    }`}
+                    disabled={disabled}
+                  >
+                    <span className="font-medium">{g}</span>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      activeGender === g ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                    }`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+              {activeGender && (
+                <button 
+                  onClick={() => setParam("gender", null)} 
+                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
+                >
+                  Clear gender
+                </button>
+              )}
+            </div>
+          </Section>
+        )}
+
+        {isAccessories && (
+          <Section title="Gender" id="gender">
+            <div className="flex flex-col gap-2.5">
+              {["Men", "Women"].map((g) => {
                 const count = genderCounts[g.toUpperCase()] || 0;
                 const disabled = count === 0;
                 return (
@@ -387,12 +461,91 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   );
 
   const sortedProducts = useMemo(() => {
+    // For accessories, backend already sorts by gender, so we should preserve that order
+    // Only apply additional sorting if needed (for client-side sorting when backend doesn't handle it)
     const arr = [...products];
-    if (sort === 'price-asc') arr.sort((a,b) => (a.price||0) - (b.price||0));
-    if (sort === 'price-desc') arr.sort((a,b) => (b.price||0) - (a.price||0));
-    if (sort === 'newest') arr.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    // For accessories, backend handles gender sorting, but we'll ensure it's correct here too
+    if (isAccessories) {
+      const genderOrder = (gender) => {
+        const g = String(gender || '').toLowerCase().trim();
+        // Handle various gender value formats
+        if (g === 'men' || g === 'man' || g === 'male') return 1;
+        if (g === 'women' || g === 'woman' || g === 'female') return 2;
+        if (g === 'unisex') return 3;
+        return 4; // others or empty
+      };
+      
+      // Sort by subcategory first, then gender (Men, then Women), then by selected criteria
+      // Backend already sorts, but we ensure consistency here for client-side operations
+      arr.sort((a, b) => {
+        // First, sort by subcategory (alphabetically)
+        const subCategoryA = String(a.subCategory || '').toLowerCase().trim();
+        const subCategoryB = String(b.subCategory || '').toLowerCase().trim();
+        
+        // If subcategories are different, sort alphabetically (empty subcategories go to end)
+        if (subCategoryA !== subCategoryB) {
+          if (!subCategoryA) return 1; // Empty subcategory goes to end
+          if (!subCategoryB) return -1; // Empty subcategory goes to end
+          return subCategoryA.localeCompare(subCategoryB);
+        }
+        
+        // If same subcategory, sort by gender
+        // For accessories, gender is stored directly on the object (from backend mapping)
+        // Check both root level and product_info for gender
+        const genderA = genderOrder(a.gender || a.product_info?.gender || '');
+        const genderB = genderOrder(b.gender || b.product_info?.gender || '');
+        
+        // If genders are different, sort by gender order (Men=1 first, then Women=2, then Unisex=3)
+        if (genderA !== genderB) {
+          return genderA - genderB;
+        }
+        
+        // If same gender, apply selected sort
+        if (sort === 'price-asc') {
+          const priceA = a.finalPrice || a.price || 0;
+          const priceB = b.finalPrice || b.price || 0;
+          return priceA - priceB;
+        }
+        if (sort === 'price-desc') {
+          const priceA = a.finalPrice || a.price || 0;
+          const priceB = b.finalPrice || b.price || 0;
+          return priceB - priceA;
+        }
+        if (sort === 'newest') {
+          const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+          const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+          return dateB - dateA;
+        }
+        // For relevance or default, maintain backend order within gender group
+        return 0;
+      });
+    } else {
+      // For non-accessories, apply normal sorting
+      if (sort === 'price-asc') {
+        arr.sort((a,b) => {
+          const priceA = a.finalPrice || a.price || 0;
+          const priceB = b.finalPrice || b.price || 0;
+          return priceA - priceB;
+        });
+      }
+      if (sort === 'price-desc') {
+        arr.sort((a,b) => {
+          const priceA = a.finalPrice || a.price || 0;
+          const priceB = b.finalPrice || b.price || 0;
+          return priceB - priceA;
+        });
+      }
+      if (sort === 'newest') {
+        arr.sort((a,b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+          const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+          return dateB - dateA;
+        });
+      }
+    }
     return arr;
-  }, [products, sort]);
+  }, [products, sort, isAccessories]);
 
   if (error) return (
     <div className="max-w-7xl mx-auto px-6 py-12">

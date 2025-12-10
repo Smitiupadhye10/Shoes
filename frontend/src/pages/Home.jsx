@@ -138,12 +138,40 @@ const Home = ({ addToCart, addToWishlist }) => {
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-            {categories.map((cat, i) => (
+            {categories.map((cat, i) => {
+              const isComputerGlasses = cat.name === "Computer Glasses";
+              return (
               <Link 
                 key={i}
                 to={cat.link}
-                className={`group relative ${cat.color} rounded-2xl p-8 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden`}
+                  className={`group relative ${isComputerGlasses ? '' : cat.color} rounded-2xl ${isComputerGlasses ? 'p-0' : 'p-8'} transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden`}
               >
+                  {isComputerGlasses ? (
+                    /* Full Screen Image for Computer Glasses */
+                    <div className="relative w-full h-full min-h-[300px] sm:min-h-[400px]">
+                      <img 
+                        src={cat.image} 
+                        alt={cat.name}
+                        className="w-full h-full object-cover" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                      <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-6 space-y-4">
+                        <div className="w-16 h-16 bg-white/90 rounded-2xl shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <cat.icon size={32} className="text-gray-700" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-white mb-2">{cat.name}</h3>
+                          <p className="text-sm text-white/90">Premium collection</p>
+                        </div>
+                        <div className="flex items-center gap-2 text-white font-medium group-hover:text-yellow-300 transition-colors">
+                          <span>Shop Now</span>
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Regular Card Layout */
+                    <>
                 {/* Background pattern */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
                   <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-indigo-600"></div>
@@ -170,8 +198,11 @@ const Home = ({ addToCart, addToWishlist }) => {
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
+                    </>
+                  )}
               </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -290,10 +321,10 @@ const Home = ({ addToCart, addToWishlist }) => {
 
             {/* Right Images */}
             <div className="relative">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {["https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765263540/lenses_odr9qz.jpg", "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1764756548/Colour_Contact_Lenses_UK_Buy_Online_qnm0oz.jpg"].map((img, i) => (
-                  <div key={i} className="relative group">
-                    <div className="aspect-square rounded-2xl overflow-hidden">
+                  <div key={i} className={`relative group ${i === 0 ? 'lg:col-span-2' : ''}`}>
+                    <div className={`${i === 0 ? 'aspect-[2/1]' : 'aspect-square'} rounded-2xl overflow-hidden`}>
                       <img 
                         src={img} 
                         alt={`Contact Lens ${i + 1}`}

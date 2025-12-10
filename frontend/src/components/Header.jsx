@@ -6,6 +6,163 @@ import { CartContext } from "../context/CartContext";
 import { Search, X, ChevronDown, ShoppingBag, Menu, Plus } from "lucide-react";
 import { categories } from "../data/categories";
 
+// Accessories Dropdown Component
+const AccessoriesDropdown = () => {
+  const [selectedGender, setSelectedGender] = useState("");
+  const [isAccessoriesOpen, setIsAccessoriesOpen] = useState(false);
+  const navigate = useNavigate();
+  const accessoriesRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (accessoriesRef.current && !accessoriesRef.current.contains(event.target)) {
+        setIsAccessoriesOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleGenderSelect = (gender) => {
+    setSelectedGender(gender);
+    setIsAccessoriesOpen(false);
+    if (gender === "All") {
+      navigate(`/category/Accessories`);
+    } else {
+      const params = new URLSearchParams({ gender: gender });
+      navigate(`/category/Accessories?${params.toString()}`);
+    }
+  };
+
+  // Handle clicking on the Accessories button itself
+  const handleAccessoriesClick = () => {
+    if (!isAccessoriesOpen) {
+      setIsAccessoriesOpen(true);
+    } else {
+      // If dropdown is open and user clicks button again, navigate to all accessories
+      navigate(`/category/Accessories`);
+      setIsAccessoriesOpen(false);
+    }
+  };
+
+  return (
+    <div className="relative" ref={accessoriesRef}>
+      <button
+        onClick={handleAccessoriesClick}
+        className="group flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl hover:border-sky-400 hover:bg-sky-50 hover:shadow-lg transition-all duration-300 text-sm font-medium text-gray-700 shadow-sm min-w-[140px] justify-between"
+      >
+        <span className="group-hover:text-sky-700 transition-colors">
+          {selectedGender ? `Accessories - ${selectedGender}` : "Accessories"}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 ${isAccessoriesOpen ? 'rotate-180' : ''}`} />
+      </button>
+      {isAccessoriesOpen && (
+        <div className="absolute top-full left-0 mt-2 w-52 bg-white/95 backdrop-blur-lg border border-gray-200 rounded-xl shadow-2xl z-50">
+          <div className="p-2">
+            <button
+              onClick={() => handleGenderSelect("All")}
+              className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-sky-50 hover:to-indigo-50 hover:text-sky-700 transition-all duration-200 text-sm font-medium rounded-lg group font-semibold"
+            >
+              <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">All Accessories</span>
+            </button>
+            <div className="border-t border-gray-200 my-1"></div>
+            {["Men", "Women"].map((gender) => (
+              <button
+                key={gender}
+                onClick={() => handleGenderSelect(gender)}
+                className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-sky-50 hover:to-indigo-50 hover:text-sky-700 transition-all duration-200 text-sm font-medium rounded-lg group"
+              >
+                <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">{gender}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Skincare Dropdown Component
+const SkincareDropdown = () => {
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [isSkincareOpen, setIsSkincareOpen] = useState(false);
+  const navigate = useNavigate();
+  const skincareRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (skincareRef.current && !skincareRef.current.contains(event.target)) {
+        setIsSkincareOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    setIsSkincareOpen(false);
+    if (category === "All") {
+      navigate(`/category/Skincare`);
+    } else {
+      // Use subCategory parameter for skincare subcategories to avoid conflict with main category
+      const params = new URLSearchParams({ subCategory: category.toLowerCase() });
+      navigate(`/category/Skincare?${params.toString()}`);
+    }
+  };
+
+  // Handle clicking on the Skincare button itself
+  const handleSkincareClick = () => {
+    if (!isSkincareOpen) {
+      setIsSkincareOpen(true);
+    } else {
+      // If dropdown is open and user clicks button again, navigate to all skincare
+      navigate(`/category/Skincare`);
+      setIsSkincareOpen(false);
+    }
+  };
+
+  const subcategories = ["Moisturizer", "Serum", "Cleanser", "Facewash", "Sunscreen"];
+
+  return (
+    <div className="relative" ref={skincareRef}>
+      <button
+        onClick={handleSkincareClick}
+        className="group flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl hover:border-sky-400 hover:bg-sky-50 hover:shadow-lg transition-all duration-300 text-sm font-medium text-gray-700 shadow-sm min-w-[140px] justify-between"
+      >
+        <span className="group-hover:text-sky-700 transition-colors">
+          {selectedCategory ? `Skincare - ${selectedCategory}` : "Skincare"}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 ${isSkincareOpen ? 'rotate-180' : ''}`} />
+      </button>
+      {isSkincareOpen && (
+        <div className="absolute top-full left-0 mt-2 w-52 bg-white/95 backdrop-blur-lg border border-gray-200 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto">
+          <div className="p-2">
+            <button
+              onClick={() => handleCategorySelect("All")}
+              className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-sky-50 hover:to-indigo-50 hover:text-sky-700 transition-all duration-200 text-sm font-medium rounded-lg group font-semibold"
+            >
+              <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">All Skincare</span>
+            </button>
+            <div className="border-t border-gray-200 my-1"></div>
+            {subcategories.map((category) => (
+              <button
+                key={category}
+                onClick={() => handleCategorySelect(category)}
+                className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-sky-50 hover:to-indigo-50 hover:text-sky-700 transition-all duration-200 text-sm font-medium rounded-lg group"
+              >
+                <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">{category}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Compact Category Dropdowns Component
 const CategoryDropdowns = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -61,13 +218,13 @@ const CategoryDropdowns = () => {
           }}
           className="group flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl hover:border-sky-400 hover:bg-sky-50 hover:shadow-lg transition-all duration-300 text-sm font-medium text-gray-700 shadow-sm min-w-[140px] justify-between"
         >
-          <span className="group-hover:text-sky-700 transition-colors">{selectedCategory ? categories[selectedCategory].title : "Category"}</span>
+          <span className="group-hover:text-sky-700 transition-colors">{selectedCategory ? categories[selectedCategory].title : "Glasses"}</span>
           <ChevronDown className={`w-4 h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
         </button>
         {isCategoryOpen && (
           <div className="absolute top-full left-0 mt-2 w-52 bg-white/95 backdrop-blur-lg border border-gray-200 rounded-xl shadow-2xl z-50 max-h-80 overflow-y-auto">
             <div className="p-2">
-              {Object.keys(categories).map((key) => (
+              {Object.keys(categories).filter(key => key !== 'accessories').map((key) => (
                 <button
                   key={key}
                   onClick={() => handleCategorySelect(key)}
@@ -277,8 +434,10 @@ const Header = () => {
       {/* Category Section - Desktop Only */}
       <div className="hidden md:block border-b" style={{ borderColor: 'var(--border-color)' }}>
         <div className="container-optic py-3 sm:py-4">
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center gap-3">
             <CategoryDropdowns />
+            <AccessoriesDropdown />
+            <SkincareDropdown />
           </div>
         </div>
       </div>

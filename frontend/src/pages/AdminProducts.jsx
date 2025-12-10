@@ -91,12 +91,53 @@ const AdminProducts = () => {
   const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
+  // Helper function to get product display fields based on type
+  const getProductDisplayFields = (product) => {
+    const type = product._type || "product";
+    
+    switch (type) {
+      case "accessory":
+        return {
+          title: product.name || "N/A",
+          price: product.finalPrice || product.price || 0,
+          category: product.category || "Accessories",
+          subCategory: product.subCategory || "",
+          images: product.images || (product.thumbnail ? [product.thumbnail] : []),
+        };
+      case "skincare":
+        return {
+          title: product.productName || "N/A",
+          price: product.finalPrice || product.price || 0,
+          category: "Skincare",
+          subCategory: product.category || "", // category field stores subcategory for skincare
+          images: product.images || (product.imageUrl ? [product.imageUrl] : []),
+        };
+      case "contactLens":
+        return {
+          title: product.title || "N/A",
+          price: product.price || 0,
+          category: product.category || "Contact Lenses",
+          subCategory: product.subCategory || "",
+          images: Array.isArray(product.images) ? product.images : [],
+        };
+      default: // product
+        return {
+          title: product.title || "N/A",
+          price: product.price || 0,
+          category: product.category || "",
+          subCategory: product.subCategory || "",
+          images: Array.isArray(product.images) ? product.images : (product.images?.image1 ? [product.images.image1, product.images.image2].filter(Boolean) : []),
+        };
+    }
+  };
+
   // ✅ Handle delete
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, type) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/api/admin/products/${id}`, {
+      const url = `http://localhost:4000/api/admin/products/${id}${type ? `?type=${type}` : ""}`;
+      const res = await fetch(url, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -269,44 +310,64 @@ const AdminProducts = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {currentProducts.map((product) => (
-                <div
-                  key={product._id}
-                  className="card-optic p-6 hover:shadow-xl transition-all"
-                >
-                  <img
-                    src={
-                      Array.isArray(product.images)
-                        ? product.images[0]
-                        : product.images?.image1 || "/placeholder.jpg"
-                    }
-                    alt={product.title}
-                    className="w-full h-40 object-contain mb-4 rounded-lg"
-                    style={{ backgroundColor: 'var(--bg-secondary)' }}
-                  />
-                  <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>{product.title}</h3>
-                  <p className="text-xl font-bold mb-1" style={{ color: 'var(--accent-yellow)' }}>₹{product.price}</p>
-                  <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>{product.category}</p>
+              {currentProducts.map((product) => {
+                const displayFields = getProductDisplayFields(product);
+                const productType = product._type || "product";
+                const imageSrc = displayFields.images && displayFields.images.length > 0 
+                  ? displayFields.images[0] 
+                  : "/placeholder.jpg";
+                
+                return (
+                  <div
+                    key={product._id}
+                    className="card-optic p-6 hover:shadow-xl transition-all"
+                  >
+                    <img
+                      src={imageSrc}
+                      alt={displayFields.title}
+                      className="w-full h-40 object-contain mb-4 rounded-lg"
+                      style={{ backgroundColor: 'var(--bg-secondary)' }}
+                    />
+                    <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>
+                      {displayFields.title}
+                    </h3>
+                    <p className="text-xl font-bold mb-1" style={{ color: 'var(--accent-yellow)' }}>
+                      ₹{displayFields.price}
+                    </p>
+                    <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>
+                      {displayFields.category}
+                      {displayFields.subCategory && ` • ${displayFields.subCategory}`}
+                    </p>
+                    <p className="text-xs mb-4" style={{ color: 'var(--text-secondary)' }}>
+                      Type: {productType.charAt(0).toUpperCase() + productType.slice(1)}
+                    </p>
 
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => handleEdit(product)}
-                      className="flex-1 btn-secondary text-sm flex items-center justify-center gap-2"
-                    >
-                      <Edit size={16} />
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product._id)}
-                      className="flex-1 px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2 transition-all"
-                      style={{ backgroundColor: '#ef4444', color: 'white' }}
-                    >
-                      <Trash2 size={16} />
-                      Delete
-                    </button>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => {
+                          if (productType === "product" || productType === "contactLens") {
+                            handleEdit(product);
+                          } else {
+                            alert("Editing is currently only available for Glasses and Contact Lenses products.");
+                          }
+                        }}
+                        className="flex-1 btn-secondary text-sm flex items-center justify-center gap-2"
+                      >
+                        <Edit size={16} />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product._id, productType)}
+                        className="flex-1 px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2 transition-all"
+                        style={{ backgroundColor: '#ef4444', color: 'white' }}
+                      >
+                        <Trash2 size={16} />
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Pagination Controls */}

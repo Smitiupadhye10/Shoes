@@ -1,20 +1,26 @@
 import Product from "../models/Product.js";
 import Order from "../models/Order.js";
 import ContactLens from "../models/ContactLens.js";
+import Accessory from "../models/Accessory.js";
+import SkincareProduct from "../models/SkincareProduct.js";
 
 export const listAllProducts = async (req, res) => {
   try {
-    // Get ALL products and contact lenses for admin dashboard
-    const [products, contactLenses] = await Promise.all([
+    // Get ALL products from all categories for admin dashboard
+    const [products, contactLenses, accessories, skincareProducts] = await Promise.all([
       Product.find({}).sort({ createdAt: -1 }).lean(),
       ContactLens.find({}).sort({ createdAt: -1 }).lean(),
+      Accessory.find({}).sort({ createdAt: -1 }).lean(),
+      SkincareProduct.find({}).sort({ createdAt: -1 }).lean(),
     ]);
 
     // Tag each item with a _type field so frontend can distinguish
     const taggedProducts = products.map((p) => ({ ...p, _type: "product" }));
     const taggedContactLenses = contactLenses.map((c) => ({ ...c, _type: "contactLens" }));
+    const taggedAccessories = accessories.map((a) => ({ ...a, _type: "accessory" }));
+    const taggedSkincare = skincareProducts.map((s) => ({ ...s, _type: "skincare" }));
 
-    res.json([...taggedProducts, ...taggedContactLenses]);
+    res.json([...taggedProducts, ...taggedContactLenses, ...taggedAccessories, ...taggedSkincare]);
   } catch (error) {
     res.status(500).json({ message: "Error fetching products", error: error.message });
   }
@@ -75,9 +81,40 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findByIdAndDelete(id);
+    const { type } = req.query; // Get product type from query parameter
+    
+    let deletedProduct = null;
+    
+    // Delete based on product type
+    switch (type) {
+      case "product":
+        deletedProduct = await Product.findByIdAndDelete(id);
+        break;
+      case "contactLens":
+        deletedProduct = await ContactLens.findByIdAndDelete(id);
+        break;
+      case "accessory":
+        deletedProduct = await Accessory.findByIdAndDelete(id);
+        break;
+      case "skincare":
+        deletedProduct = await SkincareProduct.findByIdAndDelete(id);
+        break;
+      default:
+        // Try all models if type is not specified
+        deletedProduct = await Product.findByIdAndDelete(id);
+        if (!deletedProduct) {
+          deletedProduct = await ContactLens.findByIdAndDelete(id);
+        }
+        if (!deletedProduct) {
+          deletedProduct = await Accessory.findByIdAndDelete(id);
+        }
+        if (!deletedProduct) {
+          deletedProduct = await SkincareProduct.findByIdAndDelete(id);
+        }
+        break;
+    }
 
-    if (!product) {
+    if (!deletedProduct) {
       return res.status(404).json({ message: "Product not found" });
     }
 

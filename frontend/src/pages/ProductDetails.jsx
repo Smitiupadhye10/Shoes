@@ -59,8 +59,44 @@ const ProductDetails = () => {
     }
   }, [product, wishlist]);
 
-  const images = product ? (Array.isArray(product.images) ? product.images : []) : [];
+  // Get all images for the product - handle all product types
+  const getProductImages = () => {
+    if (!product) return [];
+    
+    // Handle images array
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      return product.images.filter(img => img && img.trim() !== '');
+    }
+    
+    // Fallback to thumbnail
+    if (product.thumbnail && product.thumbnail.trim() !== '') {
+      return [product.thumbnail];
+    }
+    
+    // Fallback to imageUrl (for skincare)
+    if (product.imageUrl && product.imageUrl.trim() !== '') {
+      return [product.imageUrl];
+    }
+    
+    // If images is a string (not array)
+    if (typeof product.images === 'string' && product.images.trim() !== '') {
+      return [product.images];
+    }
+    
+    // Fallback to placeholder
+    return ["/placeholder.jpg"];
+  };
+
+  const images = getProductImages();
   const selectedImage = images[selectedImageIndex] || "/placeholder.jpg";
+  
+  // Get product title - handle all product types
+  const getProductTitle = () => {
+    if (!product) return "Product";
+    return product.title || product.name || product.productName || "Product";
+  };
+  
+  const productTitle = getProductTitle();
 
   const nextImage = () => {
     setSelectedImageIndex((prev) => (prev + 1) % images.length);
@@ -122,10 +158,21 @@ const ProductDetails = () => {
     navigate("/cart");
   };
 
+  // Calculate price - handle finalPrice for accessories and skincare
+  const getDisplayPrice = () => {
+    if (product.finalPrice) {
+      // For accessories and skincare, finalPrice is already the discounted price
+      return product.finalPrice;
+    }
+    // For regular products, calculate discounted price
+    const discount = Number(product.discount || 0);
+    const priceNumber = Number(product.price || 0);
+    return discount > 0 ? Math.max(0, priceNumber * (1 - discount / 100)) : priceNumber;
+  };
+  
   const discount = Number(product.discount || 0);
   const priceNumber = Number(product.price || 0);
-  const discountedPrice =
-    discount > 0 ? Math.max(0, priceNumber * (1 - discount / 100)) : priceNumber;
+  const discountedPrice = getDisplayPrice();
 
   const formatINR = (num) =>
     new Intl.NumberFormat("en-IN", {
@@ -146,10 +193,10 @@ const ProductDetails = () => {
           <span className="font-medium">Back</span>
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Left Section - Image Carousel */}
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <div className="card-optic p-4 sm:p-6">
+            <div className="card-optic p-6">
               {/* Wishlist Heart Icon */}
               <div className="flex justify-end mb-4">
                 <button
@@ -172,12 +219,18 @@ const ProductDetails = () => {
               {/* Image Carousel */}
               <div className="relative mb-4">
                 {/* Main Image Container */}
-                <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden group" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-xl overflow-hidden group" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                   <img
                     src={selectedImage}
-                    alt={product.title}
+                    alt={productTitle}
                     className="w-full h-full object-contain cursor-pointer transition-transform duration-300 group-hover:scale-105"
                     onClick={openImageModal}
+                    onError={(e) => {
+                      // Fallback to placeholder if image fails to load
+                      if (e.target.src !== "/placeholder.jpg") {
+                        e.target.src = "/placeholder.jpg";
+                      }
+                    }}
                   />
                   
                   {/* Navigation Arrows */}
@@ -230,8 +283,14 @@ const ProductDetails = () => {
                       >
                         <img
                           src={img}
-                          alt={`${product.title}-${i}`}
+                          alt={`${productTitle}-${i}`}
                           className="w-full h-full object-contain rounded"
+                          onError={(e) => {
+                            // Fallback to placeholder if thumbnail fails to load
+                            if (e.target.src !== "/placeholder.jpg") {
+                              e.target.src = "/placeholder.jpg";
+                            }
+                          }}
                         />
                       </button>
                     ))}
@@ -281,7 +340,7 @@ const ProductDetails = () => {
           {/* Right Section - Product Info */}
           <div className="space-y-6">
             {/* Card 1: Title / Ratings / Price */}
-            <div className="card-optic p-4 sm:p-6">
+            <div className="card-optic p-6">
               <div className="mb-3">
                 <span className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-2" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
                   {product.category}
@@ -293,7 +352,7 @@ const ProductDetails = () => {
                 )}
               </div>
               <h1 className="text-optic-heading text-3xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
-                {product.title}
+                {productTitle}
               </h1>
 
               <div className="flex items-center gap-4 mb-4">
@@ -336,14 +395,14 @@ const ProductDetails = () => {
 
             {/* Card 2: Description */}
             {product.description && (
-              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+              <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
                 <p className="text-gray-700 leading-relaxed">{product.description}</p>
               </div>
             )}
 
             {/* Card 3: Product Details */}
-            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+            <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h3>
               <div className="space-y-3">
                 {product.product_info?.brand && (
@@ -469,7 +528,7 @@ const ProductDetails = () => {
 
             {/* Power Options (if present) */}
             {product.product_info?.powerOptions && (
-              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+              <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h4 className="text-lg font-semibold text-gray-900 mb-3">Select Power</h4>
                 <div className="flex flex-wrap gap-2">
                   {product.product_info.powerOptions.map((p, i) => (
@@ -490,7 +549,7 @@ const ProductDetails = () => {
             )}
 
             {/* Quantity */}
-            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+            <div className="bg-white rounded-2xl shadow-lg p-6">
               <h4 className="text-lg font-semibold text-gray-900 mb-3">Quantity</h4>
               <div className="flex items-center gap-4">
                 <div className="flex items-center border border-gray-300 rounded-lg">
@@ -514,7 +573,7 @@ const ProductDetails = () => {
             </div>
 
             {/* Static Info Card */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 border border-blue-100">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -556,8 +615,14 @@ const ProductDetails = () => {
             </button>
             <img
               src={selectedImage}
-              alt={product.title}
+              alt={productTitle}
               className="max-w-full max-h-[80vh] object-contain rounded-lg"
+              onError={(e) => {
+                // Fallback to placeholder if image fails to load
+                if (e.target.src !== "/placeholder.jpg") {
+                  e.target.src = "/placeholder.jpg";
+                }
+              }}
             />
           </div>
         </div>
