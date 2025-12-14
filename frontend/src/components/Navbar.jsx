@@ -5,7 +5,7 @@ import { CartContext } from "../context/CartContext";
 import { useUser } from "../context/UserContext";
 import { categories } from "../data/categories";
 
-const Navbar = ({ onSearchClick }) => {
+const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSearchChange, onSearchSubmit }) => {
   const navigate = useNavigate();
   const { cart, wishlist } = useContext(CartContext);
   const { user, logout } = useUser();
@@ -13,9 +13,22 @@ const Navbar = ({ onSearchClick }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [accessoriesOpen, setAccessoriesOpen] = useState(false);
+  const [bagsOpen, setBagsOpen] = useState(false);
   const [skincareOpen, setSkincareOpen] = useState(false);
+  const [mensShoesOpen, setMensShoesOpen] = useState(false);
+  const [womensShoesOpen, setWomensShoesOpen] = useState(false);
   const navRef = useRef(null);
   const menuRef = useRef(null);
+  const searchInputRef = useRef(null);
+
+  // Focus search input when it opens
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isSearchOpen]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -28,6 +41,8 @@ const Navbar = ({ onSearchClick }) => {
         setCategoriesOpen(false);
         setAccessoriesOpen(false);
         setSkincareOpen(false);
+        setMensShoesOpen(false);
+        setWomensShoesOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -42,7 +57,7 @@ const Navbar = ({ onSearchClick }) => {
   return (
     <div className="sticky top-0 z-50" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="container-optic">
-        <div className="flex items-center justify-between py-4 sm:py-6">
+        <div className="flex items-center justify-between py-2 sm:py-3">
           {/* Menu Button (Mobile) */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -59,8 +74,13 @@ const Navbar = ({ onSearchClick }) => {
 
           {/* Logo - Centered on mobile, left on desktop */}
           <div className="flex-1 flex justify-center md:justify-start md:flex-none">
-            <Link to="/" className="text-optic-heading text-2xl sm:text-3xl md:text-4xl" style={{ color: 'var(--text-primary)' }}>
-              LENSLOGIC
+            <Link to="/" className="flex items-center">
+              <img 
+                src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765629960/b7a50a65-12b2-4dc8-89a4-1a5985bd6706.png" 
+                alt="LENS LOGIC" 
+                className="h-8 sm:h-10 md:h-12 w-auto object-contain"
+                style={{ maxWidth: '200px' }}
+              />
             </Link>
           </div>
 
@@ -92,10 +112,82 @@ const Navbar = ({ onSearchClick }) => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            {/* Search Icon */}
+            {/* Search Bar - Inline for Desktop, Hidden for Mobile (will show below navbar) */}
+            <div className="relative hidden md:block">
+              {!isSearchOpen ? (
+                <button
+                  onClick={onSearchClick}
+                  className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl border transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                  style={{ 
+                    backgroundColor: 'var(--bg-secondary)',
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)'
+                  }}
+                  aria-label="Open search"
+                >
+                  <Search className="h-5 w-5 sm:h-6 sm:w-6" />
+                </button>
+              ) : (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (onSearchSubmit) onSearchSubmit(e);
+                  }}
+                  className="flex items-center"
+                >
+                  <div className="relative flex items-center">
+                    <div className="absolute left-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-gray-400" />
+                    </div>
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      placeholder="Search products..."
+                      value={searchTerm || ''}
+                      onChange={(e) => {
+                        if (onSearchChange) onSearchChange(e);
+                      }}
+                      className="w-48 sm:w-64 md:w-80 lg:w-96 h-10 sm:h-11 pl-10 pr-20 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-all duration-300"
+                      style={{ 
+                        backgroundColor: 'var(--bg-secondary)',
+                        borderColor: 'var(--border-color)',
+                        color: 'var(--text-primary)',
+                      }}
+                      autoFocus
+                    />
+                    <div className="absolute right-2 flex items-center gap-1">
+                      {searchTerm && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (onSearchChange) onSearchChange({ target: { value: '' } });
+                          }}
+                          className="p-1 hover:opacity-70 transition-opacity rounded"
+                          style={{ color: 'var(--text-secondary)' }}
+                          aria-label="Clear search"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={onSearchClose}
+                        className="p-1 hover:opacity-70 transition-opacity rounded"
+                        style={{ color: 'var(--text-secondary)' }}
+                        aria-label="Close search"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
+            </div>
+            
+            {/* Search Icon for Mobile - Will trigger search bar below navbar */}
             <button
               onClick={onSearchClick}
-              className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl border transition-all duration-300 hover:scale-110 hover:shadow-lg"
+              className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-300 hover:scale-110 hover:shadow-lg"
               style={{ 
                 backgroundColor: 'var(--bg-secondary)',
                 borderColor: 'var(--border-color)',
@@ -103,7 +195,7 @@ const Navbar = ({ onSearchClick }) => {
               }}
               aria-label="Open search"
             >
-              <Search className="h-5 w-5 sm:h-6 sm:w-6" />
+              <Search className="h-5 w-5" />
             </button>
 
             {/* Wishlist */}
@@ -278,6 +370,7 @@ const Navbar = ({ onSearchClick }) => {
                       setAccessoriesOpen(!accessoriesOpen);
                       setCategoriesOpen(false);
                       setSkincareOpen(false);
+                      setMensShoesOpen(false);
                     }}
                     className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
                     style={{ color: 'var(--text-primary)' }}
@@ -294,12 +387,61 @@ const Navbar = ({ onSearchClick }) => {
                           onClick={() => {
                             setMenuOpen(false);
                             setAccessoriesOpen(false);
-        setSkincareOpen(false);
+                            setSkincareOpen(false);
+                            setMensShoesOpen(false);
                           }}
                           className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
                           style={{ color: 'var(--text-secondary)' }}
                         >
                           {gender}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Bags Section */}
+                <div>
+                  <button
+                    onClick={() => {
+                      setBagsOpen(!bagsOpen);
+                      setCategoriesOpen(false);
+                      setAccessoriesOpen(false);
+                      setSkincareOpen(false);
+                      setMensShoesOpen(false);
+                      setWomensShoesOpen(false);
+                    }}
+                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    <span>BAGS</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${bagsOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {bagsOpen && (
+                    <div className="pl-4 mt-2 space-y-1">
+                      <Link
+                        to="/category/Bags"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setBagsOpen(false);
+                        }}
+                        className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+                        style={{ color: 'var(--text-secondary)' }}
+                      >
+                        All Bags
+                      </Link>
+                      {["Handbag", "Backpack", "Sling Bag", "Tote Bag", "Duffle Bag", "Wallet", "Laptop Bag", "Travel Bag", "Crossbody Bag", "Clutch", "Shoulder Bag"].map((category) => (
+                        <Link
+                          key={category}
+                          to={`/category/Bags?subCategory=${category.toLowerCase().replace(/\s+/g, '-')}`}
+                          onClick={() => {
+                            setMenuOpen(false);
+                            setBagsOpen(false);
+                          }}
+                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+                          style={{ color: 'var(--text-secondary)' }}
+                        >
+                          {category}
                         </Link>
                       ))}
                     </div>
@@ -313,7 +455,9 @@ const Navbar = ({ onSearchClick }) => {
                       setSkincareOpen(!skincareOpen);
                       setCategoriesOpen(false);
                       setAccessoriesOpen(false);
-        setSkincareOpen(false);
+                      setBagsOpen(false);
+                      setMensShoesOpen(false);
+                      setWomensShoesOpen(false);
                     }}
                     className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
                     style={{ color: 'var(--text-primary)' }}
@@ -341,6 +485,102 @@ const Navbar = ({ onSearchClick }) => {
                           onClick={() => {
                             setMenuOpen(false);
                             setSkincareOpen(false);
+                          }}
+                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+                          style={{ color: 'var(--text-secondary)' }}
+                        >
+                          {category}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Men's Shoes Section */}
+                <div>
+                  <button
+                    onClick={() => {
+                      setMensShoesOpen(!mensShoesOpen);
+                      setCategoriesOpen(false);
+                      setAccessoriesOpen(false);
+                      setBagsOpen(false);
+                      setSkincareOpen(false);
+                      setWomensShoesOpen(false);
+                    }}
+                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    <span>MEN'S SHOES</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${mensShoesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {mensShoesOpen && (
+                    <div className="pl-4 mt-2 space-y-1">
+                      <Link
+                        to="/category/Men's%20Shoes"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setMensShoesOpen(false);
+                        }}
+                        className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+                        style={{ color: 'var(--text-secondary)' }}
+                      >
+                        All Men's Shoes
+                      </Link>
+                      {["Formal", "Sneakers", "Boots"].map((category) => (
+                        <Link
+                          key={category}
+                          to={`/category/Men's%20Shoes?subCategory=${category}`}
+                          onClick={() => {
+                            setMenuOpen(false);
+                            setMensShoesOpen(false);
+                          }}
+                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+                          style={{ color: 'var(--text-secondary)' }}
+                        >
+                          {category}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Women's Shoes Section */}
+                <div>
+                  <button
+                    onClick={() => {
+                      setWomensShoesOpen(!womensShoesOpen);
+                      setCategoriesOpen(false);
+                      setAccessoriesOpen(false);
+                      setBagsOpen(false);
+                      setSkincareOpen(false);
+                      setMensShoesOpen(false);
+                    }}
+                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    <span>WOMEN'S SHOES</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${womensShoesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {womensShoesOpen && (
+                    <div className="pl-4 mt-2 space-y-1">
+                      <Link
+                        to="/category/Women's%20Shoes"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setWomensShoesOpen(false);
+                        }}
+                        className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+                        style={{ color: 'var(--text-secondary)' }}
+                      >
+                        All Women's Shoes
+                      </Link>
+                      {["Heels", "Flats", "Sneakers", "Boots", "Sandals"].map((category) => (
+                        <Link
+                          key={category}
+                          to={`/category/Women's%20Shoes?subCategory=${category}`}
+                          onClick={() => {
+                            setMenuOpen(false);
+                            setWomensShoesOpen(false);
                           }}
                           className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
                           style={{ color: 'var(--text-secondary)' }}

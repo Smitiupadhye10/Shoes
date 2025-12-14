@@ -324,9 +324,9 @@ const CheckoutPage = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
         {/* Left Side: Form/Payment UI */}
-        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl border-2 border-gray-100">
+        <div className="bg-white p-8 rounded-2xl shadow-xl border-2 border-gray-100">
           {step === 1 ? (
             <>
               <div className="mb-6">
@@ -567,9 +567,9 @@ const CheckoutPage = () => {
         </div>
 
         {/* Right: Order Summary */}
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-6">
           {/* Order Items */}
-          <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-xl border-2 border-gray-100">
+          <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-gray-100">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Order Items</h2>
             <div className="space-y-4">
               {cart.map((item) => (
@@ -594,7 +594,7 @@ const CheckoutPage = () => {
           </div>
 
           {/* Order Summary Card */}
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-4 sm:p-6 rounded-2xl shadow-xl text-white">
+          <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-6 rounded-2xl shadow-xl text-white">
             <h3 className="font-bold text-xl mb-6">Order Summary</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-indigo-100">

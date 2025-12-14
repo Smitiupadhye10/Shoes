@@ -15,7 +15,7 @@ const skincareProductSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ['moisturizer', 'serum', 'cleanser', 'facewash', 'sunscreen'],
-    default: 'moisturizer'
+    default: 'other'
   },
   skinType: {
     type: String,

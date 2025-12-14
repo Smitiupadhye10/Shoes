@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useSearchParams, Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard.jsx";
-import { Eye, Sun, Monitor, Phone, Star, Shield, Truck, ArrowRight, Plus, TrendingUp, Users, Award, Zap, Heart, Package, Clock, CheckCircle } from 'lucide-react';
+import { Eye, Sun, Monitor, Phone, Star, Shield, Truck, ArrowRight, Plus, TrendingUp, Users, Award, Zap, Heart, Package, Clock, CheckCircle, Sparkles, ShoppingBag, Footprints } from 'lucide-react';
 
 const Home = ({ addToCart, addToWishlist }) => {
   const [products, setProducts] = useState([]);
@@ -16,6 +16,8 @@ const Home = ({ addToCart, addToWishlist }) => {
   const search = searchParams.get("search");
 
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
@@ -25,16 +27,27 @@ const Home = ({ addToCart, addToWishlist }) => {
         if (search) params.search = search;
         params.limit = 500; // increase the number of products returned on Home
         const { data } = await api.get('/products', { params });
+        
+        if (isMounted) {
         setProducts(Array.isArray(data) ? data : data.products || []);
+        }
       } catch (err) {
+        if (isMounted) {
         console.error("Error fetching products:", err);
         setError(err.message);
+        }
       } finally {
+        if (isMounted) {
         setIsLoading(false);
+        }
       }
     };
 
     fetchProducts();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [category, search]);
 
   const posters = ["https://res.cloudinary.com/dfhjtmvrz/image/upload/v1764746468/Objects_Discover_and_Inspire_-_View_Our_Portfolio_KARL_TAYLOR_tzwgky.jpg", 
@@ -139,39 +152,12 @@ const Home = ({ addToCart, addToWishlist }) => {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {categories.map((cat, i) => {
-              const isComputerGlasses = cat.name === "Computer Glasses";
               return (
               <Link 
                 key={i}
                 to={cat.link}
-                  className={`group relative ${isComputerGlasses ? '' : cat.color} rounded-2xl ${isComputerGlasses ? 'p-0' : 'p-8'} transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden`}
+                className={`group relative ${cat.color} rounded-2xl p-8 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden`}
               >
-                  {isComputerGlasses ? (
-                    /* Full Screen Image for Computer Glasses */
-                    <div className="relative w-full h-full min-h-[300px] sm:min-h-[400px]">
-                      <img 
-                        src={cat.image} 
-                        alt={cat.name}
-                        className="w-full h-full object-cover" 
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-                      <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-6 space-y-4">
-                        <div className="w-16 h-16 bg-white/90 rounded-2xl shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                          <cat.icon size={32} className="text-gray-700" />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-bold text-white mb-2">{cat.name}</h3>
-                          <p className="text-sm text-white/90">Premium collection</p>
-                        </div>
-                        <div className="flex items-center gap-2 text-white font-medium group-hover:text-yellow-300 transition-colors">
-                          <span>Shop Now</span>
-                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    /* Regular Card Layout */
-                    <>
                 {/* Background pattern */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
                   <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-indigo-600"></div>
@@ -198,8 +184,6 @@ const Home = ({ addToCart, addToWishlist }) => {
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
-                    </>
-                  )}
               </Link>
               );
             })}
@@ -333,6 +317,312 @@ const Home = ({ addToCart, addToWishlist }) => {
                     </div>
                     <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
                       {i === 0 ? 'NEW' : 'HOT'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Decorative Element */}
+              <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full opacity-20" style={{ backgroundColor: 'var(--accent-yellow)' }}></div>
+              <div className="absolute -top-6 -right-6 w-16 h-16 rounded-full opacity-20" style={{ backgroundColor: 'var(--accent-yellow)' }}></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Accessories Section */}
+      <section className="py-16 md:py-24" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="container-optic">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left Images */}
+            <div className="relative order-2 lg:order-1">
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765628634/ForevermarkJewellery_bivmdr.jpg",
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765381755/Classy_jewellery_tfh1dy.jpg",
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765604411/-2_c4bayc.jpg",
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765605150/__gruuxh.jpg"
+                ].map((imageSrc, i) => (
+                  <div key={i} className={`relative group ${i === 0 ? 'col-span-2' : ''}`}>
+                    <div className={`${i === 0 ? 'aspect-[2/1]' : 'aspect-square'} rounded-2xl overflow-hidden bg-gray-100`}>
+                      <img 
+                        src={imageSrc.trim()}
+                        alt={`Accessory ${i + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => { e.target.src = "/placeholder.jpg"; }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Decorative Element */}
+              <div className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full opacity-20" style={{ backgroundColor: 'var(--accent-yellow)' }}></div>
+              <div className="absolute -top-6 -left-6 w-16 h-16 rounded-full opacity-20" style={{ backgroundColor: 'var(--accent-yellow)' }}></div>
+            </div>
+
+            {/* Right Content */}
+            <div className="space-y-8 order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                <Sparkles className="w-4 h-4" />
+                Fashion Collection
+              </div>
+              <h2 className="text-optic-heading text-4xl md:text-5xl lg:text-6xl" style={{ color: 'var(--text-primary)' }}>
+                Stylish Accessories
+              </h2>
+              <p className="text-optic-body text-lg md:text-xl max-w-lg" style={{ color: 'var(--text-secondary)' }}>
+                Complete your look with our curated collection of accessories. From necklaces to belts, find the perfect piece to express your style.
+              </p>
+              
+              {/* Features */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+                    <Star className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold" style={{ color: 'var(--text-primary)' }}>Premium quality</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Handpicked designs</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+                    <Package className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold" style={{ color: 'var(--text-primary)' }}>Wide variety</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Necklaces, bracelets & more</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Link to="/category/Accessories" className="btn-primary">
+                Shop Accessories
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Skincare Section */}
+      <section className="py-16 md:py-24" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="container-optic">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left Content */}
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                <Sparkles className="w-4 h-4" />
+                Beauty Essentials
+              </div>
+              <h2 className="text-optic-heading text-4xl md:text-5xl lg:text-6xl" style={{ color: 'var(--text-primary)' }}>
+                Premium Skincare
+              </h2>
+              <p className="text-optic-body text-lg md:text-xl max-w-lg" style={{ color: 'var(--text-secondary)' }}>
+                Nourish your skin with our carefully selected skincare products. From moisturizers to serums, discover your perfect skincare routine.
+              </p>
+              
+              {/* Features */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+                    <Shield className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold" style={{ color: 'var(--text-primary)' }}>Natural ingredients</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Safe for all skin types</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+                    <Award className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold" style={{ color: 'var(--text-primary)' }}>Dermatologist tested</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Proven results</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Link to="/category/Skincare" className="btn-primary">
+                Shop Skincare
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+            </div>
+
+            {/* Right Images */}
+            <div className="relative">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {[
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765624761/cfed9d14ca376276db8d5f771096246e_w7zr1a.jpg",
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765624893/Mock_Up_Cosmetic_Products_For_Skin_And_Hair_Care_With_Plant_Extract_Natural_Cosmetics_Skin_Care_Hair_Care_Cosmetics_PNG_Transparent_Image_and_Clipart_for_Free_Download_hitdtg.jpg"
+                ].map((imageSrc, i) => (
+                  <div key={i} className={`relative group ${i === 0 ? 'lg:col-span-2' : ''}`}>
+                    <div className={`${i === 0 ? 'aspect-[2/1]' : 'aspect-square'} rounded-2xl overflow-hidden bg-gray-100`}>
+                      <img 
+                        src={imageSrc}
+                        alt={`Skincare ${i + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => { e.target.src = "/placeholder.jpg"; }}
+                      />
+                    </div>
+                    <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                      {i === 0 ? 'NEW' : 'HOT'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Decorative Element */}
+              <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full opacity-20" style={{ backgroundColor: 'var(--accent-yellow)' }}></div>
+              <div className="absolute -top-6 -right-6 w-16 h-16 rounded-full opacity-20" style={{ backgroundColor: 'var(--accent-yellow)' }}></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Bags Section */}
+      <section className="py-16 md:py-24" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="container-optic">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left Images */}
+            <div className="relative order-2 lg:order-1">
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765627731/0bf11b55-b060-48d3-ad2c-6e8c8ea672d2.png",
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765625023/Collections_xhdxv4.jpg",
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765628179/-3_jwchfd.jpg" 
+                ].map((imageSrc, i) => (
+                  <div key={i} className={`relative group ${i === 0 ? 'col-span-2' : ''}`}>
+                    <div className={`${i === 0 ? 'aspect-[2/1]' : 'aspect-square'} rounded-2xl overflow-hidden bg-gray-100`}>
+                      <img 
+                        src={imageSrc}
+                        alt={`Bag ${i + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => { e.target.src = "/placeholder.jpg"; }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Decorative Element */}
+              <div className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full opacity-20" style={{ backgroundColor: 'var(--accent-yellow)' }}></div>
+              <div className="absolute -top-6 -left-6 w-16 h-16 rounded-full opacity-20" style={{ backgroundColor: 'var(--accent-yellow)' }}></div>
+            </div>
+
+            {/* Right Content */}
+            <div className="space-y-8 order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                <ShoppingBag className="w-4 h-4" />
+                Travel Collection
+              </div>
+              <h2 className="text-optic-heading text-4xl md:text-5xl lg:text-6xl" style={{ color: 'var(--text-primary)' }}>
+                Designer Bags
+              </h2>
+              <p className="text-optic-body text-lg md:text-xl max-w-lg" style={{ color: 'var(--text-secondary)' }}>
+                Carry your essentials in style with our premium collection of bags. From handbags to backpacks, find the perfect companion for every occasion.
+              </p>
+              
+              {/* Features */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+                    <Shield className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold" style={{ color: 'var(--text-primary)' }}>Durable materials</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Built to last</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+                    <Truck className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold" style={{ color: 'var(--text-primary)' }}>Free shipping</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>On orders above ₹500</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Link to="/category/Bags" className="btn-primary">
+                Shop Bags
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Shoes Section - Men's & Women's Combined */}
+      <section className="py-16 md:py-24" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="container-optic">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left Content */}
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                <Footprints className="w-4 h-4" />
+                Footwear Collection
+              </div>
+              <h2 className="text-optic-heading text-4xl md:text-5xl lg:text-6xl" style={{ color: 'var(--text-primary)' }}>
+                Men's & Women's Shoes
+              </h2>
+              <p className="text-optic-body text-lg md:text-xl max-w-lg" style={{ color: 'var(--text-secondary)' }}>
+                Step out in style with our premium collection of footwear. From formal to casual, sneakers to elegant, discover the perfect pair for every occasion.
+              </p>
+              
+              {/* Features */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+                    <Award className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold" style={{ color: 'var(--text-primary)' }}>Premium quality</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Comfortable & durable</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+                    <Star className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold" style={{ color: 'var(--text-primary)' }}>Wide variety</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Formal, casual, sneakers & more</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Two buttons for Men's and Women's */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to="/category/Men's%20Shoes" className="btn-primary flex-1">
+                  Men's Shoes
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+                <Link to="/category/Women's%20Shoes" className="btn-secondary flex-1">
+                  Women's Shoes
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Images */}
+            <div className="relative">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {[
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg"
+                ].map((imageSrc, i) => (
+                  <div key={i} className={`relative group ${i === 0 ? 'lg:col-span-2' : ''}`}>
+                    <div className={`${i === 0 ? 'aspect-[2/1]' : 'aspect-square'} rounded-2xl overflow-hidden bg-gray-100`}>
+                      <img 
+                        src={imageSrc}
+                        alt={`Shoes ${i + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => { e.target.src = "/placeholder.jpg"; }}
+                      />
+                    </div>
+                    <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                      {i === 0 ? 'MEN\'S' : 'WOMEN\'S'}
                     </div>
                   </div>
                 ))}

@@ -3,24 +3,259 @@ import Order from "../models/Order.js";
 import ContactLens from "../models/ContactLens.js";
 import Accessory from "../models/Accessory.js";
 import SkincareProduct from "../models/SkincareProduct.js";
+import Bag from "../models/Bag.js";
+import MensShoe from "../models/MensShoe.js";
+import WomensShoe from "../models/WomensShoe.js";
+
+// Helper function to normalize Accessory to Product-like format
+function normalizeAccessory(acc) {
+  const doc = acc._doc || acc;
+  let imagesArray = [];
+  if (Array.isArray(doc.images) && doc.images.length > 0) {
+    imagesArray = doc.images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+  }
+  if (imagesArray.length === 0 && doc.thumbnail && typeof doc.thumbnail === 'string' && doc.thumbnail.trim() !== '') {
+    imagesArray = [doc.thumbnail];
+  }
+  
+  return {
+    _id: doc._id,
+    title: doc.name || '',
+    price: doc.finalPrice || doc.price || 0,
+    description: doc.description || '',
+    category: doc.category || "Accessories",
+    subCategory: doc.subCategory,
+    product_info: {
+      brand: doc.brand || '',
+      gender: doc.gender || '',
+    },
+    images: imagesArray,
+    ratings: doc.rating || 0,
+    discount: doc.discountPercent || 0,
+    finalPrice: doc.finalPrice || doc.price || 0,
+    _type: 'accessory',
+    thumbnail: doc.thumbnail,
+    brand: doc.brand,
+    name: doc.name
+  };
+}
+
+// Helper function to normalize SkincareProduct to Product-like format
+function normalizeSkincareProduct(skp) {
+  const doc = skp._doc || skp;
+  let imagesArray = [];
+  
+  if (Array.isArray(doc.images) && doc.images.length > 0) {
+    imagesArray = doc.images
+      .map(img => {
+        if (img && typeof img === 'object' && img.url) {
+          return img.url;
+        }
+        if (img && typeof img === 'string') {
+          return img.trim();
+        }
+        return null;
+      })
+      .filter(img => img && img.length > 0);
+  }
+  
+  if (imagesArray.length === 0 && doc.thumbnail) {
+    const thumb = typeof doc.thumbnail === 'string' ? doc.thumbnail.trim() : 
+                  (doc.thumbnail?.url ? doc.thumbnail.url.trim() : '');
+    if (thumb) {
+      imagesArray = [thumb];
+    }
+  }
+  
+  if (imagesArray.length === 0 && doc.imageUrl) {
+    const imgUrl = typeof doc.imageUrl === 'string' ? doc.imageUrl.trim() : '';
+    if (imgUrl) {
+      imagesArray = [imgUrl];
+    }
+  }
+  
+  return {
+    _id: doc._id,
+    title: doc.productName || doc.name || '',
+    price: doc.finalPrice || doc.price || 0,
+    description: doc.description || '',
+    category: "Skincare",
+    subCategory: doc.category,
+    product_info: {
+      brand: doc.brand || '',
+    },
+    images: imagesArray,
+    ratings: doc.rating || 0,
+    discount: doc.discountPercent || 0,
+    finalPrice: doc.finalPrice || doc.price || 0,
+    _type: 'skincare',
+    thumbnail: doc.thumbnail,
+    brand: doc.brand,
+    productName: doc.productName,
+    imageUrl: doc.imageUrl
+  };
+}
+
+// Helper function to normalize Bag to Product-like format
+function normalizeBag(bag) {
+  const doc = bag._doc || bag;
+  let imagesArray = [];
+  if (Array.isArray(doc.images) && doc.images.length > 0) {
+    imagesArray = doc.images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+  }
+  
+  return {
+    _id: doc._id,
+    title: doc.name || '',
+    price: doc.finalPrice || doc.price || 0,
+    description: doc.description || '',
+    category: "Bags",
+    subCategory: doc.category,
+    product_info: {
+      brand: doc.brand || '',
+      gender: doc.gender || '',
+    },
+    images: imagesArray,
+    ratings: doc.rating || 0,
+    discount: doc.discountPercent || 0,
+    finalPrice: doc.finalPrice || doc.price || 0,
+    _type: 'bag',
+    brand: doc.brand,
+    name: doc.name
+  };
+}
+
+// Helper function to normalize MensShoe to Product-like format
+function normalizeMensShoe(shoe) {
+  const doc = shoe._doc || shoe;
+  let imagesArray = [];
+  if (Array.isArray(doc.images) && doc.images.length > 0) {
+    imagesArray = doc.images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+  }
+  
+  if (imagesArray.length === 0 && doc.Images) {
+    if (doc.Images.image1) imagesArray.push(doc.Images.image1);
+    if (doc.Images.image2) imagesArray.push(doc.Images.image2);
+    if (Array.isArray(doc.Images.additionalImages)) {
+      imagesArray.push(...doc.Images.additionalImages.filter(img => img && typeof img === 'string' && img.trim() !== ''));
+    }
+  }
+  
+  if (imagesArray.length === 0 && doc.thumbnail && typeof doc.thumbnail === 'string' && doc.thumbnail.trim() !== '') {
+    imagesArray = [doc.thumbnail];
+  }
+  
+  return {
+    _id: doc._id,
+    title: doc.title || '',
+    price: doc.finalPrice || doc.price || 0,
+    description: doc.description || '',
+    category: doc.category || "Men's Shoes",
+    subCategory: doc.subCategory || '',
+    subSubCategory: doc.subSubCategory || '',
+    product_info: {
+      brand: doc.product_info?.brand || '',
+      gender: doc.product_info?.gender || 'Men',
+      color: doc.product_info?.color || '',
+    },
+    images: imagesArray,
+    ratings: doc.rating || 0,
+    discount: doc.discountPercent || 0,
+    finalPrice: doc.finalPrice || doc.price || 0,
+    _type: 'mensShoe',
+    stock: doc.stock,
+    inStock: doc.inStock
+  };
+}
+
+// Helper function to normalize WomensShoe to Product-like format
+function normalizeWomensShoe(shoe) {
+  const doc = shoe._doc || shoe;
+  let imagesArray = [];
+  if (Array.isArray(doc.images) && doc.images.length > 0) {
+    imagesArray = doc.images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+  }
+  
+  if (imagesArray.length === 0 && doc.Images) {
+    if (doc.Images.image1) imagesArray.push(doc.Images.image1);
+    if (doc.Images.image2) imagesArray.push(doc.Images.image2);
+    if (Array.isArray(doc.Images.additionalImages)) {
+      imagesArray.push(...doc.Images.additionalImages.filter(img => img && typeof img === 'string' && img.trim() !== ''));
+    }
+  }
+  
+  if (imagesArray.length === 0 && doc.thumbnail && typeof doc.thumbnail === 'string' && doc.thumbnail.trim() !== '') {
+    imagesArray = [doc.thumbnail];
+  }
+  
+  return {
+    _id: doc._id,
+    title: doc.title || '',
+    price: doc.finalPrice || doc.price || 0,
+    description: doc.description || '',
+    category: doc.category || "Women's Shoes",
+    subCategory: doc.subCategory || '',
+    subSubCategory: doc.subSubCategory || '',
+    product_info: {
+      brand: doc.product_info?.brand || '',
+      gender: doc.product_info?.gender || 'Women',
+      color: doc.product_info?.color || '',
+    },
+    images: imagesArray,
+    ratings: doc.rating || 0,
+    discount: doc.discountPercent || 0,
+    finalPrice: doc.finalPrice || doc.price || 0,
+    _type: 'womensShoe',
+    stock: doc.stock,
+    inStock: doc.inStock
+  };
+}
 
 export const listAllProducts = async (req, res) => {
   try {
-    // Get ALL products from all categories for admin dashboard
-    const [products, contactLenses, accessories, skincareProducts] = await Promise.all([
+    // Get ALL products from all collections for admin dashboard
+    const [products, contactLenses, accessories, skincareProducts, bags, mensShoes, womensShoes] = await Promise.all([
       Product.find({}).sort({ createdAt: -1 }).lean(),
       ContactLens.find({}).sort({ createdAt: -1 }).lean(),
       Accessory.find({}).sort({ createdAt: -1 }).lean(),
       SkincareProduct.find({}).sort({ createdAt: -1 }).lean(),
+      Bag.find({}).sort({ createdAt: -1 }).lean(),
+      MensShoe.find({}).sort({ createdAt: -1 }).lean(),
+      WomensShoe.find({}).sort({ createdAt: -1 }).lean(),
     ]);
 
-    // Tag each item with a _type field so frontend can distinguish
+    // Tag and normalize each item
     const taggedProducts = products.map((p) => ({ ...p, _type: "product" }));
     const taggedContactLenses = contactLenses.map((c) => ({ ...c, _type: "contactLens" }));
-    const taggedAccessories = accessories.map((a) => ({ ...a, _type: "accessory" }));
-    const taggedSkincare = skincareProducts.map((s) => ({ ...s, _type: "skincare" }));
+    const normalizedAccessories = accessories.map(normalizeAccessory);
+    const normalizedSkincare = skincareProducts.map(normalizeSkincareProduct);
+    const normalizedBags = bags.map(normalizeBag);
+    const normalizedMensShoes = mensShoes.map(normalizeMensShoe);
+    const normalizedWomensShoes = womensShoes.map(normalizeWomensShoe);
 
-    res.json([...taggedProducts, ...taggedContactLenses, ...taggedAccessories, ...taggedSkincare]);
+    // Combine all products and sort by creation date (newest first)
+    const allProducts = [
+      ...taggedProducts,
+      ...taggedContactLenses,
+      ...normalizedAccessories,
+      ...normalizedSkincare,
+      ...normalizedBags,
+      ...normalizedMensShoes,
+      ...normalizedWomensShoes
+    ].sort((a, b) => {
+      // Sort by createdAt if available, otherwise by _id
+      const dateA = a.createdAt ? new Date(a.createdAt) : null;
+      const dateB = b.createdAt ? new Date(b.createdAt) : null;
+      if (dateA && dateB) {
+        return dateB - dateA; // Newest first
+      }
+      if (dateA) return -1;
+      if (dateB) return 1;
+      // Fallback to _id comparison
+      return (b._id || '').toString().localeCompare((a._id || '').toString());
+    });
+
+    res.json(allProducts);
   } catch (error) {
     res.status(500).json({ message: "Error fetching products", error: error.message });
   }
@@ -81,40 +316,9 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { type } = req.query; // Get product type from query parameter
-    
-    let deletedProduct = null;
-    
-    // Delete based on product type
-    switch (type) {
-      case "product":
-        deletedProduct = await Product.findByIdAndDelete(id);
-        break;
-      case "contactLens":
-        deletedProduct = await ContactLens.findByIdAndDelete(id);
-        break;
-      case "accessory":
-        deletedProduct = await Accessory.findByIdAndDelete(id);
-        break;
-      case "skincare":
-        deletedProduct = await SkincareProduct.findByIdAndDelete(id);
-        break;
-      default:
-        // Try all models if type is not specified
-        deletedProduct = await Product.findByIdAndDelete(id);
-        if (!deletedProduct) {
-          deletedProduct = await ContactLens.findByIdAndDelete(id);
-        }
-        if (!deletedProduct) {
-          deletedProduct = await Accessory.findByIdAndDelete(id);
-        }
-        if (!deletedProduct) {
-          deletedProduct = await SkincareProduct.findByIdAndDelete(id);
-        }
-        break;
-    }
+    const product = await Product.findByIdAndDelete(id);
 
-    if (!deletedProduct) {
+    if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 

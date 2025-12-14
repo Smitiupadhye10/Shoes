@@ -169,7 +169,7 @@ const ProductDetails = () => {
     const priceNumber = Number(product.price || 0);
     return discount > 0 ? Math.max(0, priceNumber * (1 - discount / 100)) : priceNumber;
   };
-  
+
   const discount = Number(product.discount || 0);
   const priceNumber = Number(product.price || 0);
   const discountedPrice = getDisplayPrice();
@@ -219,11 +219,11 @@ const ProductDetails = () => {
               {/* Image Carousel */}
               <div className="relative mb-4">
                 {/* Main Image Container */}
-                <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-xl overflow-hidden group" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] rounded-xl overflow-hidden group" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                   <img
                     src={selectedImage}
                     alt={productTitle}
-                    className="w-full h-full object-contain cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-full object-contain p-4 sm:p-6 md:p-8 cursor-pointer transition-transform duration-300 group-hover:scale-105"
                     onClick={openImageModal}
                     onError={(e) => {
                       // Fallback to placeholder if image fails to load
@@ -231,6 +231,7 @@ const ProductDetails = () => {
                         e.target.src = "/placeholder.jpg";
                       }
                     }}
+                    loading="eager"
                   />
                   
                   {/* Navigation Arrows */}
@@ -265,32 +266,34 @@ const ProductDetails = () => {
 
                 {/* Thumbnail Strip */}
                 {images.length > 1 && (
-                  <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+                  <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4 overflow-x-auto pb-2 scrollbar-hide">
                     {images.map((img, i) => (
                       <button
                         key={i}
                         onClick={() => setSelectedImageIndex(i)}
-                        className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 p-1 rounded-lg border-2 transition-all duration-200 ${
+                        className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 p-1 rounded-md sm:rounded-lg border-2 transition-all duration-200 ${
                           selectedImageIndex === i
-                            ? "scale-105"
+                            ? "scale-105 ring-2 ring-offset-2"
                             : "hover:scale-105"
                         }`}
                         style={{
                           backgroundColor: 'var(--bg-primary)',
-                          borderColor: selectedImageIndex === i ? 'var(--accent-yellow)' : 'var(--border-color)'
+                          borderColor: selectedImageIndex === i ? 'var(--accent-yellow)' : 'var(--border-color)',
+                          ringColor: selectedImageIndex === i ? 'var(--accent-yellow)' : 'transparent'
                         }}
                         aria-label={`Select image ${i + 1}`}
                       >
                         <img
                           src={img}
                           alt={`${productTitle}-${i}`}
-                          className="w-full h-full object-contain rounded"
+                          className="w-full h-full object-contain rounded p-0.5 sm:p-1"
                           onError={(e) => {
                             // Fallback to placeholder if thumbnail fails to load
                             if (e.target.src !== "/placeholder.jpg") {
                               e.target.src = "/placeholder.jpg";
                             }
                           }}
+                          loading="lazy"
                         />
                       </button>
                     ))}

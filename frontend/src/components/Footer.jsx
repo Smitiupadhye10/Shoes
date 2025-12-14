@@ -9,11 +9,16 @@ const Footer = () => {
 
         {/* --- Company Info --- */}
         <div>
-          <div className="flex items-center">
-                      <Link to="/" className="text-optic-heading text-3xl md:text-4xl" style={{ color: 'var(--text-white)' }}>
-                        LENSLOGIC
-                      </Link>
-                    </div>
+          <div className="flex items-center mb-4">
+            <Link to="/" className="flex items-center">
+              <img 
+                src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765630473/file_00000000ac50720780542fa210dc5c8e_e0c5v4.png" 
+                alt="LENS LOGIC" 
+                className="h-14 md:h-16 lg:h-20 w-auto object-contain"
+                style={{ maxWidth: '300px' }}
+              />
+            </Link>
+          </div>
           <p className="text-sm leading-6">
             Discover premium eyeglasses, sunglasses, and contact lenses at unbeatable prices.
             Style your vision with the latest trends and comfort-focused designs.

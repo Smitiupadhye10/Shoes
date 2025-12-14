@@ -32,16 +32,4 @@ export const categories = {
      
     },
   },
-  accessories: {
-    title: "Accessories",
-    fields: {
-      Gender: ["Men", "Women"],
-    },
-  },
-  skincare: {
-    title: "Skincare",
-    fields: {
-      Category: ["Moisturizer", "Serum", "Cleanser", "Facewash", "Sunscreen"],
-    },
-  },
 };

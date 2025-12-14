@@ -19,48 +19,12 @@ const ProductCard = ({ product }) => {
     navigate("/cart");
   };
 
-  // Calculate display price - use finalPrice if available (already discounted), otherwise calculate from price and discount
-  const getDisplayPrice = () => {
-    if (product.finalPrice) {
-      // For accessories and skincare, finalPrice is already the discounted price
-      return product.finalPrice;
-    }
-    // For regular products, calculate discounted price
-    return product.price * (1 - (product.discount || 0) / 100);
-  };
-  
-  const displayPrice = getDisplayPrice().toFixed(0);
-
-  // Get product title - handle all product types
-  const getProductTitle = () => {
-    return product.title || product.name || product.productName || "Product";
-  };
+  const discountedPrice = (
+    product.price * (1 - (product.discount || 0) / 100)
+  ).toFixed(0);
 
   // Use first image from images array (show only one image for contact lenses)
-  // Handle different image formats: array, string, or object
-  const getImageSrc = () => {
-    if (Array.isArray(product.images) && product.images.length > 0) {
-      // Filter out empty/null/undefined images
-      const validImage = product.images.find(img => img && img.trim() !== '');
-      if (validImage) return validImage;
-    }
-    // Fallback to thumbnail if images array is empty
-    if (product.thumbnail && product.thumbnail.trim() !== '') {
-      return product.thumbnail;
-    }
-    // Fallback to imageUrl for skincare products
-    if (product.imageUrl && product.imageUrl.trim() !== '') {
-      return product.imageUrl;
-    }
-    // If images is a string (not array)
-    if (typeof product.images === 'string' && product.images.trim() !== '') {
-      return product.images;
-    }
-    return "/placeholder.jpg";
-  };
-  
-  const imageSrc = getImageSrc();
-  const productTitle = getProductTitle();
+  const imageSrc = Array.isArray(product.images) ? (product.images[0] || "/placeholder.jpg") : (product.images || "/placeholder.jpg");
 
   const isContactLens = product._type === 'contactLens' || product.category === 'Contact Lenses';
 
@@ -95,34 +59,30 @@ const ProductCard = ({ product }) => {
         <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100">
           <img
             src={imageSrc}
-            alt={productTitle}
+            alt={product.title}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             onClick={() => navigate(`/product/${product._id}`)}
-            onError={(e) => {
-              // Fallback to placeholder if image fails to load
-              e.target.src = "/placeholder.jpg";
-            }}
           />
         </div>
       </div>
 
       {/* Product Info */}
       <h3 
-        className="text-optic-heading text-sm sm:text-base md:text-lg font-bold mb-2 cursor-pointer hover:opacity-80 transition-opacity line-clamp-2"
+        className="text-optic-heading text-lg font-bold mb-2 cursor-pointer hover:opacity-80 transition-opacity"
         style={{ color: 'var(--text-primary)' }}
         onClick={() => navigate(`/product/${product._id}`)}
       >
-        {productTitle}
+        {product.title}
       </h3>
       
-      <p className="text-optic-body text-xs sm:text-sm mb-3 sm:mb-4" style={{ color: 'var(--text-secondary)' }}>
+      <p className="text-optic-body text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
         {product.category || 'vision'}
       </p>
       
-      <div className="text-optic-heading text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4" style={{ color: 'var(--text-primary)' }}>
-        ₹{displayPrice}
-        {(product.discount > 0 || (product.finalPrice && product.finalPrice < product.price)) && (
-          <span className="text-xs sm:text-sm font-normal line-through ml-2" style={{ color: 'var(--text-secondary)' }}>
+      <div className="text-optic-heading text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+        ₹{discountedPrice}
+        {product.discount > 0 && (
+          <span className="text-sm font-normal line-through ml-2" style={{ color: 'var(--text-secondary)' }}>
             ₹{product.price}
           </span>
         )}

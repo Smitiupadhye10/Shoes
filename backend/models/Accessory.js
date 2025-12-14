@@ -24,7 +24,10 @@ const accessorySchema = new mongoose.Schema({
   },
   subCategory: {
     type: String,
+    required: true,
+    enum: ['necklace', 'bracelets', 'tie', 'anklets', 'earings', 'belts', 'scarfs', 'watches'],
     trim: true,
+    lowercase: true,
   },
   gender: {
     type: String,
@@ -147,7 +150,9 @@ accessorySchema.pre('save', function (next) {
 });
 
 // Indexes
-accessorySchema.index({ category: 1, gender: 1 });
+accessorySchema.index({ category: 1, subCategory: 1 });
+accessorySchema.index({ category: 1, gender: 1 }); // Keep for backward compatibility
+accessorySchema.index({ subCategory: 1 }); // Index for subcategory filtering
 accessorySchema.index({ name: 'text', brand: 'text', description: 'text' });
 
 const Accessory = mongoose.model('Accessory', accessorySchema, 'accesories');

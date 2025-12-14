@@ -77,14 +77,7 @@ const Admin = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/api/admin/products", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!res.ok) {
-        throw new Error("Failed to fetch products");
-      }
+      const res = await fetch("http://localhost:4000/api/products");
       const data = await res.json();
       setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -169,52 +162,11 @@ const Admin = () => {
     }
   };
 
-  // Helper function to get product display fields based on type
-  const getProductDisplayFields = (product) => {
-    const type = product._type || "product";
-    
-    switch (type) {
-      case "accessory":
-        return {
-          title: product.name || "N/A",
-          price: product.finalPrice || product.price || 0,
-          category: product.category || "Accessories",
-          subCategory: product.subCategory || "",
-          images: product.images || (product.thumbnail ? [product.thumbnail] : []),
-        };
-      case "skincare":
-        return {
-          title: product.productName || "N/A",
-          price: product.finalPrice || product.price || 0,
-          category: "Skincare",
-          subCategory: product.category || "", // category field stores subcategory for skincare
-          images: product.images || (product.imageUrl ? [product.imageUrl] : []),
-        };
-      case "contactLens":
-        return {
-          title: product.title || "N/A",
-          price: product.price || 0,
-          category: product.category || "Contact Lenses",
-          subCategory: product.subCategory || "",
-          images: Array.isArray(product.images) ? product.images : [],
-        };
-      default: // product
-        return {
-          title: product.title || "N/A",
-          price: product.price || 0,
-          category: product.category || "",
-          subCategory: product.subCategory || "",
-          images: Array.isArray(product.images) ? product.images : (product.images?.image1 ? [product.images.image1, product.images.image2].filter(Boolean) : []),
-        };
-    }
-  };
-
-  const handleDelete = async (id, type) => {
+  const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const url = `http://localhost:4000/api/admin/products/${id}${type ? `?type=${type}` : ""}`;
-      const res = await fetch(url, {
+      const res = await fetch(`http://localhost:4000/api/admin/products/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -562,54 +514,34 @@ const Admin = () => {
             {/* Products List */}
             {loading && <p>Loading...</p>}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((product) => {
-                const displayFields = getProductDisplayFields(product);
-                const productType = product._type || "product";
-                const imageSrc = displayFields.images && displayFields.images.length > 0 
-                  ? displayFields.images[0] 
-                  : "/placeholder.jpg";
-                
-                return (
-                  <div key={product._id} className="bg-white p-4 rounded-lg shadow border">
-                    <img
-                      src={imageSrc}
-                      alt={displayFields.title}
-                      className="w-full h-32 object-contain mb-2"
-                    />
-                    <h3 className="font-semibold">{displayFields.title}</h3>
-                    <p className="text-gray-600">₹{displayFields.price}</p>
-                    <p className="text-sm text-gray-500">
-                      {displayFields.category}
-                      {displayFields.subCategory && ` • ${displayFields.subCategory}`}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Type: {productType.charAt(0).toUpperCase() + productType.slice(1)}
-                    </p>
-                    <div className="flex gap-2 mt-3">
-                      <button
-                        onClick={() => {
-                          if (productType === "product" || productType === "contactLens") {
-                            handleEdit(product);
-                          } else {
-                            alert("Editing is currently only available for Glasses and Contact Lenses products.");
-                          }
-                        }}
-                        className="flex-1 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 flex items-center justify-center gap-1"
-                      >
-                        <Edit size={16} />
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product._id, productType)}
-                        className="flex-1 bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 flex items-center justify-center gap-1"
-                      >
-                        <Trash2 size={16} />
-                        Delete
-                      </button>
-                    </div>
+              {products.map((product) => (
+                <div key={product._id} className="bg-white p-4 rounded-lg shadow border">
+                  <img
+                    src={Array.isArray(product.images) ? product.images[0] : product.images?.image1 || "/placeholder.jpg"}
+                    alt={product.title}
+                    className="w-full h-32 object-contain mb-2"
+                  />
+                  <h3 className="font-semibold">{product.title}</h3>
+                  <p className="text-gray-600">₹{product.price}</p>
+                  <p className="text-sm text-gray-500">{product.category}</p>
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      onClick={() => handleEdit(product)}
+                      className="flex-1 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 flex items-center justify-center gap-1"
+                    >
+                      <Edit size={16} />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product._id)}
+                      className="flex-1 bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 flex items-center justify-center gap-1"
+                    >
+                      <Trash2 size={16} />
+                      Delete
+                    </button>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         )}
