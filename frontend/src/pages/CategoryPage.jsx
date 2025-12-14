@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useRef } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import api from "../api/axios";
-import { Filter, X, Eye, Sun, Monitor, Phone, Sparkles, ShoppingBag, Footprints } from "lucide-react";
+import { Filter, X } from "lucide-react";
 
 const PRICE_RANGES = [
   "300-1000",
@@ -443,61 +443,6 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     );
   };
 
-  const allCategories = [
-    { icon: Eye, name: "Eyeglasses", link: "/category/Eyeglasses" },
-    { icon: Sun, name: "Sunglasses", link: "/category/Sunglasses" },
-    { icon: Monitor, name: "Computer Glasses", link: "/category/Computer%20Glasses" },
-    { icon: Phone, name: "Contact Lenses", link: "/category/Contact%20Lenses" },
-    { icon: Sparkles, name: "Accessories", link: "/category/Accessories" },
-    { icon: Sparkles, name: "Skincare", link: "/category/Skincare" },
-    { icon: ShoppingBag, name: "Bags", link: "/category/Bags" },
-    { icon: Footprints, name: "Men's Shoes", link: "/category/Men's%20Shoes" },
-    { icon: Footprints, name: "Women's Shoes", link: "/category/Women's%20Shoes" },
-  ];
-
-  const AllCategoriesSection = () => (
-    <div className="mb-8">
-      <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--accent-yellow)' }}>
-        All Categories
-      </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-        {allCategories.map((cat) => {
-          const Icon = cat.icon;
-          const isActive = categoryParam.toLowerCase() === cat.name.toLowerCase();
-          return (
-            <Link
-              key={cat.name}
-              to={cat.link}
-              className={`flex flex-col items-center justify-center p-4 sm:p-5 rounded-xl border-2 transition-all duration-200 ${
-                isActive
-                  ? 'border-yellow-400 bg-yellow-50 shadow-md scale-105'
-                  : 'border-gray-200 bg-white hover:border-yellow-300 hover:bg-yellow-50 hover:shadow-md hover:scale-105'
-              }`}
-            >
-              <div 
-                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center mb-2 sm:mb-3 ${
-                  isActive ? 'bg-yellow-400' : 'bg-gray-100'
-                }`}
-              >
-                <Icon 
-                  className={`w-5 h-5 sm:w-6 sm:h-6 ${
-                    isActive ? 'text-gray-900' : 'text-gray-700'
-                  }`}
-                />
-              </div>
-              <span 
-                className={`text-xs sm:text-sm font-medium text-center ${
-                  isActive ? 'text-gray-900 font-semibold' : 'text-gray-700'
-                }`}
-              >
-                {cat.name}
-              </span>
-            </Link>
-          );
-        })}
-      </div>
-    </div>
-  );
 
   const Breadcrumb = () => (
     <nav className="text-sm mb-6" aria-label="Breadcrumb">
@@ -693,7 +638,6 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <div className="p-4 sm:p-6 max-w-7xl mx-auto">
         <Breadcrumb />
-        <AllCategoriesSection />
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-6 gap-4">
           <div>
             <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--accent-yellow)' }}>
