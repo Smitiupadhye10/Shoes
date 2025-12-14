@@ -75,7 +75,7 @@ const Home = ({ addToCart, addToWishlist }) => {
   return (
     <div className="space-y-0">
       {/* Hero Section - OPTIC Style */}
-      <section className="relative" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <section className="relative -mt-16 md:-mt-12" style={{ backgroundColor: 'var(--bg-primary)' }}>
         {/* Mobile: Full-width poster - breaks out of container padding */}
         <div className="lg:hidden" style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)', width: '100vw', paddingLeft: 0, paddingRight: 0 }}>
           <img 

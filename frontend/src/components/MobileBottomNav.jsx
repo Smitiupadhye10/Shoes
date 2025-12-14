@@ -118,14 +118,14 @@ const MobileBottomNav = () => {
       icon: Heart,
       label: "Wishlist",
       path: "/wishlist",
-      badge: wishlist.length,
+      badge: wishlist.length > 0 ? wishlist.length : null,
       onClick: null,
     },
     {
       icon: ShoppingBag,
       label: "Cart",
       path: "/cart",
-      badge: cart.length,
+      badge: cart.length > 0 ? cart.length : null,
       onClick: null,
     },
     {
@@ -313,7 +313,7 @@ const MobileBottomNav = () => {
                         color: active ? 'var(--accent-yellow)' : 'var(--text-secondary)'
                       }}
                     />
-                    {item.badge && item.badge > 0 && (
+                    {item.badge && (
                       <span 
                         className="absolute -top-2 -right-2 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold"
                         style={{ 

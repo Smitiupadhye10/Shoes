@@ -78,8 +78,8 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
               <img 
                 src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765629960/b7a50a65-12b2-4dc8-89a4-1a5985bd6706.png" 
                 alt="LENS LOGIC" 
-                className="h-8 sm:h-10 md:h-12 w-auto object-contain"
-                style={{ maxWidth: '200px' }}
+                className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto object-contain"
+                style={{ maxWidth: '280px' }}
               />
             </Link>
           </div>
