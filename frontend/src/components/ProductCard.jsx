@@ -19,9 +19,26 @@ const ProductCard = ({ product }) => {
     navigate("/cart");
   };
 
-  const discountedPrice = (
-    product.price * (1 - (product.discount || 0) / 100)
-  ).toFixed(0);
+  // Calculate prices for display
+  const getDisplayPrices = () => {
+    // Price is the discounted price (finalPrice)
+    const discountedPrice = Number(product.price || product.finalPrice || 0);
+    
+    // Original price (MRP)
+    let originalPrice = Number(product.originalPrice || 0);
+    const discountPercent = Number(product.discount || product.discountPercent || 0);
+    
+    // If originalPrice is not provided, calculate it from discounted price and discount
+    if (!originalPrice && discountPercent > 0 && discountedPrice > 0) {
+      originalPrice = Math.round(discountedPrice / (1 - discountPercent / 100));
+    } else if (!originalPrice) {
+      originalPrice = discountedPrice; // No discount, MRP equals discounted price
+    }
+    
+    return { originalPrice, discountedPrice: Math.round(discountedPrice), discountPercent };
+  };
+
+  const { originalPrice, discountedPrice, discountPercent } = getDisplayPrices();
 
   // Use first image from images array (show only one image for contact lenses)
   const imageSrc = Array.isArray(product.images) ? (product.images[0] || "/placeholder.jpg") : (product.images || "/placeholder.jpg");
@@ -81,9 +98,9 @@ const ProductCard = ({ product }) => {
       
       <div className="text-optic-heading text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
         ₹{discountedPrice}
-        {product.discount > 0 && (
+        {originalPrice > discountedPrice && (
           <span className="text-sm font-normal line-through ml-2" style={{ color: 'var(--text-secondary)' }}>
-            ₹{product.price}
+            ₹{originalPrice}
           </span>
         )}
       </div>

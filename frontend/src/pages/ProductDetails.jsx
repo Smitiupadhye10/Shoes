@@ -158,21 +158,26 @@ const ProductDetails = () => {
     navigate("/cart");
   };
 
-  // Calculate price - handle finalPrice for accessories and skincare
-  const getDisplayPrice = () => {
-    if (product.finalPrice) {
-      // For accessories and skincare, finalPrice is already the discounted price
-      return product.finalPrice;
+  // Calculate prices - handle all product types
+  const getPrices = () => {
+    // Price is the discounted price (finalPrice)
+    const discountedPrice = Number(product.price || product.finalPrice || 0);
+    
+    // Original price (MRP) - use originalPrice if available, otherwise calculate from discount
+    let originalPrice = Number(product.originalPrice || 0);
+    const discountPercent = Number(product.discount || product.discountPercent || 0);
+    
+    // If originalPrice is not provided, calculate it from discounted price and discount
+    if (!originalPrice && discountPercent > 0 && discountedPrice > 0) {
+      originalPrice = Math.round(discountedPrice / (1 - discountPercent / 100));
+    } else if (!originalPrice) {
+      originalPrice = discountedPrice; // No discount, MRP equals discounted price
     }
-    // For regular products, calculate discounted price
-    const discount = Number(product.discount || 0);
-    const priceNumber = Number(product.price || 0);
-    return discount > 0 ? Math.max(0, priceNumber * (1 - discount / 100)) : priceNumber;
+    
+    return { originalPrice, discountedPrice, discountPercent };
   };
 
-  const discount = Number(product.discount || 0);
-  const priceNumber = Number(product.price || 0);
-  const discountedPrice = getDisplayPrice();
+  const { originalPrice, discountedPrice, discountPercent } = getPrices();
 
   const formatINR = (num) =>
     new Intl.NumberFormat("en-IN", {
@@ -382,15 +387,15 @@ const ProductDetails = () => {
                   <div className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
                     {formatINR(discountedPrice)}
                   </div>
-                  {discount > 0 && (
+                  {originalPrice > discountedPrice && (
                     <div className="text-lg line-through mt-1" style={{ color: 'var(--text-secondary)' }}>
-                      {formatINR(priceNumber)}
+                      {formatINR(originalPrice)}
                     </div>
                   )}
                 </div>
-                {discount > 0 && (
+                {discountPercent > 0 && originalPrice > discountedPrice && (
                   <div className="px-4 py-2 rounded-full text-sm font-bold shadow-md" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
-                    {discount}% OFF
+                    {discountPercent.toFixed(1)}% OFF
                   </div>
                 )}
               </div>

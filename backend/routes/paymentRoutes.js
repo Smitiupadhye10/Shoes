@@ -7,14 +7,37 @@ import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
 import ContactLens from '../models/ContactLens.js';
+import Accessory from '../models/Accessory.js';
+import SkincareProduct from '../models/SkincareProduct.js';
+import Bag from '../models/Bag.js';
+import MensShoe from '../models/MensShoe.js';
+import WomensShoe from '../models/WomensShoe.js';
 import { verifyToken, requireAdmin } from '../middleware/authMiddleware.js';
 
-// -------- Resolve Item (unchanged) --------
+// -------- Resolve Item - Handle all product types --------
 async function resolveItem(productId) {
-  const prod = await Product.findById(productId).lean();
-  if (prod) return { ...prod, _type: 'product' };
-  const lens = await ContactLens.findById(productId).lean();
-  if (lens) return { ...lens, _type: 'contactLens' };
+  // Try each collection until we find the product
+  let doc = await Product.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'product', price: doc.price || 0 };
+  
+  doc = await ContactLens.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'contactLens', price: doc.price || 0 };
+  
+  doc = await Accessory.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'accessory', price: doc.finalPrice || doc.price || 0 };
+  
+  doc = await SkincareProduct.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'skincare', price: doc.finalPrice || doc.price || 0 };
+  
+  doc = await Bag.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'bag', price: doc.finalPrice || doc.price || 0 };
+  
+  doc = await MensShoe.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'mensShoe', price: doc.finalPrice || doc.price || 0 };
+  
+  doc = await WomensShoe.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'womensShoe', price: doc.finalPrice || doc.price || 0 };
+  
   return null;
 }
 
@@ -37,12 +60,19 @@ paymentRouter.post('/create-order', verifyToken, async (req, res) => {
     const items = [];
     for (const it of cart.items) {
       const resolved = await resolveItem(it.productId);
-      if (!resolved) continue;
+      if (!resolved) {
+        console.warn(`Could not resolve product ${it.productId}`);
+        continue;
+      }
       items.push({
         productId: it.productId,
         quantity: it.quantity,
         price: resolved.price || 0
       });
+    }
+
+    if (items.length === 0) {
+      return res.status(400).json({ success: false, message: 'No valid products found in cart' });
     }
 
     const computedAmount = items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
@@ -232,12 +262,19 @@ paymentRouter.post('/create-upi-qrcode', verifyToken, async (req, res) => {
     const items = [];
     for (const it of cart.items) {
       const resolved = await resolveItem(it.productId);
-      if (!resolved) continue;
+      if (!resolved) {
+        console.warn(`Could not resolve product ${it.productId}`);
+        continue;
+      }
       items.push({
         productId: it.productId,
         quantity: it.quantity,
-        price: resolved.price
+        price: resolved.price || 0
       });
+    }
+
+    if (items.length === 0) {
+      return res.status(400).json({ success: false, message: 'No valid products found in cart' });
     }
 
     const order = new Order({

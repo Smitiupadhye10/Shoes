@@ -198,8 +198,8 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
               <Search className="h-5 w-5" />
             </button>
 
-            {/* Wishlist */}
-            <Link to="/wishlist" className="relative group">
+            {/* Wishlist - Hidden on mobile (shown in bottom nav) */}
+            <Link to="/wishlist" className="relative group hidden md:block">
               <Heart 
                 className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:scale-110" 
                 style={{ color: 'var(--text-primary)' }}
@@ -214,8 +214,8 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
               )}
             </Link>
 
-            {/* Shopping Bag */}
-            <Link to="/cart" className="relative group">
+            {/* Shopping Bag - Hidden on mobile (shown in bottom nav) */}
+            <Link to="/cart" className="relative group hidden md:block">
               <ShoppingBag 
                 className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:scale-110" 
                 style={{ color: 'var(--text-primary)' }}

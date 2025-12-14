@@ -18,10 +18,21 @@ function normalizeAccessory(acc) {
     imagesArray = [doc.thumbnail];
   }
   
+  // Calculate original price (MRP)
+  const finalPrice = doc.finalPrice || doc.price || 0;
+  const discountPercent = doc.discountPercent || 0;
+  let originalPrice = doc.originalPrice;
+  if (!originalPrice && discountPercent > 0 && finalPrice > 0) {
+    originalPrice = Math.round(finalPrice / (1 - discountPercent / 100));
+  } else if (!originalPrice) {
+    originalPrice = finalPrice;
+  }
+
   return {
     _id: doc._id,
     title: doc.name || '',
-    price: doc.finalPrice || doc.price || 0,
+    price: finalPrice,
+    originalPrice: originalPrice,
     description: doc.description || '',
     category: doc.category || "Accessories",
     subCategory: doc.subCategory,
@@ -31,8 +42,8 @@ function normalizeAccessory(acc) {
     },
     images: imagesArray,
     ratings: doc.rating || 0,
-    discount: doc.discountPercent || 0,
-    finalPrice: doc.finalPrice || doc.price || 0,
+    discount: discountPercent,
+    finalPrice: finalPrice,
     _type: 'accessory',
     thumbnail: doc.thumbnail,
     brand: doc.brand,
@@ -74,10 +85,21 @@ function normalizeSkincareProduct(skp) {
     }
   }
   
+  // Calculate original price (MRP)
+  const finalPrice = doc.finalPrice || doc.price || 0;
+  const discountPercent = doc.discountPercent || 0;
+  let originalPrice = doc.originalPrice;
+  if (!originalPrice && discountPercent > 0 && finalPrice > 0) {
+    originalPrice = Math.round(finalPrice / (1 - discountPercent / 100));
+  } else if (!originalPrice) {
+    originalPrice = finalPrice;
+  }
+
   return {
     _id: doc._id,
     title: doc.productName || doc.name || '',
-    price: doc.finalPrice || doc.price || 0,
+    price: finalPrice,
+    originalPrice: originalPrice,
     description: doc.description || '',
     category: "Skincare",
     subCategory: doc.category,
@@ -86,8 +108,8 @@ function normalizeSkincareProduct(skp) {
     },
     images: imagesArray,
     ratings: doc.rating || 0,
-    discount: doc.discountPercent || 0,
-    finalPrice: doc.finalPrice || doc.price || 0,
+    discount: discountPercent,
+    finalPrice: finalPrice,
     _type: 'skincare',
     thumbnail: doc.thumbnail,
     brand: doc.brand,
@@ -104,10 +126,21 @@ function normalizeBag(bag) {
     imagesArray = doc.images.filter(img => img && typeof img === 'string' && img.trim() !== '');
   }
   
+  // Calculate original price (MRP)
+  const finalPrice = doc.finalPrice || doc.price || 0;
+  const discountPercent = doc.discountPercent || 0;
+  let originalPrice = doc.originalPrice;
+  if (!originalPrice && discountPercent > 0 && finalPrice > 0) {
+    originalPrice = Math.round(finalPrice / (1 - discountPercent / 100));
+  } else if (!originalPrice) {
+    originalPrice = finalPrice;
+  }
+
   return {
     _id: doc._id,
     title: doc.name || '',
-    price: doc.finalPrice || doc.price || 0,
+    price: finalPrice,
+    originalPrice: originalPrice,
     description: doc.description || '',
     category: "Bags",
     subCategory: doc.category,
@@ -117,8 +150,8 @@ function normalizeBag(bag) {
     },
     images: imagesArray,
     ratings: doc.rating || 0,
-    discount: doc.discountPercent || 0,
-    finalPrice: doc.finalPrice || doc.price || 0,
+    discount: discountPercent,
+    finalPrice: finalPrice,
     _type: 'bag',
     brand: doc.brand,
     name: doc.name
@@ -145,10 +178,21 @@ function normalizeMensShoe(shoe) {
     imagesArray = [doc.thumbnail];
   }
   
+  // Calculate original price (MRP)
+  const finalPrice = doc.finalPrice || doc.price || 0;
+  const discountPercent = doc.discountPercent || 0;
+  let originalPrice = doc.originalPrice;
+  if (!originalPrice && discountPercent > 0 && finalPrice > 0) {
+    originalPrice = Math.round(finalPrice / (1 - discountPercent / 100));
+  } else if (!originalPrice) {
+    originalPrice = finalPrice;
+  }
+
   return {
     _id: doc._id,
     title: doc.title || '',
-    price: doc.finalPrice || doc.price || 0,
+    price: finalPrice,
+    originalPrice: originalPrice,
     description: doc.description || '',
     category: doc.category || "Men's Shoes",
     subCategory: doc.subCategory || '',
@@ -160,8 +204,8 @@ function normalizeMensShoe(shoe) {
     },
     images: imagesArray,
     ratings: doc.rating || 0,
-    discount: doc.discountPercent || 0,
-    finalPrice: doc.finalPrice || doc.price || 0,
+    discount: discountPercent,
+    finalPrice: finalPrice,
     _type: 'mensShoe',
     stock: doc.stock,
     inStock: doc.inStock
@@ -188,10 +232,21 @@ function normalizeWomensShoe(shoe) {
     imagesArray = [doc.thumbnail];
   }
   
+  // Calculate original price (MRP)
+  const finalPrice = doc.finalPrice || doc.price || 0;
+  const discountPercent = doc.discountPercent || 0;
+  let originalPrice = doc.originalPrice;
+  if (!originalPrice && discountPercent > 0 && finalPrice > 0) {
+    originalPrice = Math.round(finalPrice / (1 - discountPercent / 100));
+  } else if (!originalPrice) {
+    originalPrice = finalPrice;
+  }
+
   return {
     _id: doc._id,
     title: doc.title || '',
-    price: doc.finalPrice || doc.price || 0,
+    price: finalPrice,
+    originalPrice: originalPrice,
     description: doc.description || '',
     category: doc.category || "Women's Shoes",
     subCategory: doc.subCategory || '',
@@ -203,8 +258,8 @@ function normalizeWomensShoe(shoe) {
     },
     images: imagesArray,
     ratings: doc.rating || 0,
-    discount: doc.discountPercent || 0,
-    finalPrice: doc.finalPrice || doc.price || 0,
+    discount: discountPercent,
+    finalPrice: finalPrice,
     _type: 'womensShoe',
     stock: doc.stock,
     inStock: doc.inStock
