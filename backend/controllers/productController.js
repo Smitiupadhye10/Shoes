@@ -374,6 +374,10 @@ function buildAccessoryFilter(query) {
     conditions.push({ gender: { $regex: `^${String(query.gender)}$`, $options: 'i' } });
   }
   
+  if (query.brand) {
+    conditions.push({ brand: { $regex: `^${String(query.brand)}$`, $options: 'i' } });
+  }
+  
   return conditions.length > 0 ? { $and: conditions } : { category: { $regex: `^Accessories$`, $options: "i" } };
 }
 
@@ -407,6 +411,10 @@ function buildSkincareFilter(query) {
         { finalPrice: priceCond }
       ]});
     }
+  }
+  
+  if (query.brand) {
+    conditions.push({ brand: { $regex: `^${String(query.brand)}$`, $options: 'i' } });
   }
   
   return conditions.length > 0 ? { $and: conditions } : {};
@@ -497,6 +505,10 @@ function buildMensShoeFilter(query) {
     conditions.push({ 'product_info.color': { $regex: `^${String(query.color)}$`, $options: 'i' } });
   }
   
+  if (query.brand) {
+    conditions.push({ 'product_info.brand': { $regex: `^${String(query.brand)}$`, $options: 'i' } });
+  }
+  
   return conditions.length > 0 ? { $and: conditions } : { category: { $regex: `^Men's Shoes$`, $options: "i" } };
 }
 
@@ -544,6 +556,10 @@ function buildWomensShoeFilter(query) {
   
   if (query.color) {
     conditions.push({ 'product_info.color': { $regex: `^${String(query.color)}$`, $options: 'i' } });
+  }
+  
+  if (query.brand) {
+    conditions.push({ 'product_info.brand': { $regex: `^${String(query.brand)}$`, $options: 'i' } });
   }
   
   return conditions.length > 0 ? { $and: conditions } : { category: { $regex: `^Women's Shoes$`, $options: "i" } };
@@ -610,6 +626,27 @@ export const listProducts = async (req, res) => {
 
     if (query.color) {
       andConditions.push({ 'product_info.color': { $regex: `^${String(query.color)}$`, $options: 'i' } });
+    }
+
+    if (query.brand) {
+      andConditions.push({ 'product_info.brand': { $regex: `^${String(query.brand)}$`, $options: 'i' } });
+    }
+
+    if (query.frameShape) {
+      andConditions.push({ 'product_info.frameShape': { $regex: `^${String(query.frameShape)}$`, $options: 'i' } });
+    }
+
+    if (query.frameMaterial) {
+      andConditions.push({ 'product_info.frameMaterial': { $regex: `^${String(query.frameMaterial)}$`, $options: 'i' } });
+    }
+
+    if (query.frameColor) {
+      andConditions.push({ 'product_info.frameColor': { $regex: `^${String(query.frameColor)}$`, $options: 'i' } });
+    }
+
+    if (query.disposability || query.usageDuration) {
+      const disposabilityValue = query.disposability || query.usageDuration;
+      andConditions.push({ 'product_info.usageDuration': { $regex: `^${String(disposabilityValue)}$`, $options: 'i' } });
     }
 
     const mongoFilter = andConditions.length > 0 ? { $and: andConditions } : {};

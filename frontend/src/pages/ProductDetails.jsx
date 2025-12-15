@@ -188,20 +188,20 @@ const ProductDetails = () => {
 
   return (
     <div className="py-0 md:py-0 pt-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-6 transition-colors duration-200"
+          className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-4 sm:mb-6 transition-colors duration-200 text-sm sm:text-base"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           <span className="font-medium">Back</span>
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
           {/* Left Section - Image Carousel */}
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <div className="card-optic p-6">
+            <div className="card-optic p-4 sm:p-6">
               {/* Wishlist Heart Icon */}
               <div className="flex justify-end mb-4">
                 <button
@@ -307,18 +307,18 @@ const ProductDetails = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="space-y-3 mt-6">
+              <div className="space-y-3 mt-4 sm:mt-6">
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={handleAddToCart}
-                    className="btn-primary flex-1"
+                    className="btn-primary flex-1 text-sm sm:text-base"
                   >
-                    <ShoppingCart className="w-5 h-5" />
+                    <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                     Add to Cart
                   </button>
                   <button
                     onClick={handleBuyNow}
-                    className="btn-secondary flex-1"
+                    className="btn-secondary flex-1 text-sm sm:text-base"
                   >
                     Buy Now
                   </button>
@@ -348,18 +348,18 @@ const ProductDetails = () => {
           {/* Right Section - Product Info */}
           <div className="space-y-6">
             {/* Card 1: Title / Ratings / Price */}
-            <div className="card-optic p-6">
+            <div className="card-optic p-4 sm:p-6">
               <div className="mb-3">
-                <span className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-2" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                <span className="inline-block px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-2" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
                   {product.category}
                 </span>
                 {product.subCategory && (
-                  <span className="inline-block ml-2 px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                  <span className="inline-block ml-2 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     {product.subCategory}
                   </span>
                 )}
               </div>
-              <h1 className="text-optic-heading text-3xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+              <h1 className="text-optic-heading text-2xl sm:text-3xl font-bold mb-3 sm:mb-4" style={{ color: 'var(--text-primary)' }}>
                 {productTitle}
               </h1>
 
@@ -382,13 +382,13 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-4 mb-3 sm:mb-4">
                 <div>
-                  <div className="text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                  <div className="text-3xl sm:text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
                     {formatINR(discountedPrice)}
                   </div>
                   {originalPrice > discountedPrice && (
-                    <div className="text-lg line-through mt-1" style={{ color: 'var(--text-secondary)' }}>
+                    <div className="text-base sm:text-lg line-through mt-1" style={{ color: 'var(--text-secondary)' }}>
                       {formatINR(originalPrice)}
                     </div>
                   )}
@@ -403,18 +403,18 @@ const ProductDetails = () => {
 
             {/* Card 2: Description */}
             {product.description && (
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
-                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Description</h3>
+                <p className="text-sm sm:text-base text-gray-700 leading-relaxed">{product.description}</p>
               </div>
             )}
 
             {/* Card 3: Product Details */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h3>
+            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Product Details</h3>
               <div className="space-y-3">
                 {product.product_info?.brand && (
-                  <div className="flex justify-between py-2 border-b border-gray-100">
+                  <div className="flex justify-between py-2 border-b border-gray-100 text-sm sm:text-base">
                     <span className="text-gray-600">Brand</span>
                     <span className="font-medium text-gray-900">
                       {product.product_info.brand}
@@ -536,8 +536,8 @@ const ProductDetails = () => {
 
             {/* Power Options (if present) */}
             {product.product_info?.powerOptions && (
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-3">Select Power</h4>
+              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Select Power</h4>
                 <div className="flex flex-wrap gap-2">
                   {product.product_info.powerOptions.map((p, i) => (
                     <button
@@ -557,18 +557,18 @@ const ProductDetails = () => {
             )}
 
             {/* Quantity */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-3">Quantity</h4>
+            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+              <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Quantity</h4>
               <div className="flex items-center gap-4">
                 <div className="flex items-center border border-gray-300 rounded-lg">
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="px-4 py-2 hover:bg-gray-100 transition-colors"
+                    className="px-3 sm:px-4 py-2 hover:bg-gray-100 transition-colors text-sm sm:text-base"
                     aria-label="Decrease quantity"
                   >
                     -
                   </button>
-                  <div className="px-6 py-2 font-medium text-gray-900">{quantity}</div>
+                  <div className="px-4 sm:px-6 py-2 font-medium text-gray-900 text-sm sm:text-base">{quantity}</div>
                   <button
                     onClick={() => setQuantity((q) => q + 1)}
                     className="px-4 py-2 hover:bg-gray-100 transition-colors"
@@ -581,25 +581,25 @@ const ProductDetails = () => {
             </div>
 
             {/* Static Info Card */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 border border-blue-100">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-xs">✓</span>
                   </div>
-                  <span className="text-gray-800 font-medium">7 Days Returns</span>
+                  <span className="text-gray-800 font-medium text-sm sm:text-base">7 Days Returns</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-xs">↻</span>
                   </div>
-                  <span className="text-gray-800 font-medium">Exchange at 850+ stores</span>
+                  <span className="text-gray-800 font-medium text-sm sm:text-base">Exchange at 850+ stores</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-xs">🛡</span>
                   </div>
-                  <span className="text-gray-800 font-medium">
+                  <span className="text-gray-800 font-medium text-sm sm:text-base">
                     Warranty: {product.product_info?.warranty || "As per product"}
                   </span>
                 </div>

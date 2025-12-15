@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     lowercase: true, 
     trim: true 
   },
-  password: { type: String, required: true },
+  password: { type: String, required: true, select: false },
   phone: { type: String },
   dateOfBirth: { type: Date },
   gender: { 

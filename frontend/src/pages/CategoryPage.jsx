@@ -26,7 +26,17 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const [error, setError] = useState(null);
   const [visible, setVisible] = useState(false);
   const [sort, setSort] = useState(searchParams.get("sort") || "relevance");
-  const [expanded, setExpanded] = useState({ price: true, gender: true, color: true });
+  const [expanded, setExpanded] = useState({ 
+    price: true, 
+    gender: true, 
+    color: true, 
+    brand: false, 
+    frameShape: false, 
+    frameMaterial: false, 
+    frameColor: false, 
+    disposability: false,
+    subCategory: false 
+  });
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const page = parseInt(searchParams.get("page") || "1", 10);
@@ -37,6 +47,9 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const isAccessories = useMemo(() => /^accessories$/i.test(category || ""), [category]);
   const isSkincare = useMemo(() => /^skincare$/i.test(category || ""), [category]);
   const isBags = useMemo(() => /^bags$/i.test(category || ""), [category]);
+  const isMensShoes = useMemo(() => /men'?s\s+shoes/i.test(category || ""), [category]);
+  const isWomensShoes = useMemo(() => /women'?s\s+shoes/i.test(category || ""), [category]);
+  const isGlasses = useMemo(() => /^(eyeglasses|sunglasses|computer\s+glasses)$/i.test(category || ""), [category]);
   
   // Track previous category to detect category changes
   const prevCategoryRef = useRef(categoryParam);
@@ -124,7 +137,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
 
   const clearAll = () => {
     const params = new URLSearchParams(searchParams);
-    ["priceRange", "gender", "color", "subCategory"].forEach((k) => params.delete(k));
+    ["priceRange", "gender", "color", "subCategory", "brand", "frameShape", "frameMaterial", "frameColor", "disposability"].forEach((k) => params.delete(k));
     params.set("page", "1");
     // Keep products visible when clearing filters - don't trigger loading state
     setSearchParams(params, { replace: true });
@@ -141,6 +154,11 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const activeGender = searchParams.get("gender") || "";
   const activeColor = searchParams.get("color") || "";
   const activeSubCategory = searchParams.get("subCategory") || "";
+  const activeBrand = searchParams.get("brand") || "";
+  const activeFrameShape = searchParams.get("frameShape") || "";
+  const activeFrameMaterial = searchParams.get("frameMaterial") || "";
+  const activeFrameColor = searchParams.get("frameColor") || "";
+  const activeDisposability = searchParams.get("disposability") || "";
 
   const goToPage = (p) => {
     if (p < 1 || p > (pagination.totalPages || 1)) return;
@@ -208,6 +226,10 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     
     // Accessories subcategories
     const accessoriesSubcategories = ["Necklace", "Bracelets", "Tie", "Anklets", "Earings", "Belts", "Scarfs"];
+    const skincareSubcategories = ["Moisturizer", "Serum", "Cleanser", "Facewash", "Sunscreen"];
+    const bagsSubcategories = ["Handbag", "Sling Bag", "Tote Bag", "Duffle Bag", "Wallet", "Laptop Bag", "Travel Bag", "Clutch", "Shoulder Bag"];
+    const mensShoesSubcategories = ["Formal", "Sneakers", "Boots"];
+    const womensShoesSubcategories = ["Heels", "Flats", "Sneakers", "Boots", "Sandals"];
     const activeSubCategory = searchParams.get("subCategory") || "";
 
     const Section = ({ title, id, children }) => (
@@ -231,7 +253,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           <h3 className="text-xl font-bold" style={{ color: 'var(--accent-yellow)' }}>
             Filters
           </h3>
-          {(activePrice || activeGender || activeColor || activeSubCategory) && (
+          {(activePrice || activeGender || activeColor || activeSubCategory || activeBrand || activeFrameShape || activeFrameMaterial || activeFrameColor || activeDisposability) && (
             <button 
               onClick={clearAll} 
               className="text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:underline transition-colors duration-200"
@@ -279,7 +301,8 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           </div>
         </Section>
 
-        {!isContactLenses && !isAccessories && (
+        {/* Gender filter - only for Glasses (Eyeglasses, Sunglasses, Computer Glasses) */}
+        {isGlasses && (
           <Section title="Gender" id="gender">
             <div className="flex flex-col gap-2.5">
               {GENDERS.map((g) => {
@@ -361,17 +384,101 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
         )}
         
         {isBags && (
-          <Section title="Gender" id="gender">
+          <>
+            <Section title="Gender" id="gender">
+              <div className="flex flex-col gap-2.5">
+                {["Men", "Women", "Unisex"].map((g) => {
+                  const count = genderCounts[g.toUpperCase()] || 0;
+                  const disabled = count === 0;
+                  return (
+                    <button
+                      key={g}
+                      onClick={() => !disabled && setParam("gender", activeGender === g ? null : g)}
+                      className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
+                        activeGender === g 
+                          ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                          : disabled 
+                            ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
+                            : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                      }`}
+                      disabled={disabled}
+                    >
+                      <span className="font-medium">{g}</span>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                        activeGender === g ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                      }`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+                {activeGender && (
+                  <button 
+                    onClick={() => setParam("gender", null)} 
+                    className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
+                  >
+                    Clear gender
+                  </button>
+                )}
+              </div>
+            </Section>
+            
+            {/* Bags SubCategory Filter */}
+            <Section title="Bag Type" id="subCategory">
+              <div className="flex flex-col gap-2.5">
+                {bagsSubcategories.map((subCat) => {
+                  const count = subCategoryCounts[subCat.toUpperCase()] || 0;
+                  const disabled = count === 0;
+                  const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
+                  return (
+                    <button
+                      key={subCat}
+                      onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
+                      className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
+                        isActive 
+                          ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                          : disabled 
+                            ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
+                            : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                      }`}
+                      disabled={disabled}
+                    >
+                      <span className="font-medium">{subCat}</span>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                        isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                      }`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+                {activeSubCategory && (
+                  <button 
+                    onClick={() => setParam("subCategory", null)} 
+                    className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
+                  >
+                    Clear type
+                  </button>
+                )}
+              </div>
+            </Section>
+          </>
+        )}
+
+        {/* Skincare SubCategory Filter */}
+        {isSkincare && (
+          <Section title="Product Type" id="subCategory">
             <div className="flex flex-col gap-2.5">
-              {["Men", "Women", "Unisex"].map((g) => {
-                const count = genderCounts[g.toUpperCase()] || 0;
+              {skincareSubcategories.map((subCat) => {
+                const count = subCategoryCounts[subCat.toUpperCase()] || 0;
                 const disabled = count === 0;
+                const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
                 return (
                   <button
-                    key={g}
-                    onClick={() => !disabled && setParam("gender", activeGender === g ? null : g)}
+                    key={subCat}
+                    onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
                     className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                      activeGender === g 
+                      isActive 
                         ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
                         : disabled 
                           ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
@@ -379,21 +486,105 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                     }`}
                     disabled={disabled}
                   >
-                    <span className="font-medium">{g}</span>
+                    <span className="font-medium">{subCat}</span>
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      activeGender === g ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
                     }`}>
                       {count}
                     </span>
                   </button>
                 );
               })}
-              {activeGender && (
+              {activeSubCategory && (
                 <button 
-                  onClick={() => setParam("gender", null)} 
+                  onClick={() => setParam("subCategory", null)} 
                   className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
                 >
-                  Clear gender
+                  Clear type
+                </button>
+              )}
+            </div>
+          </Section>
+        )}
+
+        {/* Men's Shoes SubCategory Filter */}
+        {isMensShoes && (
+          <Section title="Shoe Type" id="subCategory">
+            <div className="flex flex-col gap-2.5">
+              {mensShoesSubcategories.map((subCat) => {
+                const count = subCategoryCounts[subCat.toUpperCase()] || 0;
+                const disabled = count === 0;
+                const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
+                return (
+                  <button
+                    key={subCat}
+                    onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
+                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
+                      isActive 
+                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                        : disabled 
+                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
+                          : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                    }`}
+                    disabled={disabled}
+                  >
+                    <span className="font-medium">{subCat}</span>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                    }`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+              {activeSubCategory && (
+                <button 
+                  onClick={() => setParam("subCategory", null)} 
+                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
+                >
+                  Clear type
+                </button>
+              )}
+            </div>
+          </Section>
+        )}
+
+        {/* Women's Shoes SubCategory Filter */}
+        {isWomensShoes && (
+          <Section title="Shoe Type" id="subCategory">
+            <div className="flex flex-col gap-2.5">
+              {womensShoesSubcategories.map((subCat) => {
+                const count = subCategoryCounts[subCat.toUpperCase()] || 0;
+                const disabled = count === 0;
+                const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
+                return (
+                  <button
+                    key={subCat}
+                    onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
+                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
+                      isActive 
+                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                        : disabled 
+                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
+                          : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                    }`}
+                    disabled={disabled}
+                  >
+                    <span className="font-medium">{subCat}</span>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                    }`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+              {activeSubCategory && (
+                <button 
+                  onClick={() => setParam("subCategory", null)} 
+                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
+                >
+                  Clear type
                 </button>
               )}
             </div>
@@ -474,6 +665,11 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     if (activeGender) chips.push({ k: 'gender', label: activeGender });
     if (activeColor) chips.push({ k: 'color', label: activeColor });
     if (activeSubCategory) chips.push({ k: 'subCategory', label: activeSubCategory.charAt(0).toUpperCase() + activeSubCategory.slice(1) });
+    if (activeBrand) chips.push({ k: 'brand', label: activeBrand });
+    if (activeFrameShape) chips.push({ k: 'frameShape', label: activeFrameShape });
+    if (activeFrameMaterial) chips.push({ k: 'frameMaterial', label: activeFrameMaterial });
+    if (activeFrameColor) chips.push({ k: 'frameColor', label: activeFrameColor });
+    if (activeDisposability) chips.push({ k: 'disposability', label: activeDisposability });
     if (chips.length === 0) return null;
     return (
       <div className="flex flex-wrap items-center gap-3 mb-6">
@@ -679,7 +875,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
             <span>Filters</span>
             {filtersOpen && <X className="w-4 h-4" />}
           </button>
-          {(activePrice || activeGender || activeColor) && (
+          {(activePrice || activeGender || activeColor || activeSubCategory || activeBrand || activeFrameShape || activeFrameMaterial || activeFrameColor || activeDisposability) && (
             <button
               onClick={clearAll}
               className="text-sm font-medium px-3 py-2 rounded-lg border transition-colors"

@@ -4,38 +4,12 @@ import { CartContext } from '../context/CartContext';
 import { useUser } from '../context/UserContext';
 import api from '../api/axios';
 
-// Payment method icons
-const PAYMENT_METHODS = {
-  CARD: {
-    id: 'card',
-    name: 'Credit/Debit Card',
-    icon: '💳',
-    description: 'Pay securely with your credit or debit card'
-  },
-  NETBANKING: {
-    id: 'netbanking',
-    name: 'Net Banking',
-    icon: '🏦',
-    description: 'Pay using your bank account'
-  },
-  UPI: {
-    id: 'upi',
-    name: 'UPI / QR Code',
-    icon: '📱',
-    description: 'Pay using any UPI app (Google Pay, PhonePe, Paytm, etc.)'
-  },
-  WALLET: {
-    id: 'wallet',
-    name: 'Mobile Wallet',
-    icon: '👝',
-    description: 'Pay using Paytm, PhonePe, Amazon Pay etc.'
-  },
-  EMI: {
-    id: 'emi',
-    name: 'EMI',
-    icon: '📅',
-    description: 'Pay in easy monthly installments'
-  }
+// Payment method - Cash on Delivery only
+const PAYMENT_METHOD = {
+  id: 'cod',
+  name: 'Cash on Delivery',
+  icon: '💵',
+  description: 'Pay with cash when your order is delivered'
 };
 
 const CheckoutPage = () => {
@@ -44,12 +18,6 @@ const CheckoutPage = () => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [step, setStep] = useState(1); // 1: Address, 2: Payment Method
-  const [paymentMethod, setPaymentMethod] = useState(null);
-  const [qrCode, setQrCode] = useState(null);
-  const [upiId, setUpiId] = useState(null);
-  const [checkingPayment, setCheckingPayment] = useState(false);
-  const [orderId, setOrderId] = useState(null);
 
   const [address, setAddress] = useState({
     name: '',
@@ -75,207 +43,34 @@ const CheckoutPage = () => {
     }));
   };
 
-  const loadRazorpay = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  const handleAddressSubmit = (e) => {
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
-    
+    setLoading(true);
+    setError(null);
+
     // Validate form
     const requiredFields = ['name', 'address', 'city', 'state', 'zipCode', 'phone'];
     const missingFields = requiredFields.filter(field => !address[field]);
     if (missingFields.length > 0) {
       setError('Please fill all address fields');
+      setLoading(false);
       return;
     }
 
-    // Move to payment method selection
-    setError(null);
-    setStep(2);
-  };
-
-  const handleUPIPayment = async () => {
-    setLoading(true);
-    setError(null);
-
     try {
-      const response = await api.post('/payment/create-upi-qrcode', {
-        amount: total,
-        shippingAddress: address
-      });
-      const data = response.data;
-      if (response.status !== 200) throw new Error(data.message || 'Request failed');
-
-      setQrCode(data.qrDataUrl);
-      setUpiId(data.upiLink);
-      setOrderId(data.orderId);
-      
-      // Start polling for payment status
-      startPaymentStatusCheck(data.orderId);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
-  const startPaymentStatusCheck = (orderId) => {
-    setCheckingPayment(true);
-    const checkInterval = setInterval(async () => {
-      try {
-        const response = await api.post('/payment/confirm-upi-payment', {
-          orderId
-        });
-
-        const data = response.data;
-        if (response.ok && data.success) {
-          clearInterval(checkInterval);
-          setCheckingPayment(false);
-          clearCart();
-          navigate('/orders');
-        }
-      } catch (err) {
-        console.error('Error checking payment status:', err);
-      }
-    }, 5000); // Check every 5 seconds
-
-    // Cleanup interval after 5 minutes
-    setTimeout(() => {
-      clearInterval(checkInterval);
-      setCheckingPayment(false);
-      setError('Payment verification timeout. Please check your order status.');
-    }, 300000);
-  };
-
-  const handlePayment = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Handle UPI QR code payment separately
-      if (paymentMethod === 'upi') {
-        await handleUPIPayment();
-        return;
-      }
-
-      // Load Razorpay SDK
-      const res = await loadRazorpay();
-      if (!res) {
-        setError('Razorpay SDK failed to load');
-        return;
-      }
-
-      // Create order
+      // Create order with Cash on Delivery
       const response = await api.post('/payment/create-order', {
         amount: total,
         shippingAddress: address,
-        paymentMethod
+        paymentMethod: 'cod'
       });
 
       const data = response.data;
-      if (response.status !== 200) throw new Error(data.message || 'Request failed');
+      if (response.status !== 200) throw new Error(data.message || 'Order creation failed');
 
-      // Configure Razorpay options
-      const options = {
-        key: data.keyId,
-        amount: data.amount,
-        currency: data.currency,
-        name: 'LensLogic',
-        image: 'https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762174634/20251103_182346_rujtql.png',
-        description: 'Purchase from LensLogic',
-        order_id: data.razorpayOrderId,
-        prefill: {
-          name: user.name,
-          email: user.email,
-          contact: address.phone
-        },
-        config: {
-          display: {
-            blocks: {
-              banks: {
-                name: "Popular Banks",
-                instruments: [
-                  {
-                    method: "netbanking",
-                    banks: ["HDFC", "ICIC", "SBIN", "UTIB", "AXIS"]
-                  }
-                ]
-              },
-              wallets: {
-                name: "Mobile Wallets",
-                instruments: [
-                  {
-                    method: "wallet",
-                    wallets: ["paytm", "phonepe", "amazonpay", "freecharge", "mobikwik"]
-                  }
-                ]
-              },
-              upi: {
-                name: "UPI",
-                instruments: [
-                  {
-                    method: "upi"
-                  }
-                ]
-              },
-              cards: {
-                name: "Credit/Debit Cards",
-                instruments: [
-                  {
-                    method: "card"
-                  }
-                ]
-              },
-              emi: {
-                name: "EMI Options",
-                instruments: [
-                  {
-                    method: "emi"
-                  }
-                ]
-              }
-            },
-            sequence: ["block.banks", "block.wallets", "block.upi", "block.cards", "block.emi"],
-            preferences: {
-              show_default_blocks: true
-            }
-          }
-        },
-        handler: async function(response) {
-          try {
-            // Verify payment
-            const verifyRes = await api.post('/payment/verify-payment', {
-              orderId: data.orderId,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature
-            });
-
-            const verifyData = verifyRes.data;
-            if (verifyRes.status !== 200) throw new Error(verifyData.message || 'Verification failed');
-
-            // Clear cart and navigate to orders
-            clearCart();
-            navigate('/orders');
-          } catch (err) {
-            setError('Payment verification failed: ' + err.message);
-          }
-        },
-        theme: {
-          color: '#FBBF24' // yellow-400 (accent-yellow)
-        }
-      };
-
-      // Open Razorpay payment form
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-
+      // Clear cart and navigate to orders
+      clearCart();
+      navigate('/orders');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -298,41 +93,8 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen pt-8 pb-12 md:pt-12" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Progress Steps */}
-        <div className="mb-6 sm:mb-8 md:mb-10">
-          <div className="flex items-center justify-center space-x-2 sm:space-x-3 md:space-x-4">
-            <div className={`flex items-center ${step >= 1 ? '' : ''}`} style={{ color: step >= 1 ? 'var(--accent-yellow)' : 'var(--text-secondary)' }}>
-              <span 
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 font-bold transition-all duration-200 text-sm sm:text-base ${
-                  step >= 1 ? 'text-black shadow-lg' : ''
-                }`}
-                style={{
-                  borderColor: step >= 1 ? 'var(--accent-yellow)' : 'var(--border-color)',
-                  backgroundColor: step >= 1 ? 'var(--accent-yellow)' : 'var(--bg-secondary)'
-                }}
-              >1</span>
-              <span className="ml-2 sm:ml-3 font-semibold text-sm sm:text-base md:text-lg hidden sm:inline">Shipping</span>
-            </div>
-            <div 
-              className="w-16 sm:w-24 md:w-32 h-1 rounded-full transition-all duration-300" 
-              style={{ backgroundColor: step >= 2 ? 'var(--accent-yellow)' : 'var(--border-color)' }}
-            />
-            <div className={`flex items-center ${step >= 2 ? '' : ''}`} style={{ color: step >= 2 ? 'var(--accent-yellow)' : 'var(--text-secondary)' }}>
-              <span 
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 font-bold transition-all duration-200 text-sm sm:text-base ${
-                  step >= 2 ? 'text-black shadow-lg' : ''
-                }`}
-                style={{
-                  borderColor: step >= 2 ? 'var(--accent-yellow)' : 'var(--border-color)',
-                  backgroundColor: step >= 2 ? 'var(--accent-yellow)' : 'var(--bg-secondary)'
-                }}
-              >2</span>
-              <span className="ml-2 sm:ml-3 font-semibold text-sm sm:text-base md:text-lg hidden sm:inline">Payment</span>
-            </div>
-          </div>
-        </div>
 
         {error && (
           <div className="mb-6 p-4 border-2 border-red-500 rounded-xl shadow-md flex items-center gap-3" style={{ 
@@ -349,15 +111,32 @@ const CheckoutPage = () => {
         <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
         {/* Left Side: Form/Payment UI */}
         <div className="card-optic p-4 sm:p-6 md:p-8 rounded-2xl order-2 lg:order-1">
-          {step === 1 ? (
-            <>
-              <div className="mb-4 sm:mb-6">
-                <h2 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'var(--accent-yellow)' }}>
-                  Shipping Address
-                </h2>
-                <p className="text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>Please provide your delivery details</p>
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'var(--accent-yellow)' }}>
+              Shipping Address
+            </h2>
+            <p className="text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>Please provide your delivery details</p>
+          </div>
+
+          {/* Payment Method Info */}
+          <div className="mb-6 p-4 rounded-xl border-2" style={{ 
+            backgroundColor: 'var(--bg-secondary)',
+            borderColor: 'var(--accent-yellow)'
+          }}>
+            <div className="flex items-center space-x-3">
+              <span className="text-2xl sm:text-3xl">{PAYMENT_METHOD.icon}</span>
+              <div>
+                <h3 className="font-bold text-base sm:text-lg" style={{ color: 'var(--text-primary)' }}>
+                  {PAYMENT_METHOD.name}
+                </h3>
+                <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+                  {PAYMENT_METHOD.description}
+                </p>
               </div>
-              <form onSubmit={handleAddressSubmit} className="space-y-4 sm:space-y-5">
+            </div>
+          </div>
+
+          <form onSubmit={handlePlaceOrder} className="space-y-4 sm:space-y-5">
             <div>
               <label className="block text-xs sm:text-sm font-semibold mb-1 sm:mb-2" style={{ color: 'var(--text-primary)' }}>Full Name</label>
               <input
@@ -539,159 +318,21 @@ const CheckoutPage = () => {
 
             <button
               type="submit"
-              className="btn-primary w-full py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] mt-4 sm:mt-6"
+              disabled={loading}
+              className={`btn-primary w-full py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] mt-4 sm:mt-6 ${
+                loading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
-              Continue to Payment →
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white"></div>
+                  <span className="text-sm sm:text-base">Placing Order...</span>
+                </span>
+              ) : (
+                `Place Order (₹${total.toLocaleString()})`
+              )}
             </button>
           </form>
-        </>) : (
-          <>
-            <div className="mb-4 sm:mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'var(--accent-yellow)' }}>
-                Choose Payment Method
-              </h2>
-              <p className="text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>Select your preferred payment option</p>
-            </div>
-            <div className="space-y-3 sm:space-y-4">
-              {Object.values(PAYMENT_METHODS).map((method) => (
-                <button
-                  key={method.id}
-                  onClick={() => setPaymentMethod(method.id)}
-                  className="w-full p-3 sm:p-4 md:p-5 rounded-xl border-2 transition-all duration-200 text-left transform hover:scale-[1.01] sm:hover:scale-[1.02]"
-                  style={{
-                    borderColor: paymentMethod === method.id ? 'var(--accent-yellow)' : 'var(--border-color)',
-                    backgroundColor: paymentMethod === method.id ? 'var(--bg-secondary)' : 'var(--bg-primary)',
-                    boxShadow: paymentMethod === method.id ? '0 4px 6px rgba(0, 0, 0, 0.1)' : 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (paymentMethod !== method.id) {
-                      e.currentTarget.style.borderColor = 'var(--accent-yellow)';
-                      e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.05)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (paymentMethod !== method.id) {
-                      e.currentTarget.style.borderColor = 'var(--border-color)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }
-                  }}
-                >
-                  <div className="flex items-center space-x-3 sm:space-x-4">
-                    <span className="text-2xl sm:text-3xl">{method.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-base sm:text-lg truncate" style={{ color: 'var(--text-primary)' }}>{method.name}</h3>
-                      <p className="text-xs sm:text-sm mt-1 line-clamp-2" style={{ color: 'var(--text-secondary)' }}>{method.description}</p>
-                    </div>
-                    {paymentMethod === method.id && (
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--accent-yellow)' }}>
-                        <svg className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: 'var(--text-primary)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                </button>
-              ))}
-
-              {qrCode && paymentMethod === 'upi' && (
-                <div className="mt-4 sm:mt-6 p-4 sm:p-6 md:p-8 border-2 rounded-xl text-center shadow-lg" style={{ 
-                  borderColor: 'var(--accent-yellow)',
-                  backgroundColor: 'var(--bg-secondary)'
-                }}>
-                  <h3 className="text-lg sm:text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Pay via UPI</h3>
-                  <p className="text-xs sm:text-sm mb-4 sm:mb-6" style={{ color: 'var(--text-secondary)' }}>
-                    Scan the QR code or use the UPI ID below
-                  </p>
-                  
-                  {/* QR Code */}
-                  <div className="p-2 sm:p-4 rounded-lg inline-block shadow-md mb-4 sm:mb-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                    <img src={qrCode} alt="UPI QR Code" className="mx-auto w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64" />
-                  </div>
-                  
-                  {/* UPI ID Display */}
-                  {upiId && (
-                    <div className="p-3 sm:p-4 rounded-lg shadow-md mb-4 sm:mb-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                      <p className="text-xs sm:text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Or Pay Directly Using UPI ID:</p>
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 sm:gap-3">
-                        <code className="text-sm sm:text-base md:text-lg font-bold px-3 sm:px-4 py-2 rounded-lg break-all sm:break-normal" style={{ 
-                          color: 'var(--accent-yellow)',
-                          backgroundColor: 'var(--bg-primary)'
-                        }}>
-                          {upiId}
-                        </code>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(upiId);
-                            alert('UPI ID copied to clipboard!');
-                          }}
-                          className="btn-primary px-4 py-2 rounded-lg transition-colors text-xs sm:text-sm font-medium whitespace-nowrap"
-                        >
-                          Copy
-                        </button>
-                      </div>
-                      <p className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>
-                        Paste this UPI ID in your payment app
-                      </p>
-                    </div>
-                  )}
-                  
-                  {/* Payment Instructions */}
-                  <div className="rounded-lg p-3 sm:p-4 text-left border-2" style={{ 
-                    backgroundColor: 'var(--bg-primary)',
-                    borderColor: 'var(--accent-yellow)'
-                  }}>
-                    <p className="text-xs sm:text-sm font-semibold mb-2" style={{ color: 'var(--accent-yellow)' }}>Payment Instructions:</p>
-                    <ol className="text-xs space-y-1 list-decimal list-inside" style={{ color: 'var(--text-primary)' }}>
-                      <li>Open any UPI app (Google Pay, PhonePe, Paytm, etc.)</li>
-                      <li>Scan the QR code or enter the UPI ID manually</li>
-                      <li>Enter the amount: ₹{total}</li>
-                      <li>Complete the payment</li>
-                    </ol>
-                  </div>
-                  
-                  {checkingPayment && (
-                    <div className="mt-4 sm:mt-6">
-                      <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 mx-auto" style={{ borderColor: 'var(--accent-yellow)' }}></div>
-                      <p className="mt-2 sm:mt-3 text-xs sm:text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Verifying payment...</p>
-                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>Please wait while we confirm your payment</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-4">
-                <button
-                  onClick={() => setStep(1)}
-                  className="flex items-center justify-center gap-2 font-semibold transition-colors duration-200 py-2 sm:py-0"
-                  style={{ color: 'var(--accent-yellow)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-                >
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                  </svg>
-                  <span className="text-sm sm:text-base">Back to Shipping</span>
-                </button>
-                <button
-                  onClick={handlePayment}
-                  disabled={!paymentMethod || loading}
-                  className={`btn-primary px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.01] sm:hover:scale-[1.02] w-full sm:w-auto ${
-                    (!paymentMethod || loading) ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white"></div>
-                      <span className="text-sm sm:text-base">Processing...</span>
-                    </span>
-                  ) : (
-                    'Pay ₹' + total.toLocaleString()
-                  )}
-                </button>
-              </div>
-            </div>
-          </>
-        )}
         </div>
 
         {/* Right: Order Summary */}
@@ -755,19 +396,17 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          {/* Secure Payment Notice */}
+          {/* Cash on Delivery Notice */}
           <div className="p-3 sm:p-4 rounded-lg text-xs sm:text-sm border-2" style={{ 
             backgroundColor: 'var(--bg-secondary)',
-            borderColor: 'var(--border-color)',
+            borderColor: 'var(--accent-yellow)',
             color: 'var(--text-secondary)'
           }}>
             <div className="flex items-center gap-2 mb-1 sm:mb-2">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>Secure Checkout</span>
+              <span className="text-lg">💵</span>
+              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>Cash on Delivery</span>
             </div>
-            <p className="leading-relaxed">Your payment information is encrypted and secure. We never store your card details.</p>
+            <p className="leading-relaxed">Pay with cash when your order is delivered. No online payment required.</p>
           </div>
         </div>
         </div>

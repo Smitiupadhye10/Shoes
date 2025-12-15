@@ -5,6 +5,10 @@ import Home from "../pages/Home.jsx";
 import About from "../pages/About.jsx";
 import Shop from "../pages/Shop.jsx";
 import Cart from "../pages/Cart.jsx";
+import PrivacyPolicy from "../pages/PrivacyPolicy.jsx";
+import TermsOfService from "../pages/TermsOfService.jsx";
+import ShippingPolicy from "../pages/ShippingPolicy.jsx";
+import ReturnPolicy from "../pages/ReturnPolicy.jsx";
 import Wishlist from "../pages/Wishlist.jsx";
 import ProductDetail from "../pages/ProductDetails.jsx";
 import Signup from "../pages/Signup.jsx";
@@ -56,6 +60,10 @@ const router = () =>
           <Route path="/shop" element={<ShopWithCart />} />
           <Route path="/product/:id" element={<ProductDetailWithCart />} />
           <Route path="/category/:category" element={<CategoryPageWithCart />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          <Route path="/return-policy" element={<ReturnPolicy />} />
         </Route>
 
         {/* Auth pages (public) */}

@@ -276,15 +276,15 @@ const AdminProducts = () => {
                 >
                   <img
                     src={
-                      Array.isArray(product.images) && product.images.length > 0
+                      Array.isArray(product.images)
                         ? product.images[0]
-                        : product.images?.image1 || product.thumbnail || "/placeholder.jpg"
+                        : product.images?.image1 || "/placeholder.jpg"
                     }
-                    alt={product.title || product.name || product.productName || "Product"}
+                    alt={product.title}
                     className="w-full h-40 object-contain mb-4 rounded-lg"
                     style={{ backgroundColor: 'var(--bg-secondary)' }}
                   />
-                  <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>{product.title || product.name || product.productName || "Untitled Product"}</h3>
+                  <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>{product.title}</h3>
                   <p className="text-xl font-bold mb-1" style={{ color: 'var(--accent-yellow)' }}>₹{product.price}</p>
                   <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>{product.category}</p>
 

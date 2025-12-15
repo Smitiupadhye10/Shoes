@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import api from '../api/axios';
 import { Package, Calendar, MapPin, Phone, Filter, Search, ArrowRight, Truck, CheckCircle, Clock, XCircle, RefreshCw, Eye } from 'lucide-react';
@@ -133,15 +134,15 @@ const MyOrders = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="container-optic pt-0 pb-8">
+      <div className="container-optic pt-0 pb-8 px-4 sm:px-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-optic-heading text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>My Orders</h1>
-          <p className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Track and manage your orders</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-optic-heading text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>My Orders</h1>
+          <p className="text-optic-body text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>Track and manage your orders</p>
         </div>
 
         {/* Filters and Search */}
-        <div className="card-optic p-6 mb-8">
+        <div className="card-optic p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -183,7 +184,7 @@ const MyOrders = () => {
           </div>
           
           {/* Order Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-4 sm:mt-6">
             <div className="text-center">
               <p className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{orders.length}</p>
               <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Total Orders</p>
@@ -223,8 +224,8 @@ const MyOrders = () => {
             filteredOrders.map((order) => (
               <div key={order._id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition">
                 {/* Order Header */}
-                <div className="p-6 border-b border-gray-100">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="p-4 sm:p-6 border-b border-gray-100">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
                         <Package className="w-6 h-6 text-sky-600" />
@@ -249,11 +250,11 @@ const MyOrders = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-gray-900">₹{order.totalAmount}</p>
+                    <div className="text-left md:text-right">
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900">₹{order.totalAmount}</p>
                       <button
                         onClick={() => toggleOrderExpansion(order._id)}
-                        className="mt-2 flex items-center gap-1 text-sky-600 hover:text-sky-700 font-medium text-sm transition"
+                        className="mt-2 flex items-center gap-1 text-sky-600 hover:text-sky-700 font-medium text-xs sm:text-sm transition"
                       >
                         {expandedOrder === order._id ? 'Hide Details' : 'View Details'}
                         <ArrowRight className={`w-4 h-4 transition-transform ${expandedOrder === order._id ? 'rotate-90' : ''}`} />
@@ -280,23 +281,23 @@ const MyOrders = () => {
                 {expandedOrder === order._id && (
                   <div className="border-t border-gray-100">
                     {/* Order Items */}
-                    <div className="p-6">
-                      <h4 className="font-semibold text-gray-900 mb-4">Order Items</h4>
-                      <div className="space-y-4">
+                    <div className="p-4 sm:p-6">
+                      <h4 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Order Items</h4>
+                      <div className="space-y-3 sm:space-y-4">
                         {order.items?.map((item) => (
-                          <div key={item._id} className="flex gap-4 p-4 bg-gray-50 rounded-lg">
+                          <div key={item._id} className="flex gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg">
                             <img
                               src={item.product?.images?.[0] || '/placeholder.jpg'}
                               alt={item.product?.title}
-                              className="w-20 h-20 object-contain bg-white rounded-lg p-2 border"
+                              className="w-16 h-16 sm:w-20 sm:h-20 object-contain bg-white rounded-lg p-2 border flex-shrink-0"
                             />
-                            <div className="flex-1">
-                              <h5 className="font-medium text-gray-900">{item.product?.title}</h5>
-                              <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                            <div className="flex-1 min-w-0">
+                              <h5 className="font-medium text-gray-900 text-sm sm:text-base truncate">{item.product?.title}</h5>
+                              <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-xs sm:text-sm text-gray-600">
                                 <span>Qty: {item.quantity}</span>
                                 <span>₹{item.price} each</span>
                               </div>
-                              <p className="text-sm font-semibold text-sky-600 mt-1">
+                              <p className="text-xs sm:text-sm font-semibold text-sky-600 mt-1">
                                 ₹{item.quantity * item.price}
                               </p>
                             </div>
@@ -306,9 +307,9 @@ const MyOrders = () => {
                     </div>
 
                     {/* Shipping Address */}
-                    <div className="p-6 border-t border-gray-100 bg-gray-50">
-                      <h4 className="font-semibold text-gray-900 mb-4">Shipping Address</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-4 sm:p-6 border-t border-gray-100 bg-gray-50">
+                      <h4 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Shipping Address</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-gray-400" />

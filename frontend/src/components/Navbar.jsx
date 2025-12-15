@@ -387,7 +387,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                           onClick={() => {
                             setMenuOpen(false);
                             setAccessoriesOpen(false);
-                            setSkincareOpen(false);
+        setSkincareOpen(false);
                             setMensShoesOpen(false);
                           }}
                           className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"

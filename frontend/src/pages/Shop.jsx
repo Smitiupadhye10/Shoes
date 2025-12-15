@@ -71,12 +71,12 @@ const Shop = ({ addToCart, addToWishlist }) => {
     for (let i = start; i <= end; i++) pages.push(i);
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2">
         {pages.map((p) => (
           <button
             key={p}
             onClick={() => goToPage(p)}
-            className={`w-10 h-10 rounded-full font-medium transition-all ${
+            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full font-medium transition-all text-sm sm:text-base ${
               p === current
                 ? "scale-110"
                 : "hover:scale-105"
@@ -119,8 +119,8 @@ const Shop = ({ addToCart, addToWishlist }) => {
   return (
     <section>
       <div style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="container-optic pt-0 pb-8">
-          <h1 className="text-optic-heading text-3xl md:text-4xl lg:text-5xl mb-16 text-center" style={{ color: 'var(--text-primary)' }}>
+        <div className="container-optic pt-0 pb-6 sm:pb-8 px-4 sm:px-6">
+          <h1 className="text-optic-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-8 sm:mb-12 md:mb-16 text-center" style={{ color: 'var(--text-primary)' }}>
             {category ? category : 'All Products'}
           </h1>
 
@@ -134,7 +134,7 @@ const Shop = ({ addToCart, addToWishlist }) => {
         ) : (
           <>
             {/* Product Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12 md:mb-16">
               {products.map((product) => (
                 <ProductCard
                   key={product._id}
@@ -147,12 +147,12 @@ const Shop = ({ addToCart, addToWishlist }) => {
 
             {/* Pagination */}
             {pagination.totalPages > 1 && (
-              <div className="flex justify-center">
-                <div className="flex items-center gap-4">
+              <div className="flex justify-center px-4">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 justify-center">
                   <button
                     onClick={() => goToPage(pagination.currentPage - 1)}
                     disabled={pagination.currentPage <= 1}
-                    className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                    className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-medium transition-all text-sm sm:text-base ${
                       pagination.currentPage <= 1
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:scale-105"
@@ -170,7 +170,7 @@ const Shop = ({ addToCart, addToWishlist }) => {
                   <button
                     onClick={() => goToPage(pagination.currentPage + 1)}
                     disabled={pagination.currentPage >= pagination.totalPages}
-                    className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                    className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-medium transition-all text-sm sm:text-base ${
                       pagination.currentPage >= pagination.totalPages
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:scale-105"

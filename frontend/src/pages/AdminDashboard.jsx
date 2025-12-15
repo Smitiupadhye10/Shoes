@@ -5,14 +5,12 @@ import {
   Clock,
   CheckCircle,
   TrendingUp,
-  Eye,
   DollarSign,
 } from "lucide-react";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     products: 0,
-    contactLenses: 0,
     orders: 0,
     pending: 0,
     processing: 0,
@@ -61,11 +59,8 @@ const AdminDashboard = () => {
         ? orderData.orders
         : [];
 
-      // ✅ Calculate product stats
+      // ✅ Calculate product stats (includes all products including contact lenses)
       const totalProducts = productsArray.length;
-      const contactLenses = sortedProducts.filter(
-        (p) => p.category === "Contact Lenses"
-      ).length;
 
       // ✅ Calculate order stats
       const pending = ordersArray.filter((o) => o.status === "pending").length;
@@ -80,7 +75,6 @@ const AdminDashboard = () => {
       // ✅ Update dashboard stats
       setStats({
         products: totalProducts,
-        contactLenses,
         orders: ordersArray.length,
         pending,
         processing,
@@ -127,28 +121,36 @@ const AdminDashboard = () => {
     );
   }
 
+  // Format revenue in Indian Rupees with proper formatting
+  const formatRevenue = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   return (
-    <div style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="container-optic p-6">
-        <h1 className="text-optic-heading text-4xl font-bold mb-8" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
+    <div style={{ backgroundColor: 'var(--bg-primary)' }} className="min-h-screen">
+      <div className="container-optic p-4 sm:p-6">
+        <h1 className="text-optic-heading text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <StatCard title="Products" value={stats.products} icon={Package} />
-          <StatCard title="Contact Lenses" value={stats.contactLenses} icon={Eye} />
           <StatCard title="Orders" value={stats.orders} icon={ShoppingCart} />
           <StatCard title="Pending" value={stats.pending} icon={Clock} />
           <StatCard title="Processing" value={stats.processing} icon={TrendingUp} />
           <StatCard title="Delivered" value={stats.delivered} icon={CheckCircle} />
           <StatCard title="Completed" value={stats.completed} icon={CheckCircle} />
-          <div className="card-optic p-6 hover:shadow-xl transition-shadow" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+          <div className="card-optic p-4 sm:p-6 hover:shadow-xl transition-shadow col-span-1 sm:col-span-2 lg:col-span-1" style={{ backgroundColor: 'var(--accent-yellow)' }}>
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Revenue</p>
-                <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>₹{stats.revenue.toLocaleString()}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Revenue</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold truncate" style={{ color: 'var(--text-primary)' }}>{formatRevenue(stats.revenue)}</p>
               </div>
-              <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--text-primary)' }}>
-                <DollarSign className="text-white" size={28} />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0 ml-2 sm:ml-4" style={{ backgroundColor: 'var(--text-primary)' }}>
+                <DollarSign className="text-white w-6 h-6 sm:w-7 sm:h-7" />
               </div>
             </div>
           </div>
@@ -156,20 +158,20 @@ const AdminDashboard = () => {
 
         {/* Recent Orders */}
         <div className="card-optic overflow-hidden">
-          <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
-            <h2 className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Recent Orders</h2>
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
+            <h2 className="text-optic-heading text-xl sm:text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Recent Orders</h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[640px]">
               <thead style={{ backgroundColor: 'var(--bg-secondary)' }}>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
                     Amount
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
                     Status
                   </th>
                 </tr>
@@ -177,33 +179,42 @@ const AdminDashboard = () => {
               <tbody className="divide-y" style={{ borderColor: 'var(--border-color)' }}>
                 {recentOrders.length === 0 ? (
                   <tr>
-                    <td colSpan="3" className="px-6 py-8 text-center" style={{ color: 'var(--text-secondary)' }}>
+                    <td colSpan="3" className="px-4 sm:px-6 py-6 sm:py-8 text-center" style={{ color: 'var(--text-secondary)' }}>
                       No orders found
                     </td>
                   </tr>
                 ) : (
                   recentOrders.map((order) => (
                     <tr key={order._id} className="hover:bg-gray-50 transition-colors" style={{ hoverBackgroundColor: 'var(--bg-secondary)' }}>
-                      <td className="px-6 py-4 text-sm whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>
-                        {new Date(order.createdAt).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}{" "}
-                        ,{" "}
-                        {new Date(order.createdAt).toLocaleTimeString("en-US", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                          hour12: true,
-                        })}
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1">
+                          <span>
+                            {new Date(order.createdAt).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}
+                          </span>
+                          <span className="hidden sm:inline">,</span>
+                          <span className="text-xs">
+                            {new Date(order.createdAt).toLocaleTimeString("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
+                          </span>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>
-                        ₹{order.totalAmount?.toLocaleString() || 0}
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-semibold whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>
+                        {new Intl.NumberFormat('en-IN', {
+                          style: 'currency',
+                          currency: 'INR',
+                          maximumFractionDigits: 0,
+                        }).format(order.totalAmount || 0)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                         <span
-                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          className="px-2 sm:px-3 py-1 rounded-full text-xs font-semibold border inline-block"
                           style={{
                             backgroundColor: getStatusColor(order.status).bg,
                             color: getStatusColor(order.status).text,
@@ -228,14 +239,14 @@ const AdminDashboard = () => {
 
 // ✅ Reusable Stat Card
 const StatCard = ({ title, value, icon: Icon }) => (
-  <div className="card-optic p-6 hover:shadow-xl transition-shadow">
+  <div className="card-optic p-4 sm:p-6 hover:shadow-xl transition-shadow">
     <div className="flex items-center justify-between">
-      <div>
-        <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-secondary)' }}>{title}</p>
-        <p className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{value}</p>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs sm:text-sm font-medium mb-1" style={{ color: 'var(--text-secondary)' }}>{title}</p>
+        <p className="text-2xl sm:text-3xl font-bold truncate" style={{ color: 'var(--text-primary)' }}>{value}</p>
       </div>
-      <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-yellow)' }}>
-        <Icon style={{ color: 'var(--text-primary)' }} size={28} />
+      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0 ml-2 sm:ml-4" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+        <Icon style={{ color: 'var(--text-primary)' }} className="w-6 h-6 sm:w-7 sm:h-7" />
       </div>
     </div>
   </div>

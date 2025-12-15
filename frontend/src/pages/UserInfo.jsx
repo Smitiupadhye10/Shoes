@@ -301,15 +301,15 @@ const UserInfo = () => {
   return (
     <div style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Header */}
-      <div className="pt-0 pb-8" style={{ backgroundColor: 'var(--text-primary)' }}>
-        <h1 className="text-optic-heading text-3xl font-bold" style={{ color: 'var(--bg-secondary)' }}>My Account</h1>
-        <p className="mt-2" style={{ color: 'var(--bg-secondary)' }}>Manage your profile, orders, and more</p>
+      <div className="pt-4 pb-6 md:pt-6 md:pb-8 px-4 sm:px-6" style={{ backgroundColor: 'var(--text-primary)' }}>
+        <h1 className="text-optic-heading text-2xl sm:text-3xl font-bold" style={{ color: 'var(--bg-secondary)' }}>My Account</h1>
+        <p className="mt-2 text-sm sm:text-base" style={{ color: 'var(--bg-secondary)' }}>Manage your profile, orders, and more</p>
       </div>
 
       {/* Main Layout */}
-      <div className="container-optic p-6 flex flex-col lg:flex-row gap-6">
+      <div className="container-optic p-4 sm:p-6 flex flex-col lg:flex-row gap-4 sm:gap-6">
         {/* Sidebar */}
-        <div className="card-optic w-full lg:w-72 p-4">
+        <div className="card-optic w-full lg:w-72 p-4 sm:p-6">
           {navItems.map((item) => (
             <NavItem
               key={item.id}
@@ -333,7 +333,7 @@ const UserInfo = () => {
         </div>
 
         {/* Main Content */}
-        <div className="card-optic flex-1 p-6">{renderTab()}</div>
+        <div className="card-optic flex-1 p-4 sm:p-6">{renderTab()}</div>
       </div>
     </div>
   );

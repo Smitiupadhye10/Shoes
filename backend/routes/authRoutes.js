@@ -1,5 +1,4 @@
 import express from "express";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
@@ -14,12 +13,25 @@ authRouter.post("/signin", async (req, res) => {
   console.log('📝 Request headers:', req.headers);
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+    
+    // Explicitly select password field to ensure it's available
+    const user = await User.findOne({ email }).select('+password');
     if (!user) {
       console.log('❌ User not found:', email);
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const isMatch = await bcrypt.compare(password, user.password);
+    
+    console.log('🔍 User found:', user.email);
+    console.log('🔍 Has password field:', !!user.password);
+    console.log('🔍 Password provided:', !!password);
+    
+    const isMatch = await user.comparePassword(password);
+    console.log('🔍 Password match result:', isMatch);
+    
     if (!isMatch) {
       console.log('❌ Password mismatch for:', email);
       return res.status(401).json({ message: "Invalid credentials" });
@@ -53,10 +65,10 @@ authRouter.post("/signup", async (req, res) => {
       console.log('❌ User already exists:', email);
       return res.status(400).json({ message: "User already exists" });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Don't hash password here - let the User model's pre-save hook handle it
     const newUser = new User({
       email,
-      password: hashedPassword,
+      password: password, // Pass plain password, pre-save hook will hash it
       firstName: firstName || name,
       lastName: lastName || "",
       name: firstName && lastName ? `${firstName} ${lastName}` : name || email

@@ -38,20 +38,30 @@ const Footer = () => {
         {/* --- Product Categories --- */}
         <div>
           <h2 className="text-lg font-semibold text-white mb-4">Categories</h2>
-          <ul className="space-y-2 text-sm">
-            <li><Link to="/category/eyeglasses" className="hover:text-white">Eyeglasses</Link></li>
-            <li><Link to="/category/sunglasses" className="hover:text-white">Sunglasses</Link></li>
-            <li><Link to="/category/computer-glasses" className="hover:text-white">Computer Glasses</Link></li>
-            <li><Link to="/category/contact-lenses" className="hover:text-white">Contact Lenses</Link></li>
-          </ul>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+            <ul className="space-y-2">
+              <li><Link to="/category/Eyeglasses" className="hover:text-white">Eyeglasses</Link></li>
+              <li><Link to="/category/Sunglasses" className="hover:text-white">Sunglasses</Link></li>
+              <li><Link to="/category/Computer%20Glasses" className="hover:text-white">Computer Glasses</Link></li>
+              <li><Link to="/category/Contact%20Lenses" className="hover:text-white">Contact Lenses</Link></li>
+              <li><Link to="/category/Accessories" className="hover:text-white">Accessories</Link></li>
+            </ul>
+            <ul className="space-y-2">
+              <li><Link to="/category/Skincare" className="hover:text-white">Skincare</Link></li>
+              <li><Link to="/category/Bags" className="hover:text-white">Bags</Link></li>
+              <li><Link to="/category/Men's%20Shoes" className="hover:text-white">Men's Shoes</Link></li>
+              <li><Link to="/category/Women's%20Shoes" className="hover:text-white">Women's Shoes</Link></li>
+            </ul>
+          </div>
         </div>
 
         {/* --- Contact Info --- */}
         <div>
           <h2 className="text-lg font-semibold text-white mb-4">Get in Touch</h2>
           <ul className="space-y-3 text-sm">
-            <li className="flex items-center gap-2"><MapPin size={16}/> Office No. 618, Gera Imperium Rise, Hinjawadi Phase II </li>
-            <li className="flex items-center gap-2"><Phone size={16}/> +91 75583 38015</li>
+            <li className="flex items-center gap-2"><MapPin size={16}/> 1245 Fashion Street, Bandra West, Mumbai - 400050, Maharashtra, India</li>
+            <li className="flex items-center gap-2"><Phone size={16}/> +91 98765 43210</li>
+            <li className="flex items-center gap-2"><Phone size={16}/> +91 87654 32109</li>
             <li className="flex items-center gap-2"><Mail size={16}/> support@lenslogic.com</li>
           </ul>
 
@@ -65,8 +75,31 @@ const Footer = () => {
       </div>
 
       {/* --- Bottom Bar --- */}
-      <div className="border-t border-gray-700 text-center py-4 text-sm text-gray-500">
-        © {new Date().getFullYear()} Glasses Store. All Rights Reserved.  
+      <div className="border-t border-gray-700">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-sm text-gray-500">
+              © {new Date().getFullYear()} LensLogic. All Rights Reserved.
+            </div>
+            <div className="flex flex-wrap justify-center gap-4 text-sm">
+              <Link to="/privacy-policy" className="text-gray-500 hover:text-white transition-colors">
+                Privacy Policy
+              </Link>
+              <span className="text-gray-600">•</span>
+              <Link to="/terms-of-service" className="text-gray-500 hover:text-white transition-colors">
+                Terms of Service
+              </Link>
+              <span className="text-gray-600">•</span>
+              <Link to="/shipping-policy" className="text-gray-500 hover:text-white transition-colors">
+                Shipping Policy
+              </Link>
+              <span className="text-gray-600">•</span>
+              <Link to="/return-policy" className="text-gray-500 hover:text-white transition-colors">
+                Return & Refund Policy
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
   );
