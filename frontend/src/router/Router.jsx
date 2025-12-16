@@ -102,7 +102,12 @@ const router = () =>
         </Route>
       </>
     ),
-    { future: { v7_startTransition: true } }
+    { 
+      future: { 
+        v7_startTransition: true,
+        v7_fetcherPersist: true 
+      } 
+    }
   );
 
 // Prevent authenticated users from accessing login/signup pages

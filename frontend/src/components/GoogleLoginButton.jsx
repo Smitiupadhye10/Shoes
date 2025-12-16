@@ -72,17 +72,18 @@ const GoogleLoginButton = ({ text = "Continue with Google" }) => {
           <p className="text-sm" style={{ color: '#DC2626' }}>{error}</p>
         </div>
       )}
-      <GoogleLogin
-        onSuccess={handleSuccess}
-        onError={handleError}
-        useOneTap={false}
-        shape="rectangular"
-        theme="outline"
-        size="large"
-        text={text}
-        width="100%"
-        locale="en"
-      />
+      <div style={{ width: '100%' }}>
+        <GoogleLogin
+          onSuccess={handleSuccess}
+          onError={handleError}
+          useOneTap={false}
+          shape="rectangular"
+          theme="outline"
+          size="large"
+          text={text}
+          locale="en"
+        />
+      </div>
     </div>
   );
 };
