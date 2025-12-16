@@ -218,7 +218,7 @@ const UserInfo = () => {
     try {
       if (logout) await logout();
       localStorage.removeItem('token');
-      navigate('/login');
+      navigate('/signin');
     } catch (error) {
       console.error('Logout error:', error);
     }
