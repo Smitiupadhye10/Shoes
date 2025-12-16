@@ -7,9 +7,14 @@ import "slick-carousel/slick/slick-theme.css";
 import { UserProvider } from "./context/UserContext";
 import { CartProvider } from "./context/CartContext";
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+const GOOGLE_CLIENT_ID = (import.meta.env.VITE_GOOGLE_CLIENT_ID || "").trim();
 
 const App = () => {
+  // Warn if Google Client ID is missing
+  if (!GOOGLE_CLIENT_ID) {
+    console.warn("⚠️ VITE_GOOGLE_CLIENT_ID is not set in environment variables. Google OAuth will not work.");
+  }
+
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <UserProvider>

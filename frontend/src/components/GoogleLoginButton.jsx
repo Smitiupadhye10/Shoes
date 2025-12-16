@@ -53,6 +53,18 @@ const GoogleLoginButton = ({ text = "Continue with Google" }) => {
     setError("Google login failed. Please try again.");
   };
 
+  const GOOGLE_CLIENT_ID = (import.meta.env.VITE_GOOGLE_CLIENT_ID || "").trim();
+  
+  if (!GOOGLE_CLIENT_ID) {
+    return (
+      <div className="w-full p-4 rounded-lg" style={{ backgroundColor: '#FEF3C7', borderColor: '#FCD34D', borderWidth: '1px' }}>
+        <p className="text-sm" style={{ color: '#92400E' }}>
+          Google login is not configured. Please contact support.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       {error && (
