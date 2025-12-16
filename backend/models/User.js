@@ -24,7 +24,9 @@ const userSchema = new mongoose.Schema({
     lowercase: true, 
     trim: true 
   },
-  password: { type: String, required: true, select: false },
+  password: { type: String, required: function() { return !this.googleId; }, select: false },
+  googleId: { type: String, sparse: true, unique: true },
+  provider: { type: String, enum: ['local', 'google'], default: 'local' },
   phone: { type: String },
   dateOfBirth: { type: Date },
   gender: { 
@@ -53,16 +55,22 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Hash password before saving
+// Hash password before saving (only for local auth users)
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+  // Skip password hashing for Google users or if password is not modified
+  if (this.provider === 'google' || !this.isModified('password')) return next();
   
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+  // If password is modified and user is local auth, hash it
+  if (this.password && this.provider === 'local') {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
     next();
-  } catch (error) {
-    next(error);
   }
 });
 

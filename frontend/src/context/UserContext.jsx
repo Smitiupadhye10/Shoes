@@ -70,6 +70,43 @@ export const UserProvider = ({ children }) => {
 };
 
 
+  // 🔹 Google Login function
+  const loginWithGoogle = async (token, userData) => {
+    try {
+      localStorage.setItem("token", token);
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      
+      // If userData is provided, use it directly, otherwise fetch from API
+      if (userData) {
+        setUser({
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          isAdmin: userData.isAdmin || false,
+        });
+      } else {
+        // Fetch user data from API
+        const { data } = await api.get("/auth/me");
+        setUser({
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          isAdmin: data.isAdmin || false,
+        });
+      }
+      
+      return { success: true };
+    } catch (error) {
+      console.error("Google login error:", error);
+      localStorage.removeItem("token");
+      delete api.defaults.headers.common["Authorization"];
+      return {
+        success: false,
+        error: error?.response?.data?.message || error.message || "Google login failed",
+      };
+    }
+  };
+
   // 🔹 Logout function
   const logout = () => {
     localStorage.removeItem("token");
@@ -78,7 +115,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout, loading }}>
+    <UserContext.Provider value={{ user, login, loginWithGoogle, logout, loading }}>
       {children}
     </UserContext.Provider>
   );

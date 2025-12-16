@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../context/UserContext.jsx";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import GoogleLoginButton from "../components/GoogleLoginButton.jsx";
 
 const Signin = () => {
   const { login } = useUser();
@@ -178,8 +179,12 @@ const Signin = () => {
                 <div className="w-full border-t" style={{ borderColor: 'var(--border-color)' }}></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>New to our platform?</span>
+                <span className="px-2" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>Or continue with</span>
               </div>
+            </div>
+
+            <div className="mt-6">
+              <GoogleLoginButton text="Continue with Google" />
             </div>
 
             <div className="mt-6 text-center">

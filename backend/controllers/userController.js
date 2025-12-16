@@ -212,6 +212,39 @@ export const deleteAddress = async (req, res) => {
   }
 };
 
+// Set default address
+export const setDefaultAddress = async (req, res) => {
+  try {
+    const { addressId } = req.params;
+    const user = await User.findById(req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const addressIndex = user.addresses.findIndex(addr => addr._id.toString() === addressId);
+    if (addressIndex === -1) {
+      return res.status(404).json({ message: 'Address not found' });
+    }
+
+    // Unset default for all addresses, then set the selected one as default
+    user.addresses = user.addresses.map((addr, idx) => ({
+      ...addr.toObject(),
+      isDefault: idx === addressIndex
+    }));
+
+    await user.save();
+    
+    res.json({ 
+      message: 'Default address updated successfully',
+      address: user.addresses[addressIndex]
+    });
+  } catch (error) {
+    console.error('Error setting default address:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // Change password
 export const changePassword = async (req, res) => {
   const errors = validationResult(req);

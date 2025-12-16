@@ -1,7 +1,11 @@
 import express from "express";
 import jwt from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
+
+// Initialize Google OAuth2 Client
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 console.log('🔐 Loading auth routes...');
 const authRouter = express.Router();
@@ -112,12 +116,113 @@ authRouter.get("/me", verifyToken, async (req, res) => {
   }
 });
 
+// Google OAuth Login/Signup
+authRouter.post("/google", async (req, res) => {
+  console.log('🔑 Google OAuth request received');
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({ message: "Google credential token is required" });
+    }
+
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      console.error('❌ GOOGLE_CLIENT_ID not configured');
+      return res.status(500).json({ message: "Google OAuth not configured" });
+    }
+
+    // Verify the Google ID token
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+    } catch (error) {
+      console.error('❌ Google token verification failed:', error.message);
+      return res.status(401).json({ message: "Invalid Google token" });
+    }
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email not provided by Google" });
+    }
+
+    // Find existing user by email or googleId
+    let user = await User.findOne({
+      $or: [
+        { email: email.toLowerCase() },
+        { googleId }
+      ]
+    });
+
+    if (user) {
+      // User exists - update Google info if needed
+      if (!user.googleId) {
+        user.googleId = googleId;
+        user.provider = 'google';
+        if (!user.profileImage && picture) {
+          user.profileImage = picture;
+        }
+        if (!user.name && name) {
+          user.name = name;
+        }
+        user.emailVerified = true;
+        await user.save();
+      }
+    } else {
+      // User doesn't exist - create new user
+      // Don't include password field - schema validation allows omitting it when googleId is present
+      user = new User({
+        email: email.toLowerCase(),
+        name: name || email.split('@')[0],
+        googleId,
+        provider: 'google',
+        profileImage: picture || null,
+        emailVerified: true,
+      });
+      await user.save();
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET || "fallback_secret",
+      { expiresIn: "1h" }
+    );
+
+    const displayName = user.firstName && user.lastName 
+      ? `${user.firstName} ${user.lastName}` 
+      : user.name || user.email;
+
+    console.log('✅ Google OAuth successful for:', email);
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: displayName,
+        email: user.email,
+        isAdmin: user.isAdmin || false
+      }
+    });
+  } catch (error) {
+    console.error('❌ Google OAuth error:', error);
+    res.status(500).json({ message: "Error authenticating with Google", error: error.message });
+  }
+});
+
 // Debug endpoint
 authRouter.get("/debug", (req, res) => {
   console.log('🔍 Auth debug route hit!');
   res.json({
     message: "Auth debug working!",
-    routes: ["/api/signin (POST)", "/api/signup (POST)", "/api/me (GET)", "/api/debug (GET)"],
+    routes: ["/api/signin (POST)", "/api/signup (POST)", "/api/google (POST)", "/api/me (GET)", "/api/debug (GET)"],
     timestamp: new Date()
   });
 });

@@ -8,6 +8,7 @@ import {
   addAddress,
   updateAddress,
   deleteAddress,
+  setDefaultAddress,
   changePassword,
   updatePreferences
 } from '../controllers/userController.js';
@@ -72,6 +73,11 @@ userRouter.put(
 // @desc    Delete an address
 // @access  Private
 userRouter.delete('/addresses/:addressId', deleteAddress);
+
+// @route   PUT /api/users/addresses/:addressId/default
+// @desc    Set an address as default
+// @access  Private
+userRouter.put('/addresses/:addressId/default', setDefaultAddress);
 
 // @route   PUT /api/users/change-password
 // @desc    Change password

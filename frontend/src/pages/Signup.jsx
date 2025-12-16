@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../context/UserContext.jsx";
 import api from "../api/axios";
 import { Mail, Lock, User, Phone, Eye, EyeOff, ArrowRight } from "lucide-react";
+import GoogleLoginButton from "../components/GoogleLoginButton.jsx";
 
 const Signup = () => {
   const { login } = useUser();
@@ -317,8 +318,12 @@ const Signup = () => {
               <div className="w-full border-t" style={{ borderColor: 'var(--border-color)' }}></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>Already have an account?</span>
+              <span className="px-2" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>Or continue with</span>
             </div>
+          </div>
+          
+          <div className="mt-6">
+            <GoogleLoginButton text="Continue with Google" />
           </div>
           
           <div className="mt-6 text-center">
