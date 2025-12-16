@@ -780,34 +780,130 @@ export const listProducts = async (req, res) => {
       return res.json({ products: data.map(d => ({ ...d._doc, _type: 'product' })), pagination });
     }
 
-    // No specific category: use aggregation with $unionWith for cross-collection pagination
-    const matchStage = { $match: mongoFilter };
-    const addTypeProduct = { $addFields: { _type: "product" } };
-    const addTypeContact = { $addFields: { _type: "contactLens" } };
+    // No specific category: search across all collections when search term is provided
+    const searchTerm = query.search ? String(query.search).trim() : '';
+    
+    if (searchTerm) {
+      // Build search filters for each collection type based on their field names
+      const productFilter = { title: { $regex: searchTerm, $options: "i" } };
+      const contactLensFilter = { title: { $regex: searchTerm, $options: "i" } };
+      const accessoryFilter = { name: { $regex: searchTerm, $options: "i" } };
+      const skincareFilter = { productName: { $regex: searchTerm, $options: "i" } };
+      const bagFilter = { name: { $regex: searchTerm, $options: "i" } };
+      const mensShoeFilter = { title: { $regex: searchTerm, $options: "i" } };
+      const womensShoeFilter = { title: { $regex: searchTerm, $options: "i" } };
+      
+      // Query all collections in parallel
+      const [
+        products,
+        contactLenses,
+        accessories,
+        skincareProducts,
+        bags,
+        mensShoes,
+        womensShoes
+      ] = await Promise.all([
+        Product.find(productFilter).limit(limit * 3).lean(),
+        ContactLens.find(contactLensFilter).limit(limit * 3).lean(),
+        Accessory.find(accessoryFilter).limit(limit * 3).lean(),
+        SkincareProduct.find(skincareFilter).limit(limit * 3).lean(),
+        Bag.find(bagFilter).limit(limit * 3).lean(),
+        MensShoe.find(mensShoeFilter).limit(limit * 3).lean(),
+        WomensShoe.find(womensShoeFilter).limit(limit * 3).lean()
+      ]);
+      
+      // Normalize and combine all results
+      const allResults = [];
+      allResults.push(...products.map(p => ({ ...p, _type: 'product' })));
+      allResults.push(...contactLenses.map(c => ({ ...c, _type: 'contactLens' })));
+      allResults.push(...accessories.map(a => normalizeAccessory(a)));
+      allResults.push(...skincareProducts.map(s => normalizeSkincareProduct(s)));
+      allResults.push(...bags.map(b => normalizeBag(b)));
+      allResults.push(...mensShoes.map(m => normalizeMensShoe(m)));
+      allResults.push(...womensShoes.map(w => normalizeWomensShoe(w)));
+      
+      // Apply price filter if specified (after normalization)
+      let filteredResults = allResults;
+      if (query.priceRange) {
+        const pr = String(query.priceRange).trim();
+        let priceMin, priceMax;
+        if (/^\d+\-\d+$/.test(pr)) {
+          [priceMin, priceMax] = pr.split('-').map(n => parseInt(n, 10));
+        } else if (/^\d+\+$/.test(pr)) {
+          priceMin = parseInt(pr.replace('+',''), 10);
+        }
+        filteredResults = allResults.filter(p => {
+          const price = p.price || p.finalPrice || 0;
+          if (priceMin !== undefined && priceMax !== undefined) {
+            return price >= priceMin && price <= priceMax;
+          } else if (priceMin !== undefined) {
+            return price >= priceMin;
+          }
+          return true;
+        });
+      }
+      
+      // Sort by relevance (exact matches first, then contains)
+      filteredResults.sort((a, b) => {
+        const aTitle = (a.title || a.name || a.productName || '').toLowerCase();
+        const bTitle = (b.title || b.name || b.productName || '').toLowerCase();
+        const searchLower = searchTerm.toLowerCase();
+        const aStarts = aTitle.startsWith(searchLower);
+        const bStarts = bTitle.startsWith(searchLower);
+        const aContains = aTitle.includes(searchLower);
+        const bContains = bTitle.includes(searchLower);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+        if (aContains && !bContains) return -1;
+        if (!aContains && bContains) return 1;
+        return 0;
+      });
+      
+      // Paginate results
+      const totalCount = filteredResults.length;
+      const totalPages = Math.ceil(totalCount / limit) || 0;
+      const paginatedResults = filteredResults.slice(skip, skip + limit);
 
-    const pipeline = [
-      matchStage,
-      addTypeProduct,
-      { $unionWith: { coll: "contactlenses", pipeline: [matchStage, addTypeContact] } },
-      { $sort: { _id: 1 } },
-      { $facet: { data: [ { $skip: skip }, { $limit: limit } ], totalCount: [ { $count: "count" } ] } }
-    ];
+      const pagination = {
+        currentPage: page,
+        totalPages,
+        totalProducts: totalCount,
+        productsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      };
 
-    const aggResult = await Product.aggregate(pipeline);
-    const data = aggResult?.[0]?.data || [];
-    const totalCount = aggResult?.[0]?.totalCount?.[0]?.count || 0;
-    const totalPages = Math.ceil(totalCount / limit) || 0;
+      return res.json({ products: paginatedResults, pagination });
+    } else {
+      // No search term and no category: use aggregation with $unionWith for Product and ContactLens only
+      const matchStage = { $match: mongoFilter };
+      const addTypeProduct = { $addFields: { _type: "product" } };
+      const addTypeContact = { $addFields: { _type: "contactLens" } };
 
-    const pagination = {
-      currentPage: page,
-      totalPages,
-      totalProducts: totalCount,
-      productsPerPage: limit,
-      hasNextPage: page < totalPages,
-      hasPrevPage: page > 1,
-    };
+      const pipeline = [
+        matchStage,
+        addTypeProduct,
+        { $unionWith: { coll: "contactlenses", pipeline: [matchStage, addTypeContact] } },
+        { $sort: { _id: 1 } },
+        { $facet: { data: [ { $skip: skip }, { $limit: limit } ], totalCount: [ { $count: "count" } ] } }
+      ];
 
-    return res.json({ products: data, pagination });
+      const aggResult = await Product.aggregate(pipeline);
+      const data = aggResult?.[0]?.data || [];
+      const totalCount = aggResult?.[0]?.totalCount?.[0]?.count || 0;
+      const totalPages = Math.ceil(totalCount / limit) || 0;
+
+      const pagination = {
+        currentPage: page,
+        totalPages,
+        totalProducts: totalCount,
+        productsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      };
+
+      return res.json({ products: data, pagination });
+    }
   } catch (error) {
     return res.status(500).json({
       message: "Error listing products",

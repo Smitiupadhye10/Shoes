@@ -153,7 +153,6 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                         borderColor: 'var(--border-color)',
                         color: 'var(--text-primary)',
                       }}
-                      autoFocus
                     />
                     <div className="absolute right-2 flex items-center gap-1">
                       {searchTerm && (

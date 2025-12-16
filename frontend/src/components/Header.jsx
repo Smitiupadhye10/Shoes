@@ -661,7 +661,6 @@ const Header = () => {
                   }}
                   value={searchTerm}
                   onChange={handleSearchChange}
-                  autoFocus
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center gap-1 pr-2">
                   {searchTerm && (

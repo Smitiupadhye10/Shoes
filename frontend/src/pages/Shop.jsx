@@ -21,6 +21,11 @@ const Shop = ({ addToCart, addToWishlist }) => {
   const category = searchParams.get("category");
   const search = searchParams.get("search") || "";
 
+  // Reset to page 1 when search or category changes
+  useEffect(() => {
+    setPage(1);
+  }, [search, category]);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -121,14 +126,18 @@ const Shop = ({ addToCart, addToWishlist }) => {
       <div style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container-optic pt-0 pb-6 sm:pb-8 px-4 sm:px-6">
           <h1 className="text-optic-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-8 sm:mb-12 md:mb-16 text-center" style={{ color: 'var(--text-primary)' }}>
-            {category ? category : 'All Products'}
+            {search ? `Search Results for: "${search}"` : category ? category : 'All Products'}
           </h1>
+          {search && products.length > 0 && (
+            <p className="text-center mb-8 text-lg" style={{ color: 'var(--text-secondary)' }}>
+              Found {pagination.totalProducts || products.length} {pagination.totalProducts === 1 ? 'product' : 'products'}
+            </p>
+          )}
 
           {loading ? (
             <div className="text-center py-20 text-lg" style={{ color: 'var(--text-secondary)' }}>
               Loading products...
-            Loading products...
-          </div>
+            </div>
         ) : error ? (
           <div className="text-center py-20 text-lg text-red-600">{error}</div>
         ) : (

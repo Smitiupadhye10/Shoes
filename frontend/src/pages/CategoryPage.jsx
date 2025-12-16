@@ -508,7 +508,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
         )}
 
         {/* Men's Shoes SubCategory Filter */}
-        {isMensShoes && (
+        {isMensShoes && !isWomensShoes && (
           <Section title="Shoe Type" id="subCategory">
             <div className="flex flex-col gap-2.5">
               {mensShoesSubcategories.map((subCat) => {
