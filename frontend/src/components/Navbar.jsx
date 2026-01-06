@@ -76,8 +76,8 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
           <div className="flex-1 flex justify-center md:justify-start md:flex-none">
             <Link to="/" className="flex items-center">
               <img 
-                src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765629960/b7a50a65-12b2-4dc8-89a4-1a5985bd6706.png" 
-                alt="LENS LOGIC" 
+                src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1766062481/01ecd43a-da05-4a95-a5b3-36af250d2740.png" 
+                alt="Stylish Touches" 
                 className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto object-contain"
                 style={{ maxWidth: '280px' }}
               />
@@ -206,7 +206,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
               {wishlist.length > 0 && (
                 <span 
                   className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
-                  style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}
+                  style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }}
                 >
                   {wishlist.length}
                 </span>
@@ -222,7 +222,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
               {cart.length > 0 && (
                 <span 
                   className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
-                  style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}
+                  style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }}
                 >
                   {cart.length}
                 </span>
@@ -267,7 +267,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                           to="/admin/dashboard"
                           onClick={() => setAccountOpen(false)}
                           className="block px-4 py-2 text-sm hover:bg-gray-50 font-medium"
-                          style={{ color: 'var(--accent-yellow)' }}
+                          style={{ color: 'var(--text-heading)' }}
                         >
                           Admin Dashboard
                         </Link>
@@ -332,178 +332,11 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                   ABOUT US
                 </Link>
                 
-                {/* Categories Section */}
-                <div>
-                  <button
-                    onClick={() => setCategoriesOpen(!categoriesOpen)}
-                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    <span>GLASSES</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${categoriesOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {categoriesOpen && (
-                    <div className="pl-4 mt-2 space-y-1">
-                      {Object.entries(categories).filter(([key]) => key !== 'accessories').map(([key, category]) => (
-                        <Link
-                          key={key}
-                          to={`/category/${encodeURIComponent(category.title)}`}
-                          onClick={() => {
-                            setMenuOpen(false);
-                            setCategoriesOpen(false);
-                          }}
-                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
-                          style={{ color: 'var(--text-secondary)' }}
-                        >
-                          {category.title}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Accessories Section */}
-                <div>
-                  <button
-                    onClick={() => {
-                      setAccessoriesOpen(!accessoriesOpen);
-                      setCategoriesOpen(false);
-                      setSkincareOpen(false);
-                      setMensShoesOpen(false);
-                    }}
-                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    <span>ACCESSORIES</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${accessoriesOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {accessoriesOpen && (
-                    <div className="pl-4 mt-2 space-y-1">
-                      {["Men", "Women"].map((gender) => (
-                        <Link
-                          key={gender}
-                          to={`/category/Accessories?gender=${gender}`}
-                          onClick={() => {
-                            setMenuOpen(false);
-                            setAccessoriesOpen(false);
-        setSkincareOpen(false);
-                            setMensShoesOpen(false);
-                          }}
-                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
-                          style={{ color: 'var(--text-secondary)' }}
-                        >
-                          {gender}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Bags Section */}
-                <div>
-                  <button
-                    onClick={() => {
-                      setBagsOpen(!bagsOpen);
-                      setCategoriesOpen(false);
-                      setAccessoriesOpen(false);
-                      setSkincareOpen(false);
-                      setMensShoesOpen(false);
-                      setWomensShoesOpen(false);
-                    }}
-                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    <span>BAGS</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${bagsOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {bagsOpen && (
-                    <div className="pl-4 mt-2 space-y-1">
-                      <Link
-                        to="/category/Bags"
-                        onClick={() => {
-                          setMenuOpen(false);
-                          setBagsOpen(false);
-                        }}
-                        className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
-                        style={{ color: 'var(--text-secondary)' }}
-                      >
-                        All Bags
-                      </Link>
-                      {["Handbag", "Backpack", "Sling Bag", "Tote Bag", "Duffle Bag", "Wallet", "Laptop Bag", "Travel Bag", "Crossbody Bag", "Clutch", "Shoulder Bag"].map((category) => (
-                        <Link
-                          key={category}
-                          to={`/category/Bags?subCategory=${category.toLowerCase().replace(/\s+/g, '-')}`}
-                          onClick={() => {
-                            setMenuOpen(false);
-                            setBagsOpen(false);
-                          }}
-                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
-                          style={{ color: 'var(--text-secondary)' }}
-                        >
-                          {category}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Skincare Section */}
-                <div>
-                  <button
-                    onClick={() => {
-                      setSkincareOpen(!skincareOpen);
-                      setCategoriesOpen(false);
-                      setAccessoriesOpen(false);
-                      setBagsOpen(false);
-                      setMensShoesOpen(false);
-                      setWomensShoesOpen(false);
-                    }}
-                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    <span>SKINCARE</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${skincareOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {skincareOpen && (
-                    <div className="pl-4 mt-2 space-y-1">
-                      <Link
-                        to="/category/Skincare"
-                        onClick={() => {
-                          setMenuOpen(false);
-                          setSkincareOpen(false);
-                        }}
-                        className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
-                        style={{ color: 'var(--text-secondary)' }}
-                      >
-                        All Skincare
-                      </Link>
-                      {["Moisturizer", "Serum", "Cleanser", "Facewash", "Sunscreen"].map((category) => (
-                        <Link
-                          key={category}
-                          to={`/category/Skincare?subCategory=${category.toLowerCase()}`}
-                          onClick={() => {
-                            setMenuOpen(false);
-                            setSkincareOpen(false);
-                          }}
-                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
-                          style={{ color: 'var(--text-secondary)' }}
-                        >
-                          {category}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
                 {/* Men's Shoes Section */}
                 <div>
                   <button
                     onClick={() => {
                       setMensShoesOpen(!mensShoesOpen);
-                      setCategoriesOpen(false);
-                      setAccessoriesOpen(false);
-                      setBagsOpen(false);
-                      setSkincareOpen(false);
                       setWomensShoesOpen(false);
                     }}
                     className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
@@ -548,10 +381,6 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                   <button
                     onClick={() => {
                       setWomensShoesOpen(!womensShoesOpen);
-                      setCategoriesOpen(false);
-                      setAccessoriesOpen(false);
-                      setBagsOpen(false);
-                      setSkincareOpen(false);
                       setMensShoesOpen(false);
                     }}
                     className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
@@ -615,7 +444,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                         to="/admin/dashboard"
                         onClick={() => setMenuOpen(false)}
                         className="text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
-                        style={{ color: 'var(--accent-yellow)' }}
+                        style={{ color: 'var(--text-heading)' }}
                       >
                         ADMIN DASHBOARD
                       </Link>

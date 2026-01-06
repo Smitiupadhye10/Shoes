@@ -148,3 +148,4 @@ When deploying to production:
 - Keep your JWT_SECRET secure and never commit it to version control
 - Use environment variables for all sensitive configuration
 
+

@@ -25,7 +25,7 @@ const AdminLayout = () => {
       <div className="w-64 shadow-2xl" style={{ backgroundColor: 'var(--text-black)' }}>
         <div className="p-6">
           <h1 className="text-optic-heading text-2xl font-bold mb-8" style={{
-            backgroundColor: location.pathname === "/admin/dashboard" ? 'var(--accent-yellow)' : 'transparent',
+            backgroundColor: location.pathname === "/admin/dashboard" ? 'var(--text-heading)' : 'transparent',
             color: 'black'
           }}
           >Admin</h1>
@@ -37,7 +37,7 @@ const AdminLayout = () => {
                   : "hover:bg-gray-700 text-gray-300"
                 }`}
               style={{
-                backgroundColor: location.pathname === "/admin/dashboard" ? 'var(--accent-yellow)' : 'transparent',
+                backgroundColor: location.pathname === "/admin/dashboard" ? 'var(--text-heading)' : 'transparent',
                 color: 'black'
               }}
             >
@@ -51,7 +51,7 @@ const AdminLayout = () => {
                   : "hover:bg-gray-700 text-gray-300"
                 }`}
               style={{
-                backgroundColor: location.pathname === "/admin/products" ? 'var(--accent-yellow)' : 'transparent',
+                backgroundColor: location.pathname === "/admin/products" ? 'var(--text-heading)' : 'transparent',
                 color: 'black'
               }}
             >
@@ -65,7 +65,7 @@ const AdminLayout = () => {
                   : "hover:bg-gray-700 text-gray-300"
                 }`}
               style={{
-                backgroundColor: location.pathname === "/admin/orders" ? 'var(--accent-yellow)' : 'transparent',
+                backgroundColor: location.pathname === "/admin/orders" ? 'var(--text-heading)' : 'transparent',
                 color: 'black'
               }}
             >

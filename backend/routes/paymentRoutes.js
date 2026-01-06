@@ -106,10 +106,42 @@ paymentRouter.post('/create-order', verifyToken, async (req, res) => {
 paymentRouter.get('/my-orders', verifyToken, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.user.id })
-      .populate('items.productId')
-      .sort('-createdAt');
+      .sort('-createdAt')
+      .lean();
 
-    res.json({ success: true, orders });
+    // Manually resolve products for each order item
+    const ordersWithProducts = await Promise.all(
+      orders.map(async (order) => {
+        const itemsWithProducts = await Promise.all(
+          order.items.map(async (item) => {
+            const product = await resolveItem(item.productId);
+            if (product) {
+              // Normalize product data for frontend
+              const normalizedProduct = {
+                _id: product._id,
+                title: product.title || product.name || product.productName || '',
+                name: product.name || product.productName || product.title || '',
+                images: product.images || (product.image ? [product.image] : []) || (product.thumbnail ? [product.thumbnail] : []),
+                thumbnail: product.thumbnail || product.image || (product.images?.[0]),
+                price: product.price || product.finalPrice || 0,
+                _type: product._type || 'product'
+              };
+              return {
+                ...item,
+                product: normalizedProduct
+              };
+            }
+            return item;
+          })
+        );
+        return {
+          ...order,
+          items: itemsWithProducts
+        };
+      })
+    );
+
+    res.json({ success: true, orders: ordersWithProducts });
 
   } catch (error) {
     console.error(error);

@@ -30,7 +30,10 @@ const MyOrders = () => {
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          order.items?.some(item => item.product?.title?.toLowerCase().includes(searchTerm.toLowerCase()));
+                          order.items?.some(item => {
+                            const productName = (item.product?.title || item.product?.name || '').toLowerCase();
+                            return productName.includes(searchTerm.toLowerCase());
+                          });
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -78,7 +81,7 @@ const MyOrders = () => {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 mx-auto mb-4" style={{ borderTop: '4px solid var(--accent-yellow)', borderRight: '4px solid transparent' }}></div>
+          <div className="animate-spin rounded-full h-16 w-16 mx-auto mb-4" style={{ borderTop: '4px solid var(--text-heading)', borderRight: '4px solid transparent' }}></div>
           <p className="text-optic-body text-lg" style={{ color: 'var(--text-secondary)' }}>Loading your orders...</p>
           <p className="text-optic-body text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>This will only take a moment</p>
         </div>
@@ -90,7 +93,7 @@ const MyOrders = () => {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="card-optic p-8 max-w-md text-center">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--text-heading)' }}>
             <XCircle className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
           </div>
           <h2 className="text-optic-heading text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Error Loading Orders</h2>
@@ -155,7 +158,7 @@ const MyOrders = () => {
                     border: '1px solid var(--border-color)',
                     backgroundColor: 'var(--bg-secondary)',
                     color: 'var(--text-primary)',
-                    focusRingColor: 'var(--accent-yellow)'
+                    focusRingColor: 'var(--text-heading)'
                   }}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -169,7 +172,7 @@ const MyOrders = () => {
                   border: '1px solid var(--border-color)',
                   backgroundColor: 'var(--bg-secondary)',
                   color: 'var(--text-primary)',
-                  focusRingColor: 'var(--accent-yellow)'
+                  focusRingColor: 'var(--text-heading)'
                 }}
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -190,7 +193,7 @@ const MyOrders = () => {
               <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Total Orders</p>
             </div>
             <div className="text-center">
-              <p className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--accent-yellow)' }}>
+              <p className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>
                 {orders.filter(o => o.status === 'pending').length}
               </p>
               <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Pending</p>
@@ -202,7 +205,7 @@ const MyOrders = () => {
               <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Processing</p>
             </div>
             <div className="text-center">
-              <p className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--accent-yellow)' }}>
+              <p className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>
                 {orders.filter(o => o.status === 'completed').length}
               </p>
               <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>Completed</p>
@@ -227,8 +230,24 @@ const MyOrders = () => {
                 <div className="p-4 sm:p-6 border-b border-gray-100">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Package className="w-6 h-6 text-sky-600" />
+                      {/* Product Images Preview */}
+                      <div className="flex gap-2 flex-shrink-0">
+                        {order.items?.slice(0, 3).map((item, idx) => (
+                          <img
+                            key={idx}
+                            src={item.product?.images?.[0] || item.product?.image || item.product?.thumbnail || '/placeholder.jpg'}
+                            alt={item.product?.title || item.product?.name || 'Product'}
+                            className="w-16 h-16 sm:w-20 sm:h-20 object-contain bg-white rounded-lg p-2 border"
+                            onError={(e) => {
+                              e.target.src = '/placeholder.jpg';
+                            }}
+                          />
+                        ))}
+                        {order.items?.length > 3 && (
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-lg flex items-center justify-center border">
+                            <span className="text-xs font-medium text-gray-600">+{order.items.length - 3}</span>
+                          </div>
+                        )}
                       </div>
                       <div>
                         <div className="flex items-center gap-3 mb-1">
@@ -287,12 +306,15 @@ const MyOrders = () => {
                         {order.items?.map((item) => (
                           <div key={item._id} className="flex gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg">
                             <img
-                              src={item.product?.images?.[0] || '/placeholder.jpg'}
-                              alt={item.product?.title}
+                              src={item.product?.images?.[0] || item.product?.image || item.product?.thumbnail || '/placeholder.jpg'}
+                              alt={item.product?.title || item.product?.name || 'Product'}
                               className="w-16 h-16 sm:w-20 sm:h-20 object-contain bg-white rounded-lg p-2 border flex-shrink-0"
+                              onError={(e) => {
+                                e.target.src = '/placeholder.jpg';
+                              }}
                             />
                             <div className="flex-1 min-w-0">
-                              <h5 className="font-medium text-gray-900 text-sm sm:text-base truncate">{item.product?.title}</h5>
+                              <h5 className="font-medium text-gray-900 text-sm sm:text-base truncate">{item.product?.title || item.product?.name || 'Product'}</h5>
                               <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-xs sm:text-sm text-gray-600">
                                 <span>Qty: {item.quantity}</span>
                                 <span>₹{item.price} each</span>

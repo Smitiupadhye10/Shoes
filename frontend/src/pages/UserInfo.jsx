@@ -288,16 +288,16 @@ const UserInfo = () => {
             <p className="text-optic-body mb-6" style={{ color: 'var(--text-secondary)' }}>Need assistance? Contact our support team or visit the FAQ section.</p>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="card-optic p-6">
-                <Headphones className="w-8 h-8 mb-3" style={{ color: 'var(--accent-yellow)' }} />
+                <Headphones className="w-8 h-8 mb-3" style={{ color: 'var(--text-heading)' }} />
                 <h3 className="text-optic-heading font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Customer Support</h3>
                 <p className="text-optic-body text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>Get help from our support team</p>
-                <a href="mailto:support@lenslogic.example" className="text-sm font-medium" style={{ color: 'var(--accent-yellow)' }}>support@lenslogic.example</a>
+                <a href="mailto:support@stylishtouches.in" className="text-sm font-medium" style={{ color: 'var(--text-heading)' }}>support@stylishtouches.in</a>
               </div>
               <div className="card-optic p-6">
-                <MessageSquare className="w-8 h-8 mb-3" style={{ color: 'var(--accent-yellow)' }} />
+                <MessageSquare className="w-8 h-8 mb-3" style={{ color: 'var(--text-heading)' }} />
                 <h3 className="text-optic-heading font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>FAQ</h3>
                 <p className="text-optic-body text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>Find answers to common questions</p>
-                <button className="text-sm font-medium" style={{ color: 'var(--accent-yellow)' }}>View FAQ</button>
+                <button className="text-sm font-medium" style={{ color: 'var(--text-heading)' }}>View FAQ</button>
               </div>
             </div>
           </div>
@@ -334,7 +334,7 @@ const UserInfo = () => {
           <button
             onClick={handleLogout}
             className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 transition-all"
-            style={{ color: 'var(--accent-yellow)' }}
+            style={{ color: 'var(--text-heading)' }}
           >
             <LogOut className="w-5 h-5" />
             Sign out
@@ -359,7 +359,7 @@ const NavItem = ({ icon, children, active, onClick, badge }) => (
       active ? 'shadow-md' : ''
     }`}
     style={{
-      backgroundColor: active ? 'var(--accent-yellow)' : 'transparent',
+      backgroundColor: active ? 'var(--text-heading)' : 'transparent',
       color: active ? 'var(--text-primary)' : 'var(--text-secondary)'
     }}
   >
@@ -371,7 +371,7 @@ const NavItem = ({ icon, children, active, onClick, badge }) => (
       <span className="text-xs font-medium px-2 py-0.5 rounded-full"
         style={{
           backgroundColor: 'var(--text-primary)',
-          color: 'var(--bg-secondary)'
+          color: 'var(--bg-primary)'
         }}
       >
         {badge}
@@ -412,7 +412,7 @@ const ProfileTab = ({ formData, isEditing, showPassword, onInputChange, onToggle
             border: '1px solid var(--border-color)',
             backgroundColor: 'var(--bg-secondary)',
             color: 'var(--text-primary)',
-            focusRingColor: 'var(--accent-yellow)'
+            focusRingColor: 'var(--text-heading)'
           }}
         />
         <input
@@ -426,7 +426,7 @@ const ProfileTab = ({ formData, isEditing, showPassword, onInputChange, onToggle
             border: '1px solid var(--border-color)',
             backgroundColor: 'var(--bg-secondary)',
             color: 'var(--text-primary)',
-            focusRingColor: 'var(--accent-yellow)'
+            focusRingColor: 'var(--text-heading)'
           }}
         />
         <div className="relative">
@@ -441,7 +441,7 @@ const ProfileTab = ({ formData, isEditing, showPassword, onInputChange, onToggle
               border: '1px solid var(--border-color)',
               backgroundColor: 'var(--bg-secondary)',
               color: 'var(--text-primary)',
-              focusRingColor: 'var(--accent-yellow)'
+              focusRingColor: 'var(--text-heading)'
             }}
           />
           <button type="button" onClick={onTogglePassword} className="absolute right-3 top-3" style={{ color: 'var(--text-secondary)' }}>
@@ -682,7 +682,7 @@ const AddressesTab = ({
                 checked={addressForm.isDefault}
                 onChange={onAddressFormChange}
                 className="w-4 h-4 rounded"
-                style={{ accentColor: 'var(--accent-yellow)' }}
+                style={{ accentColor: 'var(--text-heading)' }}
               />
               <label htmlFor="isDefault" className="ml-2 text-sm" style={{ color: 'var(--text-primary)' }}>
                 Set as default address
@@ -726,7 +726,7 @@ const AddressesTab = ({
                 </p>
                 {address.isDefault && (
                   <span className="text-xs px-2 py-1 rounded-full font-medium"
-                    style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}
+                    style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}
                   >
                     Default
                   </span>
@@ -742,7 +742,7 @@ const AddressesTab = ({
               </p>
               <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>{address.country}</p>
               <div className="flex gap-2 flex-wrap">
-                <button onClick={() => onEdit(address)} className="text-sm font-medium" style={{ color: 'var(--accent-yellow)' }}>Edit</button>
+                <button onClick={() => onEdit(address)} className="text-sm font-medium" style={{ color: 'var(--text-heading)' }}>Edit</button>
                 <button onClick={() => onDelete(address._id)} className="text-sm font-medium" style={{ color: '#ef4444' }}>Delete</button>
                 {!address.isDefault && (
                   <button

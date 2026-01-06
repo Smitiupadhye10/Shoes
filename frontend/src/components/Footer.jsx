@@ -4,98 +4,107 @@ import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from "luci
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-8">
-      <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="mt-8" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--bg-primary)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
 
         {/* --- Company Info --- */}
-        <div>
-          <div className="flex items-center mb-4">
+        <div className="sm:col-span-2 lg:col-span-1">
+          <div className="flex items-center mb-3 sm:mb-4">
             <Link to="/" className="flex items-center">
               <img 
-                src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765630473/file_00000000ac50720780542fa210dc5c8e_e0c5v4.png" 
-                alt="LENS LOGIC" 
-                className="h-14 md:h-16 lg:h-20 w-auto object-contain"
-                style={{ maxWidth: '300px' }}
+                src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1766064439/logo_vwfmey.png" 
+                alt="Stylish Touches" 
+                className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto object-contain"
+                style={{ maxWidth: '280px' }}
               />
             </Link>
           </div>
-          <p className="text-sm leading-6">
-            Discover premium eyeglasses, sunglasses, and contact lenses at unbeatable prices.
-            Style your vision with the latest trends and comfort-focused designs.
+          <p className="text-xs sm:text-sm leading-6" style={{ color: 'var(--bg-primary)' }}>
+            Discover premium leather shoes made with 100% eco-friendly vegan leather at unbeatable prices.
+            Step out in style with the latest trends and comfort-focused designs.
           </p>
         </div>
 
         {/* --- Quick Links --- */}
         <div>
-          <h2 className="text-lg font-semibold text-white mb-4">Quick Links</h2>
-          <ul className="space-y-2 text-sm">
-            <li><Link to="/" className="hover:text-white">Home</Link></li>
-            <li><Link to="/about" className="hover:text-white">About Us</Link></li>
-            <li><Link to="/shop" className="hover:text-white">Shop</Link></li>
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4" style={{ color: 'var(--bg-primary)' }}>Quick Links</h2>
+          <ul className="space-y-2 text-xs sm:text-sm">
+            <li><Link to="/" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>Home</Link></li>
+            <li><Link to="/about" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>About Us</Link></li>
+            <li><Link to="/shop" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>Shop</Link></li>
           </ul>
         </div>
 
         {/* --- Product Categories --- */}
         <div>
-          <h2 className="text-lg font-semibold text-white mb-4">Categories</h2>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-            <ul className="space-y-2">
-              <li><Link to="/category/Eyeglasses" className="hover:text-white">Eyeglasses</Link></li>
-              <li><Link to="/category/Sunglasses" className="hover:text-white">Sunglasses</Link></li>
-              <li><Link to="/category/Computer%20Glasses" className="hover:text-white">Computer Glasses</Link></li>
-              <li><Link to="/category/Contact%20Lenses" className="hover:text-white">Contact Lenses</Link></li>
-              <li><Link to="/category/Accessories" className="hover:text-white">Accessories</Link></li>
-            </ul>
-            <ul className="space-y-2">
-              <li><Link to="/category/Skincare" className="hover:text-white">Skincare</Link></li>
-              <li><Link to="/category/Bags" className="hover:text-white">Bags</Link></li>
-              <li><Link to="/category/Men's%20Shoes" className="hover:text-white">Men's Shoes</Link></li>
-              <li><Link to="/category/Women's%20Shoes" className="hover:text-white">Women's Shoes</Link></li>
-            </ul>
-          </div>
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4" style={{ color: 'var(--bg-primary)' }}>Categories</h2>
+          <ul className="space-y-2 text-xs sm:text-sm">
+            <li><Link to="/category/Men's%20Shoes" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>Men's Shoes</Link></li>
+            <li><Link to="/category/Women's%20Shoes" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>Women's Shoes</Link></li>
+          </ul>
         </div>
 
         {/* --- Contact Info --- */}
-        <div>
-          <h2 className="text-lg font-semibold text-white mb-4">Get in Touch</h2>
-          <ul className="space-y-3 text-sm">
-            <li className="flex items-center gap-2"><MapPin size={16}/> 1245 Fashion Street, Bandra West, Mumbai - 400050, Maharashtra, India</li>
-            <li className="flex items-center gap-2"><Phone size={16}/> +91 98765 43210</li>
-            <li className="flex items-center gap-2"><Phone size={16}/> +91 87654 32109</li>
-            <li className="flex items-center gap-2"><Mail size={16}/> support@lenslogic.com</li>
+        <div className="sm:col-span-2 lg:col-span-1">
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4" style={{ color: 'var(--bg-primary)' }}>Get in Touch</h2>
+          <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+            <li className="flex items-start gap-2" style={{ color: 'var(--bg-primary)' }}>
+              <MapPin className="w-4 h-4 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0" size={16}/>
+              <span className="break-words">1245 Fashion Street, Bandra West, Mumbai - 400050, Maharashtra, India</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Phone className="w-4 h-4 sm:w-4 sm:h-4 flex-shrink-0" size={16} style={{ color: 'var(--bg-primary)' }}/>
+              <a href="tel:+919876543210" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>+91 98765 43210</a>
+            </li>
+            <li className="flex items-center gap-2">
+              <Phone className="w-4 h-4 sm:w-4 sm:h-4 flex-shrink-0" size={16} style={{ color: 'var(--bg-primary)' }}/>
+              <a href="tel:+918765432109" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>+91 87654 32109</a>
+            </li>
+            <li className="flex items-center gap-2">
+              <Mail className="w-4 h-4 sm:w-4 sm:h-4 flex-shrink-0" size={16} style={{ color: 'var(--bg-primary)' }}/>
+              <a href="mailto:support@stylishtouches.in" className="transition-colors break-all" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>support@stylishtouches.in</a>
+            </li>
           </ul>
 
-          <div className="flex gap-4 mt-4">
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-white"><Facebook size={20}/></a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-white"><Instagram size={20}/></a>
-            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-white"><Twitter size={20}/></a>
-            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:text-white"><Youtube size={20}/></a>
+          <div className="flex gap-3 sm:gap-4 mt-4">
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>
+              <Facebook className="w-5 h-5 sm:w-5 sm:h-5" size={20}/>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>
+              <Instagram className="w-5 h-5 sm:w-5 sm:h-5" size={20}/>
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>
+              <Twitter className="w-5 h-5 sm:w-5 sm:h-5" size={20}/>
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>
+              <Youtube className="w-5 h-5 sm:w-5 sm:h-5" size={20}/>
+            </a>
           </div>
         </div>
       </div>
 
       {/* --- Bottom Bar --- */}
-      <div className="border-t border-gray-700">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-500">
-              © {new Date().getFullYear()} LensLogic. All Rights Reserved.
+      <div style={{ borderTop: '1px solid var(--border-color)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
+            <div className="text-xs sm:text-sm text-center md:text-left" style={{ color: 'var(--bg-primary)' }}>
+              © {new Date().getFullYear()} Stylish Touches. All Rights Reserved.
             </div>
-            <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <Link to="/privacy-policy" className="text-gray-500 hover:text-white transition-colors">
+            <div className="flex flex-wrap justify-center gap-x-2 sm:gap-x-4 gap-y-2 text-xs sm:text-sm">
+              <Link to="/privacy-policy" className="transition-colors whitespace-nowrap" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>
                 Privacy Policy
               </Link>
-              <span className="text-gray-600">•</span>
-              <Link to="/terms-of-service" className="text-gray-500 hover:text-white transition-colors">
-                Terms of Service
+              <span className="hidden sm:inline" style={{ color: 'var(--bg-primary)' }}>•</span>
+              <Link to="/terms-of-service" className="transition-colors whitespace-nowrap" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>
+                Refund & Cancellation Policy
               </Link>
-              <span className="text-gray-600">•</span>
-              <Link to="/shipping-policy" className="text-gray-500 hover:text-white transition-colors">
+              <span className="hidden sm:inline" style={{ color: 'var(--bg-primary)' }}>•</span>
+              <Link to="/shipping-policy" className="transition-colors whitespace-nowrap" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>
                 Shipping Policy
               </Link>
-              <span className="text-gray-600">•</span>
-              <Link to="/return-policy" className="text-gray-500 hover:text-white transition-colors">
-                Return & Refund Policy
+              <span className="hidden sm:inline" style={{ color: 'var(--bg-primary)' }}>•</span>
+              <Link to="/return-policy" className="transition-colors whitespace-nowrap" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>
+                Terms & Conditions
               </Link>
             </div>
           </div>

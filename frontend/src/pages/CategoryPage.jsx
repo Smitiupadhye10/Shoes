@@ -184,7 +184,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           className={`px-4 py-2 rounded-lg border-2 font-medium transition-all duration-200 ${
             current <= 1 
               ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-              : "text-gray-700 border-gray-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-400 hover:shadow-md"
+              : "text-gray-700 border-gray-300 hover:bg-red-50 hover:border-red-800 hover:shadow-md"
           }`}
         >
           ← Previous
@@ -195,9 +195,10 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
             onClick={() => goToPage(p)}
             className={`px-4 py-2 rounded-lg border-2 font-semibold transition-all duration-200 ${
               p === current 
-                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-lg transform scale-110" 
-                : "text-gray-700 border-gray-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-400 hover:shadow-md"
+                ? "text-white shadow-lg transform scale-110"
+                : "text-gray-700 border-gray-300 hover:bg-red-50 hover:border-red-800 hover:shadow-md"
             }`}
+            style={p === current ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
           >
             {p}
           </button>
@@ -208,7 +209,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           className={`px-4 py-2 rounded-lg border-2 font-medium transition-all duration-200 ${
             current >= total 
               ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-              : "text-gray-700 border-gray-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-400 hover:shadow-md"
+              : "text-gray-700 border-gray-300 hover:bg-red-50 hover:border-red-800 hover:shadow-md"
           }`}
         >
           Next →
@@ -238,7 +239,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           onClick={() => setExpanded((s) => ({ ...s, [id]: !s[id] }))}
           className="w-full flex items-center justify-between px-5 py-4 bg-gradient-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 transition-all duration-200"
         >
-          <span className="font-semibold" style={{ color: 'var(--accent-yellow)' }}>{title}</span>
+          <span className="font-semibold" style={{ color: 'var(--text-heading)' }}>{title}</span>
           <span className={`text-lg font-bold transition-transform duration-200 ${expanded[id] ? 'rotate-180' : ''} text-indigo-600`}>
             ▼
           </span>
@@ -250,7 +251,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     return (
       <aside className="space-y-5 md:sticky md:top-24">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xl font-bold" style={{ color: 'var(--accent-yellow)' }}>
+          <h3 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>
             Filters
           </h3>
           {(activePrice || activeGender || activeColor || activeSubCategory || activeBrand || activeFrameShape || activeFrameMaterial || activeFrameColor || activeDisposability) && (
@@ -274,11 +275,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                   onClick={() => !disabled && setParam("priceRange", activePrice === r ? null : r)}
                   className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
                     activePrice === r 
-                      ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                      ? "text-white shadow-md transform scale-[1.02]"
                       : disabled 
                         ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                        : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                        : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
                   }`}
+                  style={activePrice === r ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                   disabled={disabled}
                 >
                   <span className="font-medium">₹{r}</span>
@@ -314,11 +316,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                     onClick={() => !disabled && setParam("gender", activeGender === g ? null : g)}
                     className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
                       activeGender === g 
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                        ? "text-white shadow-md transform scale-[1.02]"
                         : disabled 
                           ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
                     }`}
+                    style={activeGender === g ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                     disabled={disabled}
                   >
                     <span className="font-medium">{g}</span>
@@ -355,11 +358,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                     onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
                     className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
                       isActive 
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                        ? "text-white shadow-md transform scale-[1.02]"
                         : disabled 
                           ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
                     }`}
+                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                     disabled={disabled}
                   >
                     <span className="font-medium">{subCat}</span>
@@ -396,11 +400,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                       onClick={() => !disabled && setParam("gender", activeGender === g ? null : g)}
                       className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
                         activeGender === g 
-                          ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                          ? "text-white shadow-md transform scale-[1.02]"
                           : disabled 
                             ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                            : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                            : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
                       }`}
+                      style={activeGender === g ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                       disabled={disabled}
                     >
                       <span className="font-medium">{g}</span>
@@ -436,11 +441,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                       onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
                       className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
                         isActive 
-                          ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                          ? "text-white shadow-md transform scale-[1.02]"
                           : disabled 
                             ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                            : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                            : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
                       }`}
+                      style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                       disabled={disabled}
                     >
                       <span className="font-medium">{subCat}</span>
@@ -479,11 +485,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                     onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
                     className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
                       isActive 
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                        ? "text-white shadow-md transform scale-[1.02]"
                         : disabled 
                           ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
                     }`}
+                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                     disabled={disabled}
                   >
                     <span className="font-medium">{subCat}</span>
@@ -521,11 +528,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                     onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
                     className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
                       isActive 
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                        ? "text-white shadow-md transform scale-[1.02]"
                         : disabled 
                           ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
                     }`}
+                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                     disabled={disabled}
                   >
                     <span className="font-medium">{subCat}</span>
@@ -563,11 +571,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                     onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
                     className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
                       isActive 
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                        ? "text-white shadow-md transform scale-[1.02]"
                         : disabled 
                           ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
                     }`}
+                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                     disabled={disabled}
                   >
                     <span className="font-medium">{subCat}</span>
@@ -603,11 +612,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                     onClick={() => !disabled && setParam("color", activeColor === c ? null : c)}
                     className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
                       activeColor === c 
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-600 shadow-md transform scale-[1.02]" 
+                        ? "text-white shadow-md transform scale-[1.02]"
                         : disabled 
                           ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-indigo-300 hover:shadow-sm border-gray-200"
+                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
                     }`}
+                    style={activeColor === c ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                     disabled={disabled}
                   >
                     <span className="font-medium">{c}</span>
@@ -651,7 +661,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
         </li>
         <li className="flex items-center text-gray-400">/</li>
         <li className="flex items-center">
-          <span className="font-semibold" style={{ color: 'var(--accent-yellow)' }}>
+          <span className="font-semibold" style={{ color: 'var(--text-heading)' }}>
             {category}
           </span>
         </li>
@@ -677,7 +687,8 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
         {chips.map((c) => (
           <span 
             key={c.k} 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 text-sm font-medium shadow-sm border border-indigo-200"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm border"
+            style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)', borderColor: 'var(--text-primary)' }}
           >
             {c.label}
             <button 
@@ -836,7 +847,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
         <Breadcrumb />
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--accent-yellow)' }}>
+            <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--text-heading)' }}>
               {category}
             </h1>
             <p className="text-gray-600 font-medium">
@@ -902,7 +913,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           <div className={`md:col-span-1 ${filtersOpen ? 'fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-white z-50 overflow-y-auto p-4 shadow-2xl transform transition-transform duration-300' : 'hidden md:block'}`}>
             {filtersOpen && (
               <div className="flex items-center justify-between mb-4 pb-4 border-b sticky top-0 bg-white z-10">
-                <h3 className="text-lg font-bold" style={{ color: 'var(--accent-yellow)' }}>Filters</h3>
+                <h3 className="text-lg font-bold" style={{ color: 'var(--text-heading)' }}>Filters</h3>
                 <button
                   onClick={() => setFiltersOpen(false)}
                   className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -955,13 +966,16 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                   ) : (
                     <div className="col-span-full text-center py-16 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-gray-200 shadow-lg">
                       <div className="text-6xl mb-4">🔍</div>
-                      <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--accent-yellow)' }}>No products match your filters</h3>
+                      <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-heading)' }}>No products match your filters</h3>
                       <p className="text-gray-600 mb-6 max-w-md mx-auto">
                         Try adjusting your filters or clearing them to see more results.
                       </p>
                       <button 
                         onClick={clearAll} 
-                        className="px-6 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                        className="px-6 py-3 rounded-lg text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                        style={{ backgroundColor: 'var(--text-primary)' }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--text-secondary)'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--text-primary)'}
                       >
                         Clear all filters
                       </button>

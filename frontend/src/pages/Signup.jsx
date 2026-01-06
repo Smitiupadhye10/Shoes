@@ -87,7 +87,7 @@ const Signup = () => {
                     backgroundColor: 'var(--bg-secondary)'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-yellow)';
+                    e.target.style.borderColor = 'var(--text-heading)';
                     e.target.style.boxShadow = '0 0 0 2px rgba(255, 193, 7, 0.2)';
                   }}
                   onBlur={(e) => {
@@ -117,7 +117,7 @@ const Signup = () => {
                     backgroundColor: 'var(--bg-secondary)'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-yellow)';
+                    e.target.style.borderColor = 'var(--text-heading)';
                     e.target.style.boxShadow = '0 0 0 2px rgba(255, 193, 7, 0.2)';
                   }}
                   onBlur={(e) => {
@@ -149,7 +149,7 @@ const Signup = () => {
                   backgroundColor: 'var(--bg-secondary)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--accent-yellow)';
+                  e.target.style.borderColor = 'var(--text-heading)';
                   e.target.style.boxShadow = '0 0 0 2px rgba(255, 193, 7, 0.2)';
                 }}
                 onBlur={(e) => {
@@ -180,7 +180,7 @@ const Signup = () => {
                   backgroundColor: 'var(--bg-secondary)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--accent-yellow)';
+                  e.target.style.borderColor = 'var(--text-heading)';
                   e.target.style.boxShadow = '0 0 0 2px rgba(255, 193, 7, 0.2)';
                 }}
                 onBlur={(e) => {
@@ -211,7 +211,7 @@ const Signup = () => {
                   backgroundColor: 'var(--bg-secondary)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--accent-yellow)';
+                  e.target.style.borderColor = 'var(--text-heading)';
                   e.target.style.boxShadow = '0 0 0 2px rgba(255, 193, 7, 0.2)';
                 }}
                 onBlur={(e) => {
@@ -257,7 +257,7 @@ const Signup = () => {
                   backgroundColor: 'var(--bg-secondary)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--accent-yellow)';
+                  e.target.style.borderColor = 'var(--text-heading)';
                   e.target.style.boxShadow = '0 0 0 2px rgba(255, 193, 7, 0.2)';
                 }}
                 onBlur={(e) => {
@@ -291,7 +291,7 @@ const Signup = () => {
               loading ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 hover:shadow-md'
             }`}
             style={{ 
-              backgroundColor: 'var(--accent-yellow)', 
+              backgroundColor: 'var(--text-heading)', 
               color: 'var(--text-primary)'
             }}
           >
@@ -332,9 +332,9 @@ const Signup = () => {
               <Link
                 to="/signin"
                 className="font-medium hover:underline transition"
-                style={{ color: 'var(--accent-yellow)' }}
+                style={{ color: 'var(--text-heading)' }}
                 onMouseEnter={(e) => e.target.style.color = 'var(--accent-yellow-hover)'}
-                onMouseLeave={(e) => e.target.style.color = 'var(--accent-yellow)'}
+                onMouseLeave={(e) => e.target.style.color = 'var(--text-heading)'}
               >
                 Sign in
               </Link>

@@ -107,3 +107,4 @@ After deployment:
 - Both frontend and backend must use the **same** `GOOGLE_CLIENT_ID`
 - Changes to environment variables require a redeploy to take effect
 
+

@@ -252,7 +252,7 @@ const AdminProducts = () => {
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 mx-auto mb-4" style={{ borderTop: '4px solid var(--accent-yellow)', borderRight: '4px solid transparent' }}></div>
+              <div className="animate-spin rounded-full h-16 w-16 mx-auto mb-4" style={{ borderTop: '4px solid var(--text-heading)', borderRight: '4px solid transparent' }}></div>
               <p className="text-optic-body text-xl" style={{ color: 'var(--text-secondary)' }}>Loading products...</p>
             </div>
           </div>
@@ -285,7 +285,7 @@ const AdminProducts = () => {
                     style={{ backgroundColor: 'var(--bg-secondary)' }}
                   />
                   <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>{product.title}</h3>
-                  <p className="text-xl font-bold mb-1" style={{ color: 'var(--accent-yellow)' }}>₹{product.price}</p>
+                  <p className="text-xl font-bold mb-1" style={{ color: 'var(--text-heading)' }}>₹{product.price}</p>
                   <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>{product.category}</p>
 
                   <div className="flex gap-3">

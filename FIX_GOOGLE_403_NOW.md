@@ -88,3 +88,4 @@ https://your-app-name.onrender.com    ← ADD THIS ONE!
 2. Or check the "Settings" tab for "Auto-Deploy URL"
 3. It should look like: `https://something.onrender.com`
 
+

@@ -17,7 +17,7 @@ const About = () => {
             <div className="space-y-8">
               <div
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
-                style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}
+                style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}
               >
                 <Eye className="w-4 h-4" />
                 Since {new Date().getFullYear()}
@@ -25,13 +25,13 @@ const About = () => {
 
               <h1 className="text-optic-heading text-4xl md:text-5xl lg:text-6xl leading-tight" style={{ color: 'var(--text-primary)' }}>
                 See the world{" "}
-                <span style={{ color: 'var(--accent-yellow)' }}>
+                <span style={{ color: 'var(--text-heading)' }}>
                   clearer
                 </span>{" "}
                 — stylishly.
               </h1>
               <p className="text-optic-body text-lg md:text-xl leading-relaxed max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-                At LensLogic we craft premium eyeglasses, sunglasses and contact
+                At Stylish Touches we craft premium eyeglasses, sunglasses and contact
                 lenses with precision optics and modern design. Comfort, clarity
                 and confidence — all in one pair.
               </p>
@@ -56,7 +56,7 @@ const About = () => {
               {/* Trust indicators */}
               <div className="flex items-center gap-8 pt-4">
                 <div className="flex items-center gap-2">
-                  <Star className="w-5 h-5" style={{ color: 'var(--accent-yellow)' }} />
+                  <Star className="w-5 h-5" style={{ color: 'var(--text-heading)' }} />
                   <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>4.9/5 Rating</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -64,7 +64,7 @@ const About = () => {
                   <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>100k+ Customers</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5" style={{ color: 'var(--accent-yellow)' }} />
+                  <Award className="w-5 h-5" style={{ color: 'var(--text-heading)' }} />
                   <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Award Winning</span>
                 </div>
               </div>
@@ -85,7 +85,7 @@ const About = () => {
 
                 {/* Floating Labels */}
                 <div className="absolute -top-4 -right-4 px-4 py-2 rounded-full font-bold shadow-lg"
-                  style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}
+                  style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}
                 >
                   Premium Quality
                 </div>
@@ -105,7 +105,7 @@ const About = () => {
         <div className="container-optic">
           <div className="text-center mb-16">
             <h2 className="text-optic-heading text-3xl md:text-4xl lg:text-5xl mb-4" style={{ color: 'var(--text-primary)' }}>
-              Why Choose LensLogic?
+              Why Choose Stylish Touches?
             </h2>
             <p className="text-optic-body text-lg md:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
               We're dedicated to providing exceptional eyewear solutions
@@ -115,7 +115,7 @@ const About = () => {
             <div className="group">
               <div className="card-optic p-8 h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-                  style={{ backgroundColor: 'var(--accent-yellow)' }}
+                  style={{ backgroundColor: 'var(--text-heading)' }}
                 >
                   <Eye className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
                 </div>
@@ -128,7 +128,7 @@ const About = () => {
             <div className="group">
               <div className="card-optic p-8 h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-                  style={{ backgroundColor: 'var(--accent-yellow)' }}
+                  style={{ backgroundColor: 'var(--text-heading)' }}
                 >
                   <Shield className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
                 </div>
@@ -141,7 +141,7 @@ const About = () => {
             <div className="group">
               <div className="card-optic p-8 h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-                  style={{ backgroundColor: 'var(--accent-yellow)' }}
+                  style={{ backgroundColor: 'var(--text-heading)' }}
                 >
                   <Heart className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
                 </div>
@@ -156,7 +156,7 @@ const About = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 md:py-24" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+      <section className="py-16 md:py-24" style={{ backgroundColor: 'var(--text-heading)' }}>
         <div className="container-optic">
           <div className="text-center mb-12">
             <h2 className="text-optic-heading text-3xl md:text-4xl mb-4" style={{ color: 'var(--text-primary)' }}>Our Impact in Numbers</h2>
@@ -197,7 +197,7 @@ const About = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a
-                    href="mailto:support@lenslogic.example"
+                    href="mailto:support@stylishtouches.in"
                     className="btn-secondary"
                   >
                     <Mail className="w-5 h-5" />
@@ -215,7 +215,7 @@ const About = () => {
               <div className="grid grid-cols-2 gap-6">
                 <div className="rounded-2xl p-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                    style={{ backgroundColor: 'var(--accent-yellow)' }}
+                    style={{ backgroundColor: 'var(--text-heading)' }}
                   >
                     <Phone className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
                   </div>
@@ -225,7 +225,7 @@ const About = () => {
                 </div>
                 <div className="rounded-2xl p-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                    style={{ backgroundColor: 'var(--accent-yellow)' }}
+                    style={{ backgroundColor: 'var(--text-heading)' }}
                   >
                     <MapPin className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
                   </div>

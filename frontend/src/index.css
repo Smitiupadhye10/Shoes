@@ -1,21 +1,26 @@
 @import "tailwindcss";
 
-/* Global Design System - OPTIC Style */
+/* Global Design System - Brown for Autumn Style */
 :root {
-  /* Color Palette */
-  --bg-primary: #F5F2ED; /* Light beige/off-white background */
-  --bg-secondary: #FFFFFF; /* White for cards */
-  --text-primary: #000000; /* Black for main text */
-  --text-secondary: #666666; /* Gray for secondary text */
-  --accent-yellow: #FFC107; /* Yellow/orange accent */
-  --accent-yellow-hover: #FFB300; /* Darker yellow for hover */
-  --border-color: #E5E5E5; /* Light borders */
+  /* Color Palette - Matching Brown for Autumn Design */
+  --bg-primary: #F5E6D3; /* Light beige background (top section) */
+  --bg-secondary: #E8D4B0; /* Lighter beige for cards */
+  --bg-tertiary: #8B6F47; /* Darker brown background (bottom section) */
+  --text-primary: #3D2817; /* Dark brown for main text */
+  --text-secondary: #6B4E3D; /* Medium brown for secondary text */
+  --text-heading: #3D2817; /* Dark brown for headings */
+  --accent-red: #3D2817; /* Dark brown for buttons and accents */
+  --accent-red-hover: #4A3420; /* Slightly lighter brown for hover */
+  --accent-yellow: #8B6F47; /* Medium brown accent */
+  --accent-yellow-hover: #7D5F3A; /* Darker brown for hover */
+  --border-color: #A0826D; /* Medium brown for borders */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
   
   /* Typography */
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-primary: 'Georgia', 'Times New Roman', serif; /* Serif font for Brown for Autumn style */
+  --font-secondary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -78,7 +83,7 @@ body {
 /* Button Styles */
 .btn-primary {
   background-color: var(--text-primary);
-  color: var(--bg-secondary);
+  color: var(--bg-primary);
   border: none;
   border-radius: var(--radius-lg);
   padding: 1rem 2rem;
@@ -90,15 +95,17 @@ body {
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  font-family: var(--font-primary);
 }
 
 .btn-primary:hover {
+  background-color: var(--accent-red-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
 .btn-secondary {
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-primary);
   color: var(--text-primary);
   border: 2px solid var(--text-primary);
   border-radius: var(--radius-lg);
@@ -111,18 +118,19 @@ body {
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  font-family: var(--font-primary);
 }
 
 .btn-secondary:hover {
   background-color: var(--text-primary);
-  color: var(--bg-secondary);
+  color: var(--bg-primary);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
 .btn-accent {
-  background-color: var(--accent-yellow);
-  color: var(--text-primary);
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -137,7 +145,7 @@ body {
 }
 
 .btn-accent:hover {
-  background-color: var(--accent-yellow-hover);
+  background-color: var(--accent-red-hover);
   transform: scale(1.1);
 }
 
@@ -148,6 +156,7 @@ body {
   box-shadow: var(--shadow-md);
   padding: var(--spacing-lg);
   transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
 }
 
 .card-optic:hover {
@@ -162,6 +171,7 @@ body {
   padding: var(--spacing-md);
   transition: all 0.3s ease;
   text-align: center;
+  border: 1px solid var(--border-color);
 }
 
 .card-product:hover {
@@ -188,4 +198,23 @@ body {
   margin: 0;
   padding: 0;
   text-align: left;
+}
+
+/* 3D Effects for Hero Section */
+.hero-3d-container {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.hero-3d-image {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Smooth 3D transitions */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-3d-image {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }

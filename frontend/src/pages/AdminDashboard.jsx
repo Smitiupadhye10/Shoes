@@ -98,7 +98,7 @@ const AdminDashboard = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return { bg: 'var(--accent-yellow)', text: 'var(--text-primary)', border: 'var(--accent-yellow)' };
+        return { bg: 'var(--text-heading)', text: 'var(--text-primary)', border: 'var(--text-heading)' };
       case "processing":
         return { bg: 'var(--bg-secondary)', text: 'var(--text-primary)', border: 'var(--border-color)' };
       case "delivered":
@@ -114,7 +114,7 @@ const AdminDashboard = () => {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 mx-auto mb-4" style={{ borderTop: '4px solid var(--accent-yellow)', borderRight: '4px solid transparent' }}></div>
+          <div className="animate-spin rounded-full h-16 w-16 mx-auto mb-4" style={{ borderTop: '4px solid var(--text-heading)', borderRight: '4px solid transparent' }}></div>
           <p className="text-optic-body text-lg" style={{ color: 'var(--text-secondary)' }}>Loading dashboard...</p>
         </div>
       </div>
@@ -143,7 +143,7 @@ const AdminDashboard = () => {
           <StatCard title="Processing" value={stats.processing} icon={TrendingUp} />
           <StatCard title="Delivered" value={stats.delivered} icon={CheckCircle} />
           <StatCard title="Completed" value={stats.completed} icon={CheckCircle} />
-          <div className="card-optic p-4 sm:p-6 hover:shadow-xl transition-shadow col-span-1 sm:col-span-2 lg:col-span-1" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+          <div className="card-optic p-4 sm:p-6 hover:shadow-xl transition-shadow col-span-1 sm:col-span-2 lg:col-span-1" style={{ backgroundColor: 'var(--text-heading)' }}>
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <p className="text-xs sm:text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Revenue</p>
@@ -245,7 +245,7 @@ const StatCard = ({ title, value, icon: Icon }) => (
         <p className="text-xs sm:text-sm font-medium mb-1" style={{ color: 'var(--text-secondary)' }}>{title}</p>
         <p className="text-2xl sm:text-3xl font-bold truncate" style={{ color: 'var(--text-primary)' }}>{value}</p>
       </div>
-      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0 ml-2 sm:ml-4" style={{ backgroundColor: 'var(--accent-yellow)' }}>
+      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0 ml-2 sm:ml-4" style={{ backgroundColor: 'var(--text-heading)' }}>
         <Icon style={{ color: 'var(--text-primary)' }} className="w-6 h-6 sm:w-7 sm:h-7" />
       </div>
     </div>

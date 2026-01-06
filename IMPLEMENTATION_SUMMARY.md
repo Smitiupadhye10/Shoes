@@ -154,3 +154,4 @@ Common issues:
 - "Invalid Google token" → Verify Client IDs match between frontend and backend
 - Button doesn't appear → Check `VITE_GOOGLE_CLIENT_ID` in frontend `.env`
 
+

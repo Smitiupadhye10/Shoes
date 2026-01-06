@@ -124,7 +124,7 @@ const ProductDetails = () => {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: 'var(--accent-yellow)' }}></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: 'var(--text-heading)' }}></div>
           <p className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Loading product...</p>
         </div>
       </div>
@@ -263,7 +263,7 @@ const ProductDetails = () => {
 
                   {/* Image Counter */}
                   {images.length > 1 && (
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}>
                       {selectedImageIndex + 1} / {images.length}
                     </div>
                   )}
@@ -283,8 +283,8 @@ const ProductDetails = () => {
                         }`}
                         style={{
                           backgroundColor: 'var(--bg-primary)',
-                          borderColor: selectedImageIndex === i ? 'var(--accent-yellow)' : 'var(--border-color)',
-                          ringColor: selectedImageIndex === i ? 'var(--accent-yellow)' : 'transparent'
+                          borderColor: selectedImageIndex === i ? 'var(--text-heading)' : 'var(--border-color)',
+                          ringColor: selectedImageIndex === i ? 'var(--text-heading)' : 'transparent'
                         }}
                         aria-label={`Select image ${i + 1}`}
                       >
@@ -327,12 +327,12 @@ const ProductDetails = () => {
                   onClick={toggleWishlist}
                   className="w-full flex items-center justify-center gap-2 border-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200"
                   style={{
-                    borderColor: 'var(--accent-yellow)',
+                    borderColor: 'var(--text-heading)',
                     color: 'var(--text-primary)',
                     backgroundColor: 'transparent'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--accent-yellow)'
+                    e.currentTarget.style.backgroundColor = 'var(--text-heading)'
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent'
@@ -350,7 +350,7 @@ const ProductDetails = () => {
             {/* Card 1: Title / Ratings / Price */}
             <div className="card-optic p-4 sm:p-6">
               <div className="mb-3">
-                <span className="inline-block px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-2" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                <span className="inline-block px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-2" style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}>
                   {product.category}
                 </span>
                 {product.subCategory && (
@@ -370,9 +370,10 @@ const ProductDetails = () => {
                       key={i}
                       className={`w-5 h-5 ${
                         i < Math.round(product.ratings || 0)
-                          ? "fill-yellow-400 text-yellow-400"
+                          ? ""
                           : "text-gray-300"
                       }`}
+                      style={i < Math.round(product.ratings || 0) ? { fill: 'var(--text-heading)', color: 'var(--text-heading)' } : {}}
                     />
                   ))}
                   <span className="ml-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -394,7 +395,7 @@ const ProductDetails = () => {
                   )}
                 </div>
                 {discountPercent > 0 && originalPrice > discountedPrice && (
-                  <div className="px-4 py-2 rounded-full text-sm font-bold shadow-md" style={{ backgroundColor: 'var(--accent-yellow)', color: 'var(--text-primary)' }}>
+                  <div className="px-4 py-2 rounded-full text-sm font-bold shadow-md" style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}>
                     {discountPercent.toFixed(1)}% OFF
                   </div>
                 )}
@@ -545,9 +546,10 @@ const ProductDetails = () => {
                       onClick={() => setSelectedPower(p)}
                       className={`px-4 py-2 rounded-lg border font-medium transition-all ${
                         selectedPower === p
-                          ? "bg-sky-600 text-white border-sky-600"
-                          : "bg-white text-gray-700 border-gray-300 hover:border-sky-400"
+                          ? "text-white"
+                          : "bg-white text-gray-700 border-gray-300 hover:border-red-800"
                       }`}
+                      style={selectedPower === p ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
                     >
                       {p}
                     </button>
@@ -581,7 +583,7 @@ const ProductDetails = () => {
             </div>
 
             {/* Static Info Card */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 border border-blue-100">
+            <div className="rounded-2xl p-4 sm:p-6 border" style={{ backgroundColor: 'var(--text-heading)', borderColor: 'var(--text-primary)' }}>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -590,13 +592,13 @@ const ProductDetails = () => {
                   <span className="text-gray-800 font-medium text-sm sm:text-base">7 Days Returns</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--text-primary)' }}>
                     <span className="text-white text-xs">↻</span>
                   </div>
                   <span className="text-gray-800 font-medium text-sm sm:text-base">Exchange at 850+ stores</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--text-primary)' }}>
                     <span className="text-white text-xs">🛡</span>
                   </div>
                   <span className="text-gray-800 font-medium text-sm sm:text-base">

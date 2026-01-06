@@ -112,7 +112,7 @@ const CheckoutPage = () => {
         {/* Left Side: Form/Payment UI */}
         <div className="card-optic p-4 sm:p-6 md:p-8 rounded-2xl order-2 lg:order-1">
           <div className="mb-4 sm:mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'var(--accent-yellow)' }}>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'var(--text-heading)' }}>
               Shipping Address
             </h2>
             <p className="text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>Please provide your delivery details</p>
@@ -121,7 +121,7 @@ const CheckoutPage = () => {
           {/* Payment Method Info */}
           <div className="mb-6 p-4 rounded-xl border-2" style={{ 
             backgroundColor: 'var(--bg-secondary)',
-            borderColor: 'var(--accent-yellow)'
+            borderColor: 'var(--text-heading)'
           }}>
             <div className="flex items-center space-x-3">
               <span className="text-2xl sm:text-3xl">{PAYMENT_METHOD.icon}</span>
@@ -151,7 +151,7 @@ const CheckoutPage = () => {
                   color: 'var(--text-primary)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--accent-yellow)';
+                  e.target.style.borderColor = 'var(--text-heading)';
                   e.target.style.boxShadow = '0 0 0 3px rgba(251, 191, 36, 0.1)';
                 }}
                 onBlur={(e) => {
@@ -176,7 +176,7 @@ const CheckoutPage = () => {
                   color: 'var(--text-primary)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--accent-yellow)';
+                  e.target.style.borderColor = 'var(--text-heading)';
                   e.target.style.boxShadow = '0 0 0 3px rgba(251, 191, 36, 0.1)';
                 }}
                 onBlur={(e) => {
@@ -202,7 +202,7 @@ const CheckoutPage = () => {
                     color: 'var(--text-primary)'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-yellow)';
+                    e.target.style.borderColor = 'var(--text-heading)';
                     e.target.style.boxShadow = '0 0 0 3px rgba(251, 191, 36, 0.1)';
                   }}
                   onBlur={(e) => {
@@ -227,7 +227,7 @@ const CheckoutPage = () => {
                     color: 'var(--text-primary)'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-yellow)';
+                    e.target.style.borderColor = 'var(--text-heading)';
                     e.target.style.boxShadow = '0 0 0 3px rgba(251, 191, 36, 0.1)';
                   }}
                   onBlur={(e) => {
@@ -255,7 +255,7 @@ const CheckoutPage = () => {
                     color: 'var(--text-primary)'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-yellow)';
+                    e.target.style.borderColor = 'var(--text-heading)';
                     e.target.style.boxShadow = '0 0 0 3px rgba(251, 191, 36, 0.1)';
                   }}
                   onBlur={(e) => {
@@ -281,7 +281,7 @@ const CheckoutPage = () => {
                     color: 'var(--text-primary)'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-yellow)';
+                    e.target.style.borderColor = 'var(--text-heading)';
                     e.target.style.boxShadow = '0 0 0 3px rgba(251, 191, 36, 0.1)';
                   }}
                   onBlur={(e) => {
@@ -297,9 +297,9 @@ const CheckoutPage = () => {
             {/* Order Summary */}
             <div className="mt-6 sm:mt-8 p-4 sm:p-6 rounded-xl border-2" style={{ 
               backgroundColor: 'var(--bg-secondary)',
-              borderColor: 'var(--accent-yellow)'
+              borderColor: 'var(--text-heading)'
             }}>
-              <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4" style={{ color: 'var(--accent-yellow)' }}>Order Summary</h3>
+              <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4" style={{ color: 'var(--text-heading)' }}>Order Summary</h3>
               <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                 <div className="flex justify-between" style={{ color: 'var(--text-primary)' }}>
                   <span>Subtotal</span>
@@ -309,9 +309,9 @@ const CheckoutPage = () => {
                   <span>Shipping</span>
                   <span className="font-semibold">₹{shippingCost}</span>
                 </div>
-                <div className="flex justify-between font-bold pt-2 sm:pt-3 border-t-2 text-base sm:text-lg" style={{ borderColor: 'var(--accent-yellow)' }}>
+                <div className="flex justify-between font-bold pt-2 sm:pt-3 border-t-2 text-base sm:text-lg" style={{ borderColor: 'var(--text-heading)' }}>
                   <span style={{ color: 'var(--text-primary)' }}>Total</span>
-                  <span style={{ color: 'var(--accent-yellow)' }}>₹{total.toLocaleString()}</span>
+                  <span style={{ color: 'var(--text-heading)' }}>₹{total.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -364,7 +364,7 @@ const CheckoutPage = () => {
                     <p className="text-xs sm:text-sm mb-1 sm:mb-2" style={{ color: 'var(--text-secondary)' }}>
                       ₹{(item.price || item.finalPrice || 0).toLocaleString()} × {item.quantity || 1}
                     </p>
-                    <p className="font-bold text-base sm:text-lg" style={{ color: 'var(--accent-yellow)' }}>
+                    <p className="font-bold text-base sm:text-lg" style={{ color: 'var(--text-heading)' }}>
                       ₹{((item.price || item.finalPrice || 0) * (item.quantity || 1)).toLocaleString()}
                     </p>
                   </div>
@@ -375,8 +375,8 @@ const CheckoutPage = () => {
 
           {/* Order Summary Card */}
           <div className="p-4 sm:p-6 rounded-2xl shadow-xl border-2" style={{ 
-            backgroundColor: 'var(--accent-yellow)',
-            borderColor: 'var(--accent-yellow)',
+            backgroundColor: 'var(--text-heading)',
+            borderColor: 'var(--text-heading)',
             color: 'var(--text-primary)'
           }}>
             <h3 className="font-bold text-lg sm:text-xl mb-4 sm:mb-6" style={{ color: 'var(--text-primary)' }}>Order Summary</h3>
@@ -399,7 +399,7 @@ const CheckoutPage = () => {
           {/* Cash on Delivery Notice */}
           <div className="p-3 sm:p-4 rounded-lg text-xs sm:text-sm border-2" style={{ 
             backgroundColor: 'var(--bg-secondary)',
-            borderColor: 'var(--accent-yellow)',
+            borderColor: 'var(--text-heading)',
             color: 'var(--text-secondary)'
           }}>
             <div className="flex items-center gap-2 mb-1 sm:mb-2">

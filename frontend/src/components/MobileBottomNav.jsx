@@ -82,13 +82,6 @@ const MobileBottomNav = () => {
   };
 
   const allCategories = [
-    { icon: Eye, name: "Eyeglasses", link: "/category/Eyeglasses", subcategories: null },
-    { icon: Sun, name: "Sunglasses", link: "/category/Sunglasses", subcategories: null },
-    { icon: Monitor, name: "Computer Glasses", link: "/category/Computer%20Glasses", subcategories: null },
-    { icon: Phone, name: "Contact Lenses", link: "/category/Contact%20Lenses", subcategories: null },
-    { icon: Sparkles, name: "Accessories", link: "/category/Accessories", subcategories: ["Necklace", "Bracelets", "Tie", "Anklets", "Earings", "Belts", "Scarfs"] },
-    { icon: Sparkles, name: "Skincare", link: "/category/Skincare", subcategories: ["Moisturizer", "Serum", "Cleanser", "Facewash", "Sunscreen"] },
-    { icon: BagIcon, name: "Bags", link: "/category/Bags", subcategories: ["Handbag", "Sling Bag", "Tote Bag", "Duffle Bag", "Wallet", "Laptop Bag", "Travel Bag", "Clutch", "Shoulder Bag"] },
     { icon: Footprints, name: "Men's Shoes", link: "/category/Men's%20Shoes", subcategories: ["Formal", "Sneakers", "Boots"] },
     { icon: Footprints, name: "Women's Shoes", link: "/category/Women's%20Shoes", subcategories: ["Heels", "Flats", "Sneakers", "Boots", "Sandals"] },
   ];
@@ -195,10 +188,13 @@ const MobileBottomNav = () => {
                   {/* All Category Option */}
                   <button
                     onClick={() => handleAllCategorySelect(selectedCategory)}
-                    className="w-full flex items-center justify-between p-4 mb-3 rounded-xl border-2 border-yellow-400 bg-yellow-50 hover:bg-yellow-100 transition-all duration-200 active:scale-95"
+                    className="w-full flex items-center justify-between p-4 mb-3 rounded-xl border-2 transition-all duration-200 active:scale-95"
+                    style={{ borderColor: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#fef2f2'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--bg-secondary)'}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-yellow-400 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--text-primary)' }}>
                         {React.createElement(selectedCategory.icon, { className: "w-5 h-5 text-gray-900" })}
                       </div>
                       <span className="text-base font-semibold text-gray-900">All {selectedCategory.name}</span>
@@ -215,9 +211,12 @@ const MobileBottomNav = () => {
                           onClick={() => handleSubcategorySelect(selectedCategory, subcat)}
                           className={`flex items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${
                             isActive
-                              ? 'border-yellow-400 bg-yellow-50 shadow-md'
-                              : 'border-gray-200 bg-white hover:border-yellow-300 hover:bg-yellow-50 hover:shadow-md active:scale-95'
+                              ? 'shadow-md'
+                              : 'border-gray-200 bg-white hover:shadow-md active:scale-95'
                           }`}
+                          style={isActive ? { borderColor: 'var(--text-primary)', backgroundColor: 'var(--text-heading)' } : {}}
+                          onMouseEnter={(e) => !isActive && (e.target.style.borderColor = 'var(--text-primary)', e.target.style.backgroundColor = 'var(--text-heading)')}
+                          onMouseLeave={(e) => !isActive && (e.target.style.borderColor = '', e.target.style.backgroundColor = '')}
                         >
                           <span 
                             className={`text-sm font-medium ${
@@ -245,15 +244,16 @@ const MobileBottomNav = () => {
                         onClick={() => handleCategoryClick(cat)}
                         className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${
                           isActive
-                            ? 'border-yellow-400 bg-yellow-50 shadow-md scale-105'
-                            : 'border-gray-200 bg-white hover:border-yellow-300 hover:bg-yellow-50 hover:shadow-md active:scale-95'
+                            ? 'shadow-md scale-105'
+                            : 'border-gray-200 bg-white hover:shadow-md active:scale-95'
                         }`}
-                        style={{ backgroundColor: isActive ? 'var(--bg-secondary)' : 'var(--bg-primary)' }}
+                        style={isActive ? { borderColor: 'var(--text-primary)', backgroundColor: 'var(--text-heading)' } : { backgroundColor: 'var(--bg-primary)' }}
+                        onMouseEnter={(e) => !isActive && (e.target.style.borderColor = 'var(--text-primary)', e.target.style.backgroundColor = 'var(--text-heading)')}
+                        onMouseLeave={(e) => !isActive && (e.target.style.borderColor = '', e.target.style.backgroundColor = '')}
                       >
                         <div 
-                          className={`w-12 h-12 rounded-lg flex items-center justify-center mb-2 ${
-                            isActive ? 'bg-yellow-400' : 'bg-gray-100'
-                          }`}
+                          className="w-12 h-12 rounded-lg flex items-center justify-center mb-2"
+                          style={{ backgroundColor: isActive ? 'var(--text-primary)' : 'var(--border-color)' }}
                         >
                           <Icon 
                             className={`w-6 h-6 ${
@@ -303,22 +303,22 @@ const MobileBottomNav = () => {
                   }}
                   className="flex flex-col items-center justify-center relative px-3 py-1 flex-1 transition-all duration-200"
                   style={{
-                    color: active ? 'var(--accent-yellow)' : 'var(--text-secondary)'
+                    color: active ? 'var(--text-heading)' : 'var(--text-secondary)'
                   }}
                 >
                   <div className="relative">
                     <Icon 
                       className={`w-5 h-5 transition-all duration-200 ${active ? 'scale-110' : ''}`}
                       style={{
-                        color: active ? 'var(--accent-yellow)' : 'var(--text-secondary)'
+                        color: active ? 'var(--text-heading)' : 'var(--text-secondary)'
                       }}
                     />
                     {item.badge && (
                       <span 
                         className="absolute -top-2 -right-2 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold"
                         style={{ 
-                          backgroundColor: 'var(--accent-yellow)', 
-                          color: 'var(--text-primary)'
+                          backgroundColor: 'var(--text-primary)', 
+                          color: 'var(--bg-primary)'
                         }}
                       >
                         {item.badge > 9 ? '9+' : item.badge}
@@ -328,7 +328,7 @@ const MobileBottomNav = () => {
                   <span 
                     className="text-[10px] font-medium mt-0.5 transition-all duration-200"
                     style={{
-                      color: active ? 'var(--accent-yellow)' : 'var(--text-secondary)',
+                      color: active ? 'var(--text-heading)' : 'var(--text-secondary)',
                       fontWeight: active ? '600' : '400'
                     }}
                   >

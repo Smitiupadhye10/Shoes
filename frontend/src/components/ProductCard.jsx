@@ -49,7 +49,7 @@ const ProductCard = ({ product }) => {
   const renderStars = (rating) => {
     const stars = Math.round(rating || 0);
     return (
-      <span className="text-yellow-500 font-semibold text-sm">
+      <span className="font-semibold text-sm" style={{ color: 'var(--text-heading)' }}>
         {"★".repeat(stars) + "☆".repeat(5 - stars)} ({(rating || 0).toFixed(1)})
       </span>
     );
@@ -73,7 +73,7 @@ const ProductCard = ({ product }) => {
 
       {/* Product Image */}
       <div className="relative mb-6">
-        <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100">
+        <div className="aspect-square rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <img
             src={imageSrc}
             alt={product.title}
