@@ -1,11 +1,7 @@
-import Product from "../models/Product.js";
 import Order from "../models/Order.js";
-import ContactLens from "../models/ContactLens.js";
-import Accessory from "../models/Accessory.js";
-import SkincareProduct from "../models/SkincareProduct.js";
-import Bag from "../models/Bag.js";
 import MensShoe from "../models/MensShoe.js";
 import WomensShoe from "../models/WomensShoe.js";
+import KidsShoe from "../models/KidsShoe.js";
 
 // Helper function to normalize Accessory to Product-like format
 function normalizeAccessory(acc) {
@@ -266,37 +262,79 @@ function normalizeWomensShoe(shoe) {
   };
 }
 
+// Helper function to normalize KidsShoe to Product-like format
+function normalizeKidsShoe(shoe) {
+  const doc = shoe._doc || shoe;
+  let imagesArray = [];
+  if (Array.isArray(doc.images) && doc.images.length > 0) {
+    imagesArray = doc.images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+  }
+  
+  if (imagesArray.length === 0 && doc.Images) {
+    if (doc.Images.image1) imagesArray.push(doc.Images.image1);
+    if (doc.Images.image2) imagesArray.push(doc.Images.image2);
+    if (Array.isArray(doc.Images.additionalImages)) {
+      imagesArray.push(...doc.Images.additionalImages.filter(img => img && typeof img === 'string' && img.trim() !== ''));
+    }
+  }
+  
+  if (imagesArray.length === 0 && doc.thumbnail && typeof doc.thumbnail === 'string' && doc.thumbnail.trim() !== '') {
+    imagesArray = [doc.thumbnail];
+  }
+  
+  // Calculate original price (MRP)
+  const finalPrice = doc.finalPrice || doc.price || 0;
+  const discountPercent = doc.discountPercent || 0;
+  let originalPrice = doc.originalPrice;
+  if (!originalPrice && discountPercent > 0 && finalPrice > 0) {
+    originalPrice = Math.round(finalPrice / (1 - discountPercent / 100));
+  } else if (!originalPrice) {
+    originalPrice = finalPrice;
+  }
+
+  return {
+    _id: doc._id,
+    title: doc.title || '',
+    price: finalPrice,
+    originalPrice: originalPrice,
+    description: doc.description || '',
+    category: doc.category || "Kids Shoes",
+    subCategory: doc.subCategory || '',
+    subSubCategory: doc.subSubCategory || '',
+    product_info: {
+      brand: doc.product_info?.brand || '',
+      gender: doc.product_info?.gender || 'Kids',
+      color: doc.product_info?.color || '',
+    },
+    images: imagesArray,
+    ratings: doc.rating || 0,
+    discount: discountPercent,
+    finalPrice: finalPrice,
+    _type: 'kidsShoe',
+    stock: doc.stock,
+    inStock: doc.inStock
+  };
+}
+
 export const listAllProducts = async (req, res) => {
   try {
-    // Get ALL products from all collections for admin dashboard
-    const [products, contactLenses, accessories, skincareProducts, bags, mensShoes, womensShoes] = await Promise.all([
-      Product.find({}).sort({ createdAt: -1 }).lean(),
-      ContactLens.find({}).sort({ createdAt: -1 }).lean(),
-      Accessory.find({}).sort({ createdAt: -1 }).lean(),
-      SkincareProduct.find({}).sort({ createdAt: -1 }).lean(),
-      Bag.find({}).sort({ createdAt: -1 }).lean(),
+    // Get only Men's, Women's, and Kids Shoes for admin dashboard
+    const [mensShoes, womensShoes, kidsShoes] = await Promise.all([
       MensShoe.find({}).sort({ createdAt: -1 }).lean(),
       WomensShoe.find({}).sort({ createdAt: -1 }).lean(),
+      KidsShoe.find({}).sort({ createdAt: -1 }).lean(),
     ]);
 
-    // Tag and normalize each item
-    const taggedProducts = products.map((p) => ({ ...p, _type: "product" }));
-    const taggedContactLenses = contactLenses.map((c) => ({ ...c, _type: "contactLens" }));
-    const normalizedAccessories = accessories.map(normalizeAccessory);
-    const normalizedSkincare = skincareProducts.map(normalizeSkincareProduct);
-    const normalizedBags = bags.map(normalizeBag);
+    // Normalize each item
     const normalizedMensShoes = mensShoes.map(normalizeMensShoe);
     const normalizedWomensShoes = womensShoes.map(normalizeWomensShoe);
+    const normalizedKidsShoes = kidsShoes.map(normalizeKidsShoe);
 
     // Combine all products and sort by creation date (newest first)
     const allProducts = [
-      ...taggedProducts,
-      ...taggedContactLenses,
-      ...normalizedAccessories,
-      ...normalizedSkincare,
-      ...normalizedBags,
       ...normalizedMensShoes,
-      ...normalizedWomensShoes
+      ...normalizedWomensShoes,
+      ...normalizedKidsShoes
     ].sort((a, b) => {
       // Sort by createdAt if available, otherwise by _id
       const dateA = a.createdAt ? new Date(a.createdAt) : null;

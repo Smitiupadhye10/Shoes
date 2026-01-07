@@ -57,7 +57,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
   return (
     <div className="sticky top-0 z-50" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="container-optic">
-        <div className="flex items-center justify-between py-2 sm:py-3">
+        <div className="flex items-center justify-between py-1 sm:py-1.5">
           {/* Menu Button (Mobile) */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -76,10 +76,10 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
           <div className="flex-1 flex justify-center md:justify-start md:flex-none">
             <Link to="/" className="flex items-center">
               <img 
-                src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1766062481/01ecd43a-da05-4a95-a5b3-36af250d2740.png" 
-                alt="Stylish Touches" 
-                className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto object-contain"
-                style={{ maxWidth: '280px' }}
+                src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767693849/White_Teal_Yellow_And_Blue_Illustrative_Digital_Payment_Solutions_Presentation_100_x_100_px_2_fspuqo.png" 
+                alt="Sole mate" 
+                className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto object-contain"
+                style={{ maxWidth: '200px' }}
               />
             </Link>
           </div>

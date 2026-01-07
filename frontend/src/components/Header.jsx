@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import CategoryBar from "./CategoryBar";
 import { CartContext } from "../context/CartContext";
-import { Search, X, ChevronDown, ShoppingBag, Menu, Plus } from "lucide-react";
+import { Search, X, ChevronDown, ShoppingBag, Menu, Plus, ArrowRight, TrendingUp, Star } from "lucide-react";
 import { categories } from "../data/categories";
 
 // Removed non-shoe categories - Accessories Dropdown Component
@@ -246,10 +246,32 @@ const SkincareDropdown_Removed = () => {
   );
 };
 
-// Men's Shoes Dropdown Component
+// Category images mapping
+const categoryImages = {
+  "Men's Shoes": {
+    "Formal": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+    "Sneakers": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+    "Boots": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+  },
+  "Women's Shoes": {
+    "Heels": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg",
+    "Flats": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg",
+    "Sneakers": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg",
+    "Boots": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg",
+    "Sandals": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg",
+  },
+  "Kids Shoes": {
+    "School": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+    "Sneakers": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+    "Sandals": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+    "Boots": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+  },
+};
+
+// Men's Shoes Dropdown Component with Hover Modal
 const MensShoesDropdown = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [isMensShoesOpen, setIsMensShoesOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const mensShoesRef = useRef(null);
 
@@ -257,7 +279,7 @@ const MensShoesDropdown = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (mensShoesRef.current && !mensShoesRef.current.contains(event.target)) {
-        setIsMensShoesOpen(false);
+        setIsHovered(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -266,31 +288,28 @@ const MensShoesDropdown = () => {
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    setIsMensShoesOpen(false);
+    setIsHovered(false);
     if (category === "All") {
       navigate(`/category/Men's%20Shoes`);
     } else {
-      // Use subCategory parameter for men's shoes subcategories
       const params = new URLSearchParams({ subCategory: category });
       navigate(`/category/Men's%20Shoes?${params.toString()}`);
     }
   };
 
-  // Handle clicking on the Men's Shoes button itself
   const handleMensShoesClick = () => {
-    if (!isMensShoesOpen) {
-      setIsMensShoesOpen(true);
-    } else {
-      // If dropdown is open and user clicks button again, navigate to all men's shoes
-      navigate(`/category/Men's%20Shoes`);
-      setIsMensShoesOpen(false);
-    }
+    navigate(`/category/Men's%20Shoes`);
   };
 
   const subcategories = ["Formal", "Sneakers", "Boots"];
 
   return (
-    <div className="relative" ref={mensShoesRef}>
+    <div 
+      className="relative" 
+      ref={mensShoesRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <button
         onClick={handleMensShoesClick}
         className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg sm:rounded-xl hover:border-red-800 hover:bg-red-50 hover:shadow-lg transition-all duration-300 text-xs sm:text-sm font-medium text-gray-700 shadow-sm min-w-[100px] sm:min-w-[140px] justify-between"
@@ -298,27 +317,102 @@ const MensShoesDropdown = () => {
         <span className="group-hover:text-red-800 transition-colors truncate">
           <span>Men's Shoes</span>
         </span>
-        <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 flex-shrink-0 ${isMensShoesOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 flex-shrink-0 ${isHovered ? 'rotate-180' : ''}`} />
       </button>
-      {isMensShoesOpen && (
-        <div className="absolute top-full left-0 mt-2 w-48 sm:w-52 md:w-56 bg-white/95 backdrop-blur-lg border border-gray-200 rounded-lg sm:rounded-xl shadow-2xl z-[100] max-h-[70vh] sm:max-h-96 overflow-y-auto">
-          <div className="p-1 sm:p-2">
-            <button
-              onClick={() => handleCategorySelect("All")}
-              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-red-50 hover:text-red-800 transition-all duration-200 text-xs sm:text-sm font-medium rounded-md sm:rounded-lg group font-semibold"
-            >
-              <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">All Men's Shoes</span>
-            </button>
-            <div className="border-t border-gray-200 my-1"></div>
-            {subcategories.map((category) => (
-              <button
-                key={category}
-                onClick={() => handleCategorySelect(category)}
-                className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-red-50 hover:text-red-800 transition-all duration-200 text-xs sm:text-sm font-medium rounded-md sm:rounded-lg group"
-              >
-                <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">{category}</span>
-              </button>
-            ))}
+      {isHovered && (
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[90vw] max-w-4xl bg-white rounded-lg shadow-2xl z-[100] border border-gray-200 overflow-hidden">
+          <div className="p-6">
+            {/* Top Section */}
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Featured:</span>
+              <div className="flex gap-2">
+                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-white">By Category</button>
+                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-gray-300" style={{ color: 'var(--text-primary)' }}>By Use</button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column - Navigation */}
+              <div className="lg:col-span-1 space-y-4">
+                <button 
+                  onClick={() => navigate(`/category/Men's%20Shoes`)}
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Best Selling</span>
+                  <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+                <button 
+                  onClick={() => navigate(`/category/Men's%20Shoes`)}
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Trending</span>
+                  <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+                <button 
+                  onClick={() => navigate(`/category/Men's%20Shoes`)}
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>All Products For Men</span>
+                  <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+              </div>
+              
+              {/* Right Column - Category Grid */}
+              <div className="lg:col-span-2">
+                <div className="grid grid-cols-3 gap-4">
+                  {subcategories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => handleCategorySelect(category)}
+                      className="group relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200 hover:scale-105"
+                    >
+                      <div className="aspect-square mb-3 rounded-lg overflow-hidden bg-gray-100">
+                        <img 
+                          src={categoryImages["Men's Shoes"][category] || "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg"} 
+                          alt={category}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{category}</span>
+                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--text-secondary)' }} />
+                      </div>
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handleCategorySelect("All")}
+                    className="group relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200 hover:scale-105"
+                  >
+                    <div className="aspect-square mb-3 rounded-lg overflow-hidden bg-gray-100 grid grid-cols-2 gap-1">
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>All Products</span>
+                      <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--text-secondary)' }} />
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -326,10 +420,10 @@ const MensShoesDropdown = () => {
   );
 };
 
-// Women's Shoes Dropdown Component
+// Women's Shoes Dropdown Component with Hover Modal
 const WomensShoesDropdown = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [isWomensShoesOpen, setIsWomensShoesOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const womensShoesRef = useRef(null);
 
@@ -337,7 +431,7 @@ const WomensShoesDropdown = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (womensShoesRef.current && !womensShoesRef.current.contains(event.target)) {
-        setIsWomensShoesOpen(false);
+        setIsHovered(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -346,31 +440,28 @@ const WomensShoesDropdown = () => {
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    setIsWomensShoesOpen(false);
+    setIsHovered(false);
     if (category === "All") {
       navigate(`/category/Women's%20Shoes`);
     } else {
-      // Use subCategory parameter for women's shoes subcategories
       const params = new URLSearchParams({ subCategory: category });
       navigate(`/category/Women's%20Shoes?${params.toString()}`);
     }
   };
 
-  // Handle clicking on the Women's Shoes button itself
   const handleWomensShoesClick = () => {
-    if (!isWomensShoesOpen) {
-      setIsWomensShoesOpen(true);
-    } else {
-      // If dropdown is open and user clicks button again, navigate to all women's shoes
-      navigate(`/category/Women's%20Shoes`);
-      setIsWomensShoesOpen(false);
-    }
+    navigate(`/category/Women's%20Shoes`);
   };
 
   const subcategories = ["Heels", "Flats", "Sneakers", "Boots", "Sandals"];
 
   return (
-    <div className="relative" ref={womensShoesRef}>
+    <div 
+      className="relative" 
+      ref={womensShoesRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <button
         onClick={handleWomensShoesClick}
         className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg sm:rounded-xl hover:border-red-800 hover:bg-red-50 hover:shadow-lg transition-all duration-300 text-xs sm:text-sm font-medium text-gray-700 shadow-sm min-w-[100px] sm:min-w-[140px] justify-between"
@@ -378,27 +469,254 @@ const WomensShoesDropdown = () => {
         <span className="group-hover:text-red-800 transition-colors truncate">
           <span>Women's Shoes</span>
         </span>
-        <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 flex-shrink-0 ${isWomensShoesOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 flex-shrink-0 ${isHovered ? 'rotate-180' : ''}`} />
       </button>
-      {isWomensShoesOpen && (
-        <div className="absolute top-full left-0 mt-2 w-48 sm:w-52 md:w-56 bg-white/95 backdrop-blur-lg border border-gray-200 rounded-lg sm:rounded-xl shadow-2xl z-[100] max-h-[70vh] sm:max-h-96 overflow-y-auto">
-          <div className="p-1 sm:p-2">
-            <button
-              onClick={() => handleCategorySelect("All")}
-              className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-red-50 hover:text-red-800 transition-all duration-200 text-xs sm:text-sm font-medium rounded-md sm:rounded-lg group font-semibold"
-            >
-              <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">All Women's Shoes</span>
-            </button>
-            <div className="border-t border-gray-200 my-1"></div>
-            {subcategories.map((category) => (
-              <button
-                key={category}
-                onClick={() => handleCategorySelect(category)}
-                className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 hover:bg-red-50 hover:text-red-800 transition-all duration-200 text-xs sm:text-sm font-medium rounded-md sm:rounded-lg group"
-              >
-                <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">{category}</span>
-              </button>
-            ))}
+      {isHovered && (
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[90vw] max-w-4xl bg-white rounded-lg shadow-2xl z-[100] border border-gray-200 overflow-hidden">
+          <div className="p-6">
+            {/* Top Section */}
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Featured:</span>
+              <div className="flex gap-2">
+                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-white">By Category</button>
+                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-gray-300" style={{ color: 'var(--text-primary)' }}>By Use</button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column - Navigation */}
+              <div className="lg:col-span-1 space-y-4">
+                <button 
+                  onClick={() => navigate(`/category/Women's%20Shoes`)}
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Best Selling</span>
+                  <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+                <button 
+                  onClick={() => navigate(`/category/Women's%20Shoes`)}
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Trending</span>
+                  <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+                <button 
+                  onClick={() => navigate(`/category/Women's%20Shoes`)}
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>All Products For Women</span>
+                  <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+              </div>
+              
+              {/* Right Column - Category Grid */}
+              <div className="lg:col-span-2">
+                <div className="grid grid-cols-3 gap-4">
+                  {subcategories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => handleCategorySelect(category)}
+                      className="group relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200 hover:scale-105"
+                    >
+                      <div className="aspect-square mb-3 rounded-lg overflow-hidden bg-gray-100">
+                        <img 
+                          src={categoryImages["Women's Shoes"][category] || "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg"} 
+                          alt={category}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{category}</span>
+                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--text-secondary)' }} />
+                      </div>
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handleCategorySelect("All")}
+                    className="group relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200 hover:scale-105"
+                  >
+                    <div className="aspect-square mb-3 rounded-lg overflow-hidden bg-gray-100 grid grid-cols-2 gap-1">
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>All Products</span>
+                      <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--text-secondary)' }} />
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Kids Shoes Dropdown Component with Hover Modal
+const KidsShoesDropdown = () => {
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+  const kidsShoesRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (kidsShoesRef.current && !kidsShoesRef.current.contains(event.target)) {
+        setIsHovered(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    setIsHovered(false);
+    if (category === "All") {
+      navigate(`/category/Kids%20Shoes`);
+    } else {
+      const params = new URLSearchParams({ subCategory: category });
+      navigate(`/category/Kids%20Shoes?${params.toString()}`);
+    }
+  };
+
+  const handleKidsShoesClick = () => {
+    navigate(`/category/Kids%20Shoes`);
+  };
+
+  const subcategories = categories["Kids Shoes"]?.fields?.SubCategory || ["School", "Sneakers", "Sandals", "Boots"];
+
+  return (
+    <div 
+      className="relative" 
+      ref={kidsShoesRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <button
+        onClick={handleKidsShoesClick}
+        className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg sm:rounded-xl hover:border-red-800 hover:bg-red-50 hover:shadow-lg transition-all duration-300 text-xs sm:text-sm font-medium text-gray-700 shadow-sm min-w-[100px] sm:min-w-[140px] justify-between"
+      >
+        <span className="group-hover:text-red-800 transition-colors truncate">
+          <span>Kids Shoes</span>
+        </span>
+        <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 flex-shrink-0 ${isHovered ? 'rotate-180' : ''}`} />
+      </button>
+      {isHovered && (
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[90vw] max-w-4xl bg-white rounded-lg shadow-2xl z-[100] border border-gray-200 overflow-hidden">
+          <div className="p-6">
+            {/* Top Section */}
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Featured:</span>
+              <div className="flex gap-2">
+                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-white">By Category</button>
+                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-gray-300" style={{ color: 'var(--text-primary)' }}>By Use</button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column - Navigation */}
+              <div className="lg:col-span-1 space-y-4">
+                <button 
+                  onClick={() => navigate(`/category/Kids%20Shoes`)}
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Best Selling</span>
+                  <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+                <button 
+                  onClick={() => navigate(`/category/Kids%20Shoes`)}
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Trending</span>
+                  <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+                <button 
+                  onClick={() => navigate(`/category/Kids%20Shoes`)}
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>All Products For Kids</span>
+                  <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+              </div>
+              
+              {/* Right Column - Category Grid */}
+              <div className="lg:col-span-2">
+                <div className="grid grid-cols-3 gap-4">
+                  {subcategories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => handleCategorySelect(category)}
+                      className="group relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200 hover:scale-105"
+                    >
+                      <div className="aspect-square mb-3 rounded-lg overflow-hidden bg-gray-100">
+                        <img 
+                          src={categoryImages["Kids Shoes"][category] || "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg"} 
+                          alt={category}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{category}</span>
+                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--text-secondary)' }} />
+                      </div>
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handleCategorySelect("All")}
+                    className="group relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200 hover:scale-105"
+                  >
+                    <div className="aspect-square mb-3 rounded-lg overflow-hidden bg-gray-100 grid grid-cols-2 gap-1">
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                      <img 
+                        src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg" 
+                        alt="All Products"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>All Products</span>
+                      <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--text-secondary)' }} />
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -692,10 +1010,11 @@ const Header = () => {
 
       {/* Category Section - Desktop Only */}
       <div className="hidden md:block border-b" style={{ borderColor: 'var(--border-color)' }}>
-        <div className="container-optic py-3 sm:py-4">
+        <div className="container-optic py-2 sm:py-2.5">
           <div className="flex justify-center items-center gap-2 md:gap-3 flex-wrap">
             <MensShoesDropdown />
             <WomensShoesDropdown />
+                <KidsShoesDropdown />
           </div>
         </div>
       </div>
@@ -720,22 +1039,6 @@ const Header = () => {
                 style={{ color: 'var(--text-primary)' }}
               >
                 SHOP
-              </Link>
-              <Link 
-                to="/category/New" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-optic-body text-sm font-medium uppercase tracking-wider"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                NEW
-              </Link>
-              <Link 
-                to="/category/Sale" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-optic-body text-sm font-medium uppercase tracking-wider"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                SALE
               </Link>
             </nav>
           </div>

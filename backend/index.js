@@ -15,7 +15,6 @@ import paymentRouter from "./routes/paymentRoutes.js";
 import allProductRouter from "./routes/allProductsRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
-import contactLensRouter from "./routes/contactLensRoutes.js";
 import healthRouter from "./routes/healthRoutes.js";
 import { verifyToken } from "./middleware/authMiddleware.js";
 
@@ -70,7 +69,6 @@ app.use("/api/payment", paymentRouter);
 app.use("/api/all-products", allProductRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/cart", verifyToken, cartRouter);
-app.use("/api/contact-lenses", contactLensRouter);
 app.use("/api/health", healthRouter);
 
 // Root endpoint

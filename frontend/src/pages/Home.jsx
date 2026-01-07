@@ -56,7 +56,8 @@ const Home = ({ addToCart, addToWishlist }) => {
 
   const categories = [
     { icon: Footprints, name: "Men's Shoes", image: "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg", link: "/category/Men's%20Shoes", color: "bg-red-50" },
-    { icon: Footprints, name: "Women's Shoes", image: "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg", link: "/category/Women's%20Shoes", color: "bg-red-50" }
+    { icon: Footprints, name: "Women's Shoes", image: "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg", link: "/category/Women's%20Shoes", color: "bg-red-50" },
+    { icon: Footprints, name: "Kids Shoes", image: "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg", link: "/category/Kids%20Shoes", color: "bg-red-50" }
   ];
 
   const carouselSettings = {
@@ -70,96 +71,75 @@ const Home = ({ addToCart, addToWishlist }) => {
     arrows: false,
   };
 
+
   return (
     <div className="space-y-0">
-      {/* Hero Section - Brown for Autumn Style with 3D Effect */}
-      <section className="relative -mt-8 md:-mt-6 min-h-[80vh] flex items-center overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)', perspective: '1000px' }}>
+      {/* Hero Section - Brown for Autumn Style with Card Design */}
+      <section className="relative min-h-[80vh] flex items-center py-12 md:py-16" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container-optic w-full relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Left Content */}
-            <div className="space-y-6 lg:space-y-8 relative pl-8 z-20" style={{ fontFamily: 'Georgia, serif', transform: 'translateZ(50px)' }}>
-              {/* Vertical lines on the left */}
-              <div className="absolute left-0 top-0 bottom-0 flex flex-col gap-2">
-                <div className="w-0.5 h-16" style={{ backgroundColor: 'var(--text-primary)' }}></div>
-                <div className="w-0.5 h-16" style={{ backgroundColor: 'var(--text-primary)' }}></div>
+          {/* Card Container */}
+          <div 
+            className="relative rounded-3xl p-8 md:p-12 lg:p-16"
+            style={{
+              backgroundColor: 'var(--bg-secondary)',
+              border: '2px solid var(--border-color)',
+              boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05)',
+            }}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              {/* Left Content */}
+              <div className="space-y-6 lg:space-y-8 relative pl-8 z-20" style={{ fontFamily: 'Georgia, serif' }}>
+                {/* Vertical lines on the left */}
+                <div className="absolute left-0 top-0 bottom-0 flex flex-col gap-2">
+                  <div className="w-0.5 h-16" style={{ backgroundColor: 'var(--text-primary)' }}></div>
+                  <div className="w-0.5 h-16" style={{ backgroundColor: 'var(--text-primary)' }}></div>
+                </div>
+                <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-none font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif', textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>
+                  Brown for<br />Autumn
+                </h1>
+                <p className="text-base md:text-lg max-w-lg font-serif" style={{ color: 'var(--text-secondary)' }}>
+                  The best shoes you have.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                  <Link 
+                    to="/shop" 
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    Shop Now
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                  <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
+                    <Star className="w-5 h-5" style={{ fill: 'var(--text-primary)', color: 'var(--text-primary)' }} />
+                    <span className="text-sm font-medium">4.9 Average Customer Rating</span>
+                  </div>
+                </div>
               </div>
-              <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-none font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif', textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>
-                Brown for<br />Autumn
-              </h1>
-              <p className="text-base md:text-lg max-w-lg font-serif" style={{ color: 'var(--text-secondary)' }}>
-                The best shoes you have.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 items-center">
-                <Link 
-                  to="/shop" 
-                  className="btn-primary flex items-center gap-2"
-                  style={{ transform: 'translateZ(30px)' }}
+
+              {/* Right Product Image */}
+              <div className="relative z-10">
+                <div 
+                  className="relative rounded-2xl overflow-hidden"
+                  style={{
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                 >
-                  Shop Now
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-                <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
-                  <Star className="w-5 h-5" style={{ fill: 'var(--text-primary)', color: 'var(--text-primary)' }} />
-                  <span className="text-sm font-medium">4.9 Average Customer Rating</span>
+                  <img 
+                    src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767700197/b0a2ac7a6dfb3cae08ba547b8bc89381_uv6778.jpg" 
+                    alt="Featured Shoes"
+                    className="w-full h-auto object-cover"
+                  />
                 </div>
               </div>
             </div>
-
-            {/* Right Product Image with 3D Effect */}
-            <div className="relative z-10" style={{ transformStyle: 'preserve-3d' }}>
-              <div 
-                className="relative rounded-2xl overflow-hidden"
-                style={{
-                  transform: 'perspective(1000px) rotateY(-15deg) rotateX(5deg) translateZ(100px)',
-                  transformStyle: 'preserve-3d',
-                  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1)',
-                  transition: 'transform 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'perspective(1000px) rotateY(-10deg) rotateX(3deg) translateZ(120px) scale(1.02)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'perspective(1000px) rotateY(-15deg) rotateX(5deg) translateZ(100px)';
-                }}
-              >
-                <img 
-                  src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg" 
-                  alt="Featured Shoes"
-                  className="w-full h-auto object-cover"
-                  style={{ transform: 'translateZ(0)' }}
-                />
-                {/* 3D Shadow overlay */}
-                <div 
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, transparent 50%, rgba(0,0,0,0.15) 100%)',
-                    transform: 'translateZ(1px)'
-                  }}
-                ></div>
-              </div>
-              {/* Additional depth shadow */}
-              <div 
-                className="absolute inset-0 rounded-2xl -z-10"
-                style={{
-                  background: 'var(--text-primary)',
-                  opacity: 0.2,
-                  transform: 'perspective(1000px) rotateY(-15deg) rotateX(5deg) translateZ(-20px) translateY(20px)',
-                  filter: 'blur(20px)'
-                }}
-              ></div>
-            </div>
           </div>
         </div>
-        
-        {/* White overlapping section from right (like in the image) */}
-        <div 
-          className="hidden lg:block absolute right-0 top-0 bottom-0 w-1/3 z-0"
-          style={{
-            backgroundColor: 'var(--bg-secondary)',
-            transform: 'perspective(1000px) rotateY(-5deg) translateX(50px)',
-            boxShadow: '-10px 0 30px rgba(0, 0, 0, 0.1)'
-          }}
-        ></div>
       </section>
 
       {/* Categories Section - Brown for Autumn Style */}
@@ -177,7 +157,7 @@ const Home = ({ addToCart, addToWishlist }) => {
               From classic formal to modern sneakers, find the perfect pair of shoes for every occasion
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
             {categories.map((cat, i) => {
               return (
               <Link 
@@ -376,7 +356,7 @@ const Home = ({ addToCart, addToWishlist }) => {
         <div className="container-optic py-20">
           <div className="text-center mb-20">
             <h2 className="text-optic-heading text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif' }}>
-              Why Choose <span style={{ color: 'var(--text-primary)' }}>Stylish Touches</span>?
+              Why Choose <span style={{ color: 'var(--text-primary)' }}>Sole mate</span>?
             </h2>
             <p className="text-optic-body text-xl max-w-3xl mx-auto leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               We're committed to providing the best footwear experience with guaranteed quality and service

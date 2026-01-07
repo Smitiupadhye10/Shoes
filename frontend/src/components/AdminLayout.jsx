@@ -22,54 +22,47 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Sidebar */}
-      <div className="w-64 shadow-2xl" style={{ backgroundColor: 'var(--text-black)' }}>
+      <div className="w-64 shadow-2xl" style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <div className="p-6">
           <h1 className="text-optic-heading text-2xl font-bold mb-8" style={{
-            backgroundColor: location.pathname === "/admin/dashboard" ? 'var(--text-heading)' : 'transparent',
-            color: 'black'
+            backgroundColor: 'var(--text-heading)',
+            color: 'var(--bg-primary)',
+            padding: '0.75rem 1rem',
+            borderRadius: '0.5rem'
           }}
           >Admin</h1>
           <nav className="space-y-2">
             <Link
               to="/admin/dashboard"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${location.pathname === "/admin/dashboard"
-                  ? "bg-yellow-400 text-gray-900"
-                  : "hover:bg-gray-700 text-gray-300"
-                }`}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors"
               style={{
                 backgroundColor: location.pathname === "/admin/dashboard" ? 'var(--text-heading)' : 'transparent',
-                color: 'black'
+                color: location.pathname === "/admin/dashboard" ? 'var(--bg-primary)' : 'var(--text-primary)'
               }}
             >
-              <LayoutDashboard className="w-5 h-5" />
+              <LayoutDashboard className="w-5 h-5" style={{ color: location.pathname === "/admin/dashboard" ? 'var(--bg-primary)' : 'var(--text-primary)' }} />
               Dashboard
             </Link>
             <Link
               to="/admin/products"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${location.pathname === "/admin/products"
-                  ? "bg-yellow-400 text-gray-900"
-                  : "hover:bg-gray-700 text-gray-300"
-                }`}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors"
               style={{
                 backgroundColor: location.pathname === "/admin/products" ? 'var(--text-heading)' : 'transparent',
-                color: 'black'
+                color: location.pathname === "/admin/products" ? 'var(--bg-primary)' : 'var(--text-primary)'
               }}
             >
-              <Package className="w-5 h-5" />
+              <Package className="w-5 h-5" style={{ color: location.pathname === "/admin/products" ? 'var(--bg-primary)' : 'var(--text-primary)' }} />
               Products
             </Link>
             <Link
               to="/admin/orders"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${location.pathname === "/admin/orders"
-                  ? "bg-yellow-400 text-gray-900"
-                  : "hover:bg-gray-700 text-gray-300"
-                }`}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors"
               style={{
                 backgroundColor: location.pathname === "/admin/orders" ? 'var(--text-heading)' : 'transparent',
-                color: 'black'
+                color: location.pathname === "/admin/orders" ? 'var(--bg-primary)' : 'var(--text-primary)'
               }}
             >
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className="w-5 h-5" style={{ color: location.pathname === "/admin/orders" ? 'var(--bg-primary)' : 'var(--text-primary)' }} />
               Orders
             </Link>
           </nav>

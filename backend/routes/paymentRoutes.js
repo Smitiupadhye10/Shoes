@@ -2,38 +2,22 @@ import express from 'express';
 
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
-import Product from '../models/Product.js';
-import ContactLens from '../models/ContactLens.js';
-import Accessory from '../models/Accessory.js';
-import SkincareProduct from '../models/SkincareProduct.js';
-import Bag from '../models/Bag.js';
 import MensShoe from '../models/MensShoe.js';
 import WomensShoe from '../models/WomensShoe.js';
+import KidsShoe from '../models/KidsShoe.js';
 import { verifyToken, requireAdmin } from '../middleware/authMiddleware.js';
 
 // -------- Resolve Item - Handle all product types --------
 async function resolveItem(productId) {
-  // Try each collection until we find the product
-  let doc = await Product.findById(productId).lean();
-  if (doc) return { ...doc, _type: 'product', price: doc.price || 0 };
-  
-  doc = await ContactLens.findById(productId).lean();
-  if (doc) return { ...doc, _type: 'contactLens', price: doc.price || 0 };
-  
-  doc = await Accessory.findById(productId).lean();
-  if (doc) return { ...doc, _type: 'accessory', price: doc.finalPrice || doc.price || 0 };
-  
-  doc = await SkincareProduct.findById(productId).lean();
-  if (doc) return { ...doc, _type: 'skincare', price: doc.finalPrice || doc.price || 0 };
-  
-  doc = await Bag.findById(productId).lean();
-  if (doc) return { ...doc, _type: 'bag', price: doc.finalPrice || doc.price || 0 };
-  
-  doc = await MensShoe.findById(productId).lean();
+  // Try each shoe collection until we find the product
+  let doc = await MensShoe.findById(productId).lean();
   if (doc) return { ...doc, _type: 'mensShoe', price: doc.finalPrice || doc.price || 0 };
   
   doc = await WomensShoe.findById(productId).lean();
   if (doc) return { ...doc, _type: 'womensShoe', price: doc.finalPrice || doc.price || 0 };
+  
+  doc = await KidsShoe.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'kidsShoe', price: doc.finalPrice || doc.price || 0 };
   
   return null;
 }

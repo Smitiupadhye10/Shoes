@@ -1,10 +1,7 @@
 import Product from "../models/Product.js";
-import ContactLens from "../models/ContactLens.js";
-import Accessory from "../models/Accessory.js";
-import SkincareProduct from "../models/SkincareProduct.js";
-import Bag from "../models/Bag.js";
 import MensShoe from "../models/MensShoe.js";
 import WomensShoe from "../models/WomensShoe.js";
+import KidsShoe from "../models/KidsShoe.js";
 
 const HIERARCHICAL_KEYS = new Set([
   "Gender",
@@ -262,6 +259,75 @@ function normalizeMensShoe(shoe) {
     finalPrice: finalPrice,
     sizes_inventory: doc.sizes_inventory || [],
     _type: 'mensShoe',
+    // Preserve original fields
+    stock: doc.stock,
+    inStock: doc.inStock
+  };
+}
+
+// Helper function to normalize KidsShoe to Product-like format
+function normalizeKidsShoe(shoe) {
+  const doc = shoe._doc || shoe;
+  
+  // Handle images - support multiple formats
+  let imagesArray = [];
+  if (Array.isArray(doc.images) && doc.images.length > 0) {
+    imagesArray = doc.images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+  }
+  
+  // Fallback to legacy Images format
+  if (imagesArray.length === 0 && doc.Images) {
+    if (doc.Images.image1) imagesArray.push(doc.Images.image1);
+    if (doc.Images.image2) imagesArray.push(doc.Images.image2);
+    if (Array.isArray(doc.Images.additionalImages)) {
+      imagesArray.push(...doc.Images.additionalImages.filter(img => img && typeof img === 'string' && img.trim() !== ''));
+    }
+  }
+  
+  // Fallback to thumbnail
+  if (imagesArray.length === 0 && doc.thumbnail && typeof doc.thumbnail === 'string' && doc.thumbnail.trim() !== '') {
+    imagesArray = [doc.thumbnail];
+  }
+  
+  // Calculate original price (MRP)
+  const finalPrice = doc.finalPrice || doc.price || 0;
+  const discountPercent = doc.discountPercent || 0;
+  let originalPrice = doc.originalPrice;
+  if (!originalPrice && discountPercent > 0 && finalPrice > 0) {
+    // Calculate original price from finalPrice and discountPercent
+    originalPrice = Math.round(finalPrice / (1 - discountPercent / 100));
+  } else if (!originalPrice) {
+    originalPrice = finalPrice; // No discount, original price equals final price
+  }
+
+  return {
+    _id: doc._id,
+    title: doc.title || '',
+    price: finalPrice, // This is the discounted price
+    originalPrice: originalPrice, // MRP
+    description: doc.description || '',
+    category: doc.category || "Kids Shoes",
+    subCategory: doc.subCategory || '',
+    subSubCategory: doc.subSubCategory || '',
+    product_info: {
+      brand: doc.product_info?.brand || '',
+      gender: doc.product_info?.gender || 'Kids',
+      color: doc.product_info?.color || '',
+      outerMaterial: doc.product_info?.outerMaterial || '',
+      soleMaterial: doc.product_info?.soleMaterial || '',
+      innerMaterial: doc.product_info?.innerMaterial || '',
+      closureType: doc.product_info?.closureType || '',
+      toeShape: doc.product_info?.toeShape || '',
+      ageRange: doc.product_info?.ageRange || '',
+      safetyFeatures: doc.product_info?.safetyFeatures || [],
+      warranty: doc.product_info?.warranty || '',
+    },
+    images: imagesArray,
+    ratings: doc.rating || 0,
+    discount: discountPercent,
+    finalPrice: finalPrice,
+    sizes_inventory: doc.sizes_inventory || [],
+    _type: 'kidsShoe',
     // Preserve original fields
     stock: doc.stock,
     inStock: doc.inStock
@@ -565,6 +631,59 @@ function buildWomensShoeFilter(query) {
   return conditions.length > 0 ? { $and: conditions } : { category: { $regex: `^Women's Shoes$`, $options: "i" } };
 }
 
+// Build filter for Kids Shoes
+function buildKidsShoeFilter(query) {
+  const conditions = [];
+  
+  // Category is always "Kids Shoes" for this collection
+  conditions.push({ category: { $regex: `^Kids Shoes$`, $options: "i" } });
+  
+  if (query.subCategory) {
+    conditions.push({ subCategory: { $regex: `^${query.subCategory}$`, $options: "i" } });
+  }
+  
+  if (query.subSubCategory) {
+    conditions.push({ subSubCategory: { $regex: `^${query.subSubCategory}$`, $options: "i" } });
+  }
+  
+  if (query.search) {
+    conditions.push({ title: { $regex: query.search, $options: "i" } });
+  }
+  
+  if (query.priceRange) {
+    const pr = String(query.priceRange).trim();
+    let priceCond = {};
+    if (/^\d+\-\d+$/.test(pr)) {
+      const [min, max] = pr.split('-').map(n => parseInt(n, 10));
+      if (!isNaN(min)) priceCond.$gte = min;
+      if (!isNaN(max)) priceCond.$lte = max;
+    } else if (/^\d+\+$/.test(pr)) {
+      const min = parseInt(pr.replace('+',''), 10);
+      if (!isNaN(min)) priceCond.$gte = min;
+    }
+    if (Object.keys(priceCond).length) {
+      conditions.push({ $or: [
+        { price: priceCond },
+        { finalPrice: priceCond }
+      ]});
+    }
+  }
+  
+  if (query.gender) {
+    conditions.push({ 'product_info.gender': { $regex: `^${String(query.gender)}$`, $options: 'i' } });
+  }
+  
+  if (query.color) {
+    conditions.push({ 'product_info.color': { $regex: `^${String(query.color)}$`, $options: 'i' } });
+  }
+  
+  if (query.brand) {
+    conditions.push({ 'product_info.brand': { $regex: `^${String(query.brand)}$`, $options: 'i' } });
+  }
+  
+  return conditions.length > 0 ? { $and: conditions } : { category: { $regex: `^Kids Shoes$`, $options: "i" } };
+}
+
 export const listProducts = async (req, res) => {
   try {
     const query = req.query || {};
@@ -654,59 +773,6 @@ export const listProducts = async (req, res) => {
     // If a specific category is requested, route to the appropriate collection for reliable results
     const requestedCategory = typeof query.category === 'string' ? query.category : '';
     
-    // Handle Accessories
-    if (/^accessories$/i.test(requestedCategory)) {
-      const accessoryFilter = buildAccessoryFilter(query);
-      const [totalCount, data] = await Promise.all([
-        Accessory.countDocuments(accessoryFilter),
-        Accessory.find(accessoryFilter).sort({ subCategory: 1, _id: 1 }).skip(skip).limit(limit)
-      ]);
-      const pagination = {
-        currentPage: page,
-        totalPages: Math.ceil(totalCount / limit) || 0,
-        totalProducts: totalCount,
-        productsPerPage: limit,
-        hasNextPage: page * limit < totalCount,
-        hasPrevPage: page > 1,
-      };
-      return res.json({ products: data.map(d => normalizeAccessory(d)), pagination });
-    }
-    
-    // Handle Skincare
-    if (/^skincare$/i.test(requestedCategory)) {
-      const skincareFilter = buildSkincareFilter(query);
-      const [totalCount, data] = await Promise.all([
-        SkincareProduct.countDocuments(skincareFilter),
-        SkincareProduct.find(skincareFilter).sort({ _id: 1 }).skip(skip).limit(limit)
-      ]);
-      const pagination = {
-        currentPage: page,
-        totalPages: Math.ceil(totalCount / limit) || 0,
-        totalProducts: totalCount,
-        productsPerPage: limit,
-        hasNextPage: page * limit < totalCount,
-        hasPrevPage: page > 1,
-      };
-      return res.json({ products: data.map(d => normalizeSkincareProduct(d)), pagination });
-    }
-    
-    // Handle Bags
-    if (/^bags$/i.test(requestedCategory)) {
-      const bagFilter = buildBagFilter(query);
-      const [totalCount, data] = await Promise.all([
-        Bag.countDocuments(bagFilter),
-        Bag.find(bagFilter).sort({ category: 1, gender: 1, _id: 1 }).skip(skip).limit(limit)
-      ]);
-      const pagination = {
-        currentPage: page,
-        totalPages: Math.ceil(totalCount / limit) || 0,
-        totalProducts: totalCount,
-        productsPerPage: limit,
-        hasNextPage: page * limit < totalCount,
-        hasPrevPage: page > 1,
-      };
-      return res.json({ products: data.map(d => normalizeBag(d)), pagination });
-    }
     
     // Handle Men's Shoes
     if (/^men'?s?\s+shoes?$/i.test(requestedCategory) || /^footwear$/i.test(requestedCategory)) {
@@ -744,12 +810,12 @@ export const listProducts = async (req, res) => {
       return res.json({ products: data.map(d => normalizeWomensShoe(d)), pagination });
     }
     
-    // Handle Contact Lenses
-    if (/^contact\s+lenses$/i.test(requestedCategory)) {
+    // Handle Kids Shoes
+    if (/^kids'?\s+shoes?$/i.test(requestedCategory)) {
+      const kidsShoeFilter = buildKidsShoeFilter(query);
       const [totalCount, data] = await Promise.all([
-        ContactLens.countDocuments(mongoFilter),
-        ContactLens.find(mongoFilter).sort({ _id: 1 }).skip(skip).limit(limit)
-
+        KidsShoe.countDocuments(kidsShoeFilter),
+        KidsShoe.find(kidsShoeFilter).sort({ subCategory: 1, _id: 1 }).skip(skip).limit(limit)
       ]);
       const pagination = {
         currentPage: page,
@@ -759,68 +825,50 @@ export const listProducts = async (req, res) => {
         hasNextPage: page * limit < totalCount,
         hasPrevPage: page > 1,
       };
-      return res.json({ products: data.map(d => ({ ...d._doc, _type: 'contactLens' })), pagination });
+      return res.json({ products: data.map(d => normalizeKidsShoe(d)), pagination });
     }
     
-    // Handle other categories (Eyeglasses, Sunglasses, Computer Glasses) - use Product collection
-    if (requestedCategory && !/^contact\s+lenses|accessories|skincare|bags|men'?s?\s+shoes?|women'?s?\s+shoes?|footwear$/i.test(requestedCategory)) {
-      const [totalCount, data] = await Promise.all([
-        Product.countDocuments(mongoFilter),
-        Product.find(mongoFilter).sort({ _id: 1 }).skip(skip).limit(limit)
-
-      ]);
-      const pagination = {
-        currentPage: page,
-        totalPages: Math.ceil(totalCount / limit) || 0,
-        totalProducts: totalCount,
-        productsPerPage: limit,
-        hasNextPage: page * limit < totalCount,
-        hasPrevPage: page > 1,
-      };
-      return res.json({ products: data.map(d => ({ ...d._doc, _type: 'product' })), pagination });
+    // Handle other categories - only allow Men's Shoes, Women's Shoes, and Kids Shoes
+    if (requestedCategory && !/^men'?s?\s+shoes?|women'?s?\s+shoes?|kids'?\s+shoes?|footwear$/i.test(requestedCategory)) {
+      return res.status(404).json({ 
+        message: "Category not found. Only Men's Shoes, Women's Shoes, and Kids Shoes are available.",
+        products: [],
+        pagination: {
+          currentPage: page,
+          totalPages: 0,
+          totalProducts: 0,
+          productsPerPage: limit,
+          hasNextPage: false,
+          hasPrevPage: false,
+        }
+      });
     }
 
     // No specific category: search across all collections when search term is provided
     const searchTerm = query.search ? String(query.search).trim() : '';
     
     if (searchTerm) {
-      // Build search filters for each collection type based on their field names
-      const productFilter = { title: { $regex: searchTerm, $options: "i" } };
-      const contactLensFilter = { title: { $regex: searchTerm, $options: "i" } };
-      const accessoryFilter = { name: { $regex: searchTerm, $options: "i" } };
-      const skincareFilter = { productName: { $regex: searchTerm, $options: "i" } };
-      const bagFilter = { name: { $regex: searchTerm, $options: "i" } };
+      // Build search filters for shoe collections
       const mensShoeFilter = { title: { $regex: searchTerm, $options: "i" } };
       const womensShoeFilter = { title: { $regex: searchTerm, $options: "i" } };
+      const kidsShoeFilter = { title: { $regex: searchTerm, $options: "i" } };
       
-      // Query all collections in parallel
+      // Query only shoe collections in parallel
       const [
-        products,
-        contactLenses,
-        accessories,
-        skincareProducts,
-        bags,
         mensShoes,
-        womensShoes
+        womensShoes,
+        kidsShoes
       ] = await Promise.all([
-        Product.find(productFilter).limit(limit * 3).lean(),
-        ContactLens.find(contactLensFilter).limit(limit * 3).lean(),
-        Accessory.find(accessoryFilter).limit(limit * 3).lean(),
-        SkincareProduct.find(skincareFilter).limit(limit * 3).lean(),
-        Bag.find(bagFilter).limit(limit * 3).lean(),
         MensShoe.find(mensShoeFilter).limit(limit * 3).lean(),
-        WomensShoe.find(womensShoeFilter).limit(limit * 3).lean()
+        WomensShoe.find(womensShoeFilter).limit(limit * 3).lean(),
+        KidsShoe.find(kidsShoeFilter).limit(limit * 3).lean()
       ]);
       
-      // Normalize and combine all results
+      // Normalize and combine shoe results
       const allResults = [];
-      allResults.push(...products.map(p => ({ ...p, _type: 'product' })));
-      allResults.push(...contactLenses.map(c => ({ ...c, _type: 'contactLens' })));
-      allResults.push(...accessories.map(a => normalizeAccessory(a)));
-      allResults.push(...skincareProducts.map(s => normalizeSkincareProduct(s)));
-      allResults.push(...bags.map(b => normalizeBag(b)));
       allResults.push(...mensShoes.map(m => normalizeMensShoe(m)));
       allResults.push(...womensShoes.map(w => normalizeWomensShoe(w)));
+      allResults.push(...kidsShoes.map(k => normalizeKidsShoe(k)));
       
       // Apply price filter if specified (after normalization)
       let filteredResults = allResults;
@@ -875,22 +923,25 @@ export const listProducts = async (req, res) => {
 
       return res.json({ products: paginatedResults, pagination });
     } else {
-      // No search term and no category: use aggregation with $unionWith for Product and ContactLens only
-      const matchStage = { $match: mongoFilter };
-      const addTypeProduct = { $addFields: { _type: "product" } };
-      const addTypeContact = { $addFields: { _type: "contactLens" } };
-
-      const pipeline = [
-        matchStage,
-        addTypeProduct,
-        { $unionWith: { coll: "contactlenses", pipeline: [matchStage, addTypeContact] } },
-        { $sort: { _id: 1 } },
-        { $facet: { data: [ { $skip: skip }, { $limit: limit } ], totalCount: [ { $count: "count" } ] } }
+      // No search term and no category: return Men's, Women's, and Kids Shoes
+      const [mensShoes, womensShoes, kidsShoes] = await Promise.all([
+        MensShoe.find({}).sort({ _id: 1 }).skip(skip).limit(Math.ceil(limit / 3)).lean(),
+        WomensShoe.find({}).sort({ _id: 1 }).skip(skip).limit(Math.ceil(limit / 3)).lean(),
+        KidsShoe.find({}).sort({ _id: 1 }).skip(skip).limit(Math.ceil(limit / 3)).lean()
+      ]);
+      
+      const allShoes = [
+        ...mensShoes.map(m => normalizeMensShoe(m)),
+        ...womensShoes.map(w => normalizeWomensShoe(w)),
+        ...kidsShoes.map(k => normalizeKidsShoe(k))
       ];
-
-      const aggResult = await Product.aggregate(pipeline);
-      const data = aggResult?.[0]?.data || [];
-      const totalCount = aggResult?.[0]?.totalCount?.[0]?.count || 0;
+      
+      const totalCount = await Promise.all([
+        MensShoe.countDocuments({}),
+        WomensShoe.countDocuments({}),
+        KidsShoe.countDocuments({})
+      ]).then(([mensCount, womensCount, kidsCount]) => mensCount + womensCount + kidsCount);
+      
       const totalPages = Math.ceil(totalCount / limit) || 0;
 
       const pagination = {
@@ -902,7 +953,7 @@ export const listProducts = async (req, res) => {
         hasPrevPage: page > 1,
       };
 
-      return res.json({ products: data, pagination });
+      return res.json({ products: allShoes.slice(0, limit), pagination });
     }
   } catch (error) {
     return res.status(500).json({
@@ -925,36 +976,6 @@ export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Try Product collection first
-    let product = await Product.findById(id);
-    if (product) {
-      return res.json({ ...product._doc, _type: "product" });
-    }
-    
-    // Try ContactLens collection
-    product = await ContactLens.findById(id);
-    if (product) {
-      return res.json({ ...product._doc, _type: "contactLens" });
-    }
-    
-    // Try Accessory collection
-    product = await Accessory.findById(id);
-    if (product) {
-      return res.json(normalizeAccessory(product));
-    }
-    
-    // Try SkincareProduct collection
-    product = await SkincareProduct.findById(id);
-    if (product) {
-      return res.json(normalizeSkincareProduct(product));
-    }
-    
-    // Try Bag collection
-    product = await Bag.findById(id);
-    if (product) {
-      return res.json(normalizeBag(product));
-    }
-    
     // Try MensShoe collection
     product = await MensShoe.findById(id);
     if (product) {
@@ -965,6 +986,12 @@ export const getProductById = async (req, res) => {
     product = await WomensShoe.findById(id);
     if (product) {
       return res.json(normalizeWomensShoe(product));
+    }
+    
+    // Try KidsShoe collection
+    product = await KidsShoe.findById(id);
+    if (product) {
+      return res.json(normalizeKidsShoe(product));
     }
     
     // If not found in any collection
@@ -1056,43 +1083,8 @@ export const getFacets = async (req, res) => {
     const requestedCategory = typeof query.category === 'string' ? query.category : '';
     let dataAgg;
     
-    // Handle Accessories
-    if (/^accessories$/i.test(requestedCategory)) {
-      const accessoryFilter = buildAccessoryFilter(query);
-      dataAgg = await Accessory.aggregate([
-        { $match: accessoryFilter },
-        { $facet: {
-          genders: [ { $group: { _id: { $toUpper: "$gender" }, count: { $sum: 1 } } } ],
-          subCategories: [ { $group: { _id: { $toUpper: "$subCategory" }, count: { $sum: 1 } } } ],
-          prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
-        } }
-      ]);
-    }
-    // Handle Skincare
-    else if (/^skincare$/i.test(requestedCategory)) {
-      const skincareFilter = buildSkincareFilter(query);
-      dataAgg = await SkincareProduct.aggregate([
-        { $match: skincareFilter },
-        { $facet: {
-          subCategories: [ { $group: { _id: { $toUpper: "$category" }, count: { $sum: 1 } } } ],
-          prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
-        } }
-      ]);
-    }
-    // Handle Bags
-    else if (/^bags$/i.test(requestedCategory)) {
-      const bagFilter = buildBagFilter(query);
-      dataAgg = await Bag.aggregate([
-        { $match: bagFilter },
-        { $facet: {
-          genders: [ { $group: { _id: { $toUpper: "$gender" }, count: { $sum: 1 } } } ],
-          subCategories: [ { $group: { _id: { $toUpper: "$category" }, count: { $sum: 1 } } } ],
-          prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
-        } }
-      ]);
-    }
     // Handle Men's Shoes
-    else if (/^men'?s?\s+shoes?$/i.test(requestedCategory) || /^footwear$/i.test(requestedCategory)) {
+    if (/^men'?s?\s+shoes?$/i.test(requestedCategory) || /^footwear$/i.test(requestedCategory)) {
       const mensShoeFilter = buildMensShoeFilter(query);
       dataAgg = await MensShoe.aggregate([
         { $match: mensShoeFilter },
@@ -1117,37 +1109,80 @@ export const getFacets = async (req, res) => {
         } }
       ]);
     }
-    // Handle Contact Lenses
-    else if (/^contact\s+lenses$/i.test(requestedCategory)) {
-      dataAgg = await ContactLens.aggregate([
-        ...pipelineBase,
+    // Handle Kids Shoes
+    else if (/^kids'?\s+shoes?$/i.test(requestedCategory)) {
+      const kidsShoeFilter = buildKidsShoeFilter(query);
+      dataAgg = await KidsShoe.aggregate([
+        { $match: kidsShoeFilter },
         { $facet: {
-          genders: genderFacet.slice(1),
-          colors: colorFacet.slice(1),
-          prices: [ { $group: { _id: null, values: { $push: "$price" } } } ]
+          genders: [ { $group: { _id: { $toUpper: "$product_info.gender" }, count: { $sum: 1 } } } ],
+          subCategories: [ { $group: { _id: { $toUpper: "$subCategory" }, count: { $sum: 1 } } } ],
+          colors: [ { $group: { _id: { $toUpper: "$product_info.color" }, count: { $sum: 1 } } } ],
+          prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
         } }
       ]);
     }
-    // Handle other categories (Eyeglasses, Sunglasses, Computer Glasses) - use Product collection
+    // Handle other categories - only allow Men's Shoes, Women's Shoes, and Kids Shoes
     else if (requestedCategory) {
-      dataAgg = await Product.aggregate([
-        ...pipelineBase,
-        { $facet: {
-          genders: genderFacet.slice(1),
-          colors: colorFacet.slice(1),
-          prices: [ { $group: { _id: null, values: { $push: "$price" } } } ]
-        } }
-      ]);
+      // Return empty facets for invalid categories
+      dataAgg = [{
+        genders: [],
+        colors: [],
+        subCategories: [],
+        prices: [{ values: [] }]
+      }];
     } else {
-      dataAgg = await Product.aggregate([
-        { $match: baseMatch },
-        { $unionWith: { coll: "contactlenses", pipeline: [ { $match: baseMatch } ] } },
-        { $facet: {
-          genders: [ { $group: { _id: { $toUpper: "$product_info.gender" }, count: { $sum: 1 } } } ],
-          colors: [ { $group: { _id: { $toUpper: "$product_info.color" }, count: { $sum: 1 } } } ],
-          prices: [ { $group: { _id: null, values: { $push: "$price" } } } ]
-        } }
+      // No category specified - combine Men's, Women's, and Kids Shoes
+      const [mensData, womensData, kidsData] = await Promise.all([
+        MensShoe.aggregate([
+          { $match: baseMatch },
+          { $facet: {
+            genders: [ { $group: { _id: { $toUpper: "$product_info.gender" }, count: { $sum: 1 } } } ],
+            subCategories: [ { $group: { _id: { $toUpper: "$subCategory" }, count: { $sum: 1 } } } ],
+            colors: [ { $group: { _id: { $toUpper: "$product_info.color" }, count: { $sum: 1 } } } ],
+            prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
+          } }
+        ]),
+        WomensShoe.aggregate([
+          { $match: baseMatch },
+          { $facet: {
+            genders: [ { $group: { _id: { $toUpper: "$product_info.gender" }, count: { $sum: 1 } } } ],
+            subCategories: [ { $group: { _id: { $toUpper: "$subCategory" }, count: { $sum: 1 } } } ],
+            colors: [ { $group: { _id: { $toUpper: "$product_info.color" }, count: { $sum: 1 } } } ],
+            prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
+          } }
+        ]),
+        KidsShoe.aggregate([
+          { $match: baseMatch },
+          { $facet: {
+            genders: [ { $group: { _id: { $toUpper: "$product_info.gender" }, count: { $sum: 1 } } } ],
+            subCategories: [ { $group: { _id: { $toUpper: "$subCategory" }, count: { $sum: 1 } } } ],
+            colors: [ { $group: { _id: { $toUpper: "$product_info.color" }, count: { $sum: 1 } } } ],
+            prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
+          } }
+        ])
       ]);
+      
+      // Merge results from all three collections
+      const mergedGenders = [...(mensData[0]?.genders || []), ...(womensData[0]?.genders || []), ...(kidsData[0]?.genders || [])];
+      const mergedSubCategories = [...(mensData[0]?.subCategories || []), ...(womensData[0]?.subCategories || []), ...(kidsData[0]?.subCategories || [])];
+      const mergedColors = [...(mensData[0]?.colors || []), ...(womensData[0]?.colors || []), ...(kidsData[0]?.colors || [])];
+      const mergedPrices = [
+        {
+          values: [
+            ...(mensData[0]?.prices?.[0]?.values || []),
+            ...(womensData[0]?.prices?.[0]?.values || []),
+            ...(kidsData[0]?.prices?.[0]?.values || [])
+          ]
+        }
+      ];
+      
+      dataAgg = [{
+        genders: mergedGenders,
+        subCategories: mergedSubCategories,
+        colors: mergedColors,
+        prices: mergedPrices
+      }];
     }
 
     const gendersRaw = dataAgg?.[0]?.genders || [];
@@ -1184,7 +1219,13 @@ export const adminListProducts = async (req, res) => {
     const limit = Math.max(parseInt(req.query.limit) || 20, 1);
     const skip = (page - 1) * limit;
 
-    const Model = /^contactlens/i.test(type) ? ContactLens : Product;
+    // Determine model based on type - only support Men's Shoes and Women's Shoes
+    let Model = Product;
+    if (/^mensshoe|men'?s?\s+shoe/i.test(type)) {
+      Model = MensShoe;
+    } else if (/^womensshoe|women'?s?\s+shoe/i.test(type)) {
+      Model = WomensShoe;
+    }
     const filter = {};
     if (search) filter.title = { $regex: search, $options: 'i' };
 
@@ -1210,7 +1251,13 @@ export const adminListProducts = async (req, res) => {
 export const adminCreateProduct = async (req, res) => {
   try {
     const { type = 'product', ...body } = req.body || {};
-    const Model = /^contactlens/i.test(type) ? ContactLens : Product;
+    // Determine model based on type - only support Men's Shoes and Women's Shoes
+    let Model = Product;
+    if (/^mensshoe|men'?s?\s+shoe/i.test(type)) {
+      Model = MensShoe;
+    } else if (/^womensshoe|women'?s?\s+shoe/i.test(type)) {
+      Model = WomensShoe;
+    }
 
     // Basic unique check by title (case-insensitive) for Product only
 
@@ -1250,7 +1297,13 @@ export const adminUpdateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { type = 'product', ...body } = req.body || {};
-    const Model = /^contactlens/i.test(type) ? ContactLens : Product;
+    // Determine model based on type - only support Men's Shoes and Women's Shoes
+    let Model = Product;
+    if (/^mensshoe|men'?s?\s+shoe/i.test(type)) {
+      Model = MensShoe;
+    } else if (/^womensshoe|women'?s?\s+shoe/i.test(type)) {
+      Model = WomensShoe;
+    }
 
     // Do not allow changing _id
     if (body._id) delete body._id;
@@ -1272,7 +1325,13 @@ export const adminDeleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { type = 'product' } = req.query;
-    const Model = /^contactlens/i.test(type) ? ContactLens : Product;
+    // Determine model based on type - only support Men's Shoes and Women's Shoes
+    let Model = Product;
+    if (/^mensshoe|men'?s?\s+shoe/i.test(type)) {
+      Model = MensShoe;
+    } else if (/^womensshoe|women'?s?\s+shoe/i.test(type)) {
+      Model = WomensShoe;
+    }
 
     const deleted = await Model.findByIdAndDelete(id);
     if (!deleted) return res.status(404).json({ message: 'Product not found' });

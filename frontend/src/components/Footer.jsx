@@ -13,7 +13,7 @@ const Footer = () => {
             <Link to="/" className="flex items-center">
               <img 
                 src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1766064439/logo_vwfmey.png" 
-                alt="Stylish Touches" 
+                alt="Sole mate" 
                 className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto object-contain"
                 style={{ maxWidth: '280px' }}
               />
@@ -37,11 +37,12 @@ const Footer = () => {
 
         {/* --- Product Categories --- */}
         <div>
-          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4" style={{ color: 'var(--bg-primary)' }}>Categories</h2>
-          <ul className="space-y-2 text-xs sm:text-sm">
-            <li><Link to="/category/Men's%20Shoes" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>Men's Shoes</Link></li>
-            <li><Link to="/category/Women's%20Shoes" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>Women's Shoes</Link></li>
-          </ul>
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4" style={{ color: 'var(--bg-primary)' }}>Categories</h2>
+            <ul className="space-y-2 text-xs sm:text-sm">
+              <li><Link to="/category/Men's%20Shoes" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>Men's Shoes</Link></li>
+              <li><Link to="/category/Women's%20Shoes" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>Women's Shoes</Link></li>
+              <li><Link to="/category/Kids%20Shoes" className="transition-colors" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>Kids Shoes</Link></li>
+            </ul>
         </div>
 
         {/* --- Contact Info --- */}
@@ -62,7 +63,7 @@ const Footer = () => {
             </li>
             <li className="flex items-center gap-2">
               <Mail className="w-4 h-4 sm:w-4 sm:h-4 flex-shrink-0" size={16} style={{ color: 'var(--bg-primary)' }}/>
-              <a href="mailto:support@stylishtouches.in" className="transition-colors break-all" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>support@stylishtouches.in</a>
+              <a href="mailto:support@solemate.in" className="transition-colors break-all" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>support@solemate.in</a>
             </li>
           </ul>
 
@@ -88,7 +89,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
             <div className="text-xs sm:text-sm text-center md:text-left" style={{ color: 'var(--bg-primary)' }}>
-              © {new Date().getFullYear()} Stylish Touches. All Rights Reserved.
+              © {new Date().getFullYear()} Sole mate. All Rights Reserved.
             </div>
             <div className="flex flex-wrap justify-center gap-x-2 sm:gap-x-4 gap-y-2 text-xs sm:text-sm">
               <Link to="/privacy-policy" className="transition-colors whitespace-nowrap" style={{ color: 'var(--bg-primary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--bg-secondary)'} onMouseLeave={(e) => e.target.style.color = 'var(--bg-primary)'}>

@@ -6,7 +6,7 @@ const PrivacyPolicy = () => {
     {
       icon: FileText,
       title: "Introduction",
-      content: "At Stylish Touches, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data."
+      content: "At Sole mate, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data."
     },
     {
       icon: Eye,
@@ -41,12 +41,12 @@ const PrivacyPolicy = () => {
     {
       icon: CheckCircle2,
       title: "Your Rights",
-      content: "You can request data deletion or modification by contacting us at support@stylishtouches.in."
+      content: "You can request data deletion or modification by contacting us at support@solemate.in."
     },
     {
       icon: Mail,
       title: "Contact Us",
-      content: "For privacy concerns, email us at support@stylishtouches.in"
+      content: "For privacy concerns, email us at support@solemate.in"
     }
   ];
 

@@ -31,7 +31,7 @@ const About = () => {
                 — stylishly.
               </h1>
               <p className="text-optic-body text-lg md:text-xl leading-relaxed max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-                At Stylish Touches we craft premium eyeglasses, sunglasses and contact
+                At Sole mate we craft premium eyeglasses, sunglasses and contact
                 lenses with precision optics and modern design. Comfort, clarity
                 and confidence — all in one pair.
               </p>
@@ -105,7 +105,7 @@ const About = () => {
         <div className="container-optic">
           <div className="text-center mb-16">
             <h2 className="text-optic-heading text-3xl md:text-4xl lg:text-5xl mb-4" style={{ color: 'var(--text-primary)' }}>
-              Why Choose Stylish Touches?
+              Why Choose Sole mate?
             </h2>
             <p className="text-optic-body text-lg md:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
               We're dedicated to providing exceptional eyewear solutions
@@ -197,7 +197,7 @@ const About = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a
-                    href="mailto:support@stylishtouches.in"
+                    href="mailto:support@solemate.in"
                     className="btn-secondary"
                   >
                     <Mail className="w-5 h-5" />

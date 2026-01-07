@@ -1,35 +1,26 @@
 export const categories = {
-  eyeglasses: {
-    title: "Eyeglasses",
+  "Men's Shoes": {
+    title: "Men's Shoes",
     fields: {
-      Gender: ["Unisex", "Men", "Women", "Kids"], 
-      Shape: ["Rectangle", "Round", "Cat Eye", "Geometric", "Wayfarer"],
-      Style: ["Rimmed", "Semi-Rimmed", "Rimless"],
-      Brands: ["RayBan", "Oakley", "Fastrack", "Vincent Chase"],
+      Gender: ["Men"],
+      SubCategory: ["Formal", "Sneakers", "Boots"],
+      Brands: [],
     },
   },
-  sunglasses: {
-    title: "Sunglasses",
+  "Women's Shoes": {
+    title: "Women's Shoes",
     fields: {
-      Gender: ["Unisex", "Men", "Women", "Kids"],
-      Shape: ["Aviator", "Wraparound", "Rectangle", "Wayfarer", "Round"],
-      Brands: ["RayBan", "Titan", "Oakley", "Fastrack", "Tees by Fastrack", "Vogue Eyewear", "Emporio Armani", "Burberry", "Maui Jim"],
-       
+      Gender: ["Women"],
+      SubCategory: ["Heels", "Flats", "Sneakers", "Boots", "Sandals"],
+      Brands: [],
     },
   },
-  computerglasses: {
-    title: "Computer Glasses",
+  "Kids Shoes": {
+    title: "Kids Shoes",
     fields: {
-      Gender: ["Unisex", "Men", "Women", "Kids"],
-    },
-  },
-  contactlenses: {
-    title: "Contact Lenses",
-    fields: {
-      Brands: ["Bausch & Lomb", "Acuvue", "Alcon", "CooperVision"],
-      "Explore by Disposability": ["Daily", "Monthly", "Yearly"], 
-      "Explore by Color": ["Blue", "Green", "Brown", "Gray"],
-     
+      Gender: ["Kids"],
+      SubCategory: ["School", "Sneakers", "Sandals", "Boots"],
+      Brands: [],
     },
   },
 };

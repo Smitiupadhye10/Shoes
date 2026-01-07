@@ -291,7 +291,7 @@ const UserInfo = () => {
                 <Headphones className="w-8 h-8 mb-3" style={{ color: 'var(--text-heading)' }} />
                 <h3 className="text-optic-heading font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Customer Support</h3>
                 <p className="text-optic-body text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>Get help from our support team</p>
-                <a href="mailto:support@stylishtouches.in" className="text-sm font-medium" style={{ color: 'var(--text-heading)' }}>support@stylishtouches.in</a>
+                <a href="mailto:support@solemate.in" className="text-sm font-medium" style={{ color: 'var(--text-heading)' }}>support@solemate.in</a>
               </div>
               <div className="card-optic p-6">
                 <MessageSquare className="w-8 h-8 mb-3" style={{ color: 'var(--text-heading)' }} />
