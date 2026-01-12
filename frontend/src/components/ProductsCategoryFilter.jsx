@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../api/axios";
 
 export default function ProductsCategoryFilter() {
   const [products, setProducts] = useState([]);
@@ -7,9 +8,9 @@ export default function ProductsCategoryFilter() {
   const [subSubCategory, setSubSubCategory] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
+    api.get("/products")
+      .then(({ data }) => setProducts(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
   // Build unique lists from products

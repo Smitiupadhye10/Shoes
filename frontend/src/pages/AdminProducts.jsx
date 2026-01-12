@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Edit, Plus, ChevronLeft, ChevronRight, Package, X } from "lucide-react";
+import api from "../api/axios";
 
 const AdminProducts = () => {
   const navigate = useNavigate();
@@ -45,20 +46,7 @@ const AdminProducts = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://localhost:4000/api/admin/products", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        if (res.status === 401 || res.status === 403) {
-          throw new Error("Unauthorized access. Please log in as admin.");
-        }
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const data = await res.json();
+      const { data } = await api.get("/admin/products");
 
       // Handle both possible API response shapes
       const productsArray = Array.isArray(data)
@@ -96,19 +84,9 @@ const AdminProducts = () => {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/api/admin/products/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.ok) {
-        alert("Product deleted!");
-        fetchProducts();
-      } else {
-        alert("Error deleting product");
-      }
+      await api.delete(`/admin/products/${id}`);
+      alert("Product deleted!");
+      fetchProducts();
     } catch (error) {
       alert("Error deleting product");
     }
@@ -191,32 +169,19 @@ const AdminProducts = () => {
     };
 
     try {
-      const url = editingProduct
-        ? `http://localhost:4000/api/admin/products/${editingProduct._id}`
-        : "http://localhost:4000/api/admin/products";
-      const method = editingProduct ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.ok) {
-        alert(editingProduct ? "Product updated successfully!" : "Product added!");
-        setShowProductForm(false);
-        setEditingProduct(null);
-        resetForm();
-        fetchProducts();
+      if (editingProduct) {
+        await api.put(`/admin/products/${editingProduct._id}`, payload);
+        alert("Product updated successfully!");
       } else {
-        const error = await res.json();
-        alert(error.message || "Error saving product");
+        await api.post("/admin/products", payload);
+        alert("Product added!");
       }
+      setShowProductForm(false);
+      setEditingProduct(null);
+      resetForm();
+      fetchProducts();
     } catch (error) {
-      alert("Error saving product");
+      alert(error.response?.data?.message || "Error saving product");
     } finally {
       setLoading(false);
     }

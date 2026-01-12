@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Edit, Plus, Package, ShoppingCart } from "lucide-react";
+import api from "../api/axios";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -77,8 +78,7 @@ const Admin = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/api/products");
-      const data = await res.json();
+      const { data } = await api.get("/products");
       setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -90,12 +90,7 @@ const Admin = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/api/admin/orders", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
+      const { data } = await api.get("/admin/orders");
       setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -131,32 +126,18 @@ const Admin = () => {
     };
 
     try {
-      const url = editingProduct
-        ? `http://localhost:4000/api/admin/products/${editingProduct._id}`
-        : "http://localhost:4000/api/admin/products";
-      const method = editingProduct ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.ok) {
-        alert(editingProduct ? "Product updated!" : "Product added!");
-        setShowProductForm(false);
-        setEditingProduct(null);
-        resetForm();
-        fetchProducts();
+      if (editingProduct) {
+        await api.put(`/admin/products/${editingProduct._id}`, payload);
       } else {
-        const error = await res.json();
-        alert(error.message || "Error saving product");
+        await api.post("/admin/products", payload);
       }
+      alert(editingProduct ? "Product updated!" : "Product added!");
+      setShowProductForm(false);
+      setEditingProduct(null);
+      resetForm();
+      fetchProducts();
     } catch (error) {
-      alert("Error saving product");
+      alert(error.response?.data?.message || "Error saving product");
     } finally {
       setLoading(false);
     }
@@ -166,7 +147,7 @@ const Admin = () => {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/api/admin/products/${id}`, {
+      await api.delete(`/admin/products/${id}`);
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -232,21 +213,9 @@ const Admin = () => {
 
   const handleOrderStatusUpdate = async (orderId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/admin/orders/${orderId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (res.ok) {
-        alert("Order status updated!");
-        fetchOrders();
-      } else {
-        alert("Error updating order status");
-      }
+      await api.put(`/admin/orders/${orderId}/status`, { status: newStatus });
+      alert("Order status updated!");
+      fetchOrders();
     } catch (error) {
       alert("Error updating order status");
     }

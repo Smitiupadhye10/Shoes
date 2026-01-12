@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 const AdminOrders = () => {
   const navigate = useNavigate();
@@ -16,21 +17,11 @@ const AdminOrders = () => {
     setLoading(true);
     try {
       const url = filterStatus === "all"
-        ? "http://localhost:4000/api/admin/orders"
-        : `http://localhost:4000/api/admin/orders?status=${filterStatus}`;
+        ? "/admin/orders"
+        : `/admin/orders?status=${filterStatus}`;
       
-      const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
-      if (res.ok) {
-        const data = await res.json();
-        setOrders(Array.isArray(data) ? data : []);
-      } else {
-        console.error("Error fetching orders");
-      }
+      const { data } = await api.get(url);
+      setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
@@ -40,21 +31,9 @@ const AdminOrders = () => {
 
   const handleOrderStatusUpdate = async (orderId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/admin/orders/${orderId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (res.ok) {
-        alert("Order status updated!");
-        fetchOrders();
-      } else {
-        alert("Error updating order status");
-      }
+      await api.put(`/admin/orders/${orderId}/status`, { status: newStatus });
+      alert("Order status updated!");
+      fetchOrders();
     } catch (error) {
       alert("Error updating order status");
     }
@@ -164,7 +143,7 @@ const AdminOrders = () => {
                     </span>
                     <select
                       value={order.status}
-                      onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                      onChange={(e) => handleOrderStatusUpdate(order._id, e.target.value)}
                       className="px-4 py-2 border-2 border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:border-blue-500 transition-all"
                     >
                       <option value="pending">Pending</option>

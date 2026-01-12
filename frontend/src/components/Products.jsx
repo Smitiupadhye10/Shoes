@@ -1,6 +1,7 @@
 // src/pages/Products.jsx
 import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard.jsx";
+import api from "../api/axios";
 
 
 const Products = () => {
@@ -16,8 +17,7 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/all-products");
-        const data = await res.json();
+        const { data } = await api.get("/all-products");
         // Handle both array and object responses
         setProducts(Array.isArray(data) ? data : data.products || []);
       } catch (err) {
