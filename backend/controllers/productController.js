@@ -586,7 +586,11 @@ function buildWomensShoeFilter(query) {
   conditions.push({ category: { $regex: `^Women's Shoes$`, $options: "i" } });
   
   if (query.subCategory) {
-    conditions.push({ subCategory: { $regex: `^${query.subCategory}$`, $options: "i" } });
+    // Trim and escape special regex characters
+    const subCatValue = String(query.subCategory).trim();
+    // Use case-insensitive exact match - MongoDB enum values are case-sensitive but we match case-insensitively
+    conditions.push({ subCategory: { $regex: `^${subCatValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, $options: "i" } });
+    console.log(`[buildWomensShoeFilter] Filtering by subCategory: "${subCatValue}"`);
   }
   
   if (query.subSubCategory) {
@@ -689,7 +693,7 @@ export const listProducts = async (req, res) => {
     const query = req.query || {};
     const andConditions = [];
 
-    // Pagination parameters (default 18 per page)
+    // Pagination parameters (default 50 per page)
     const page = Math.max(parseInt(query.page) || 1, 1);
     const limit = Math.max(parseInt(query.limit) || 18, 1);
     const skip = (page - 1) * limit;
@@ -795,10 +799,13 @@ export const listProducts = async (req, res) => {
     // Handle Women's Shoes
     if (/^women'?s?\s+shoes?$/i.test(requestedCategory)) {
       const womensShoeFilter = buildWomensShoeFilter(query);
+      console.log(`[listProducts] Women's Shoes filter:`, JSON.stringify(womensShoeFilter, null, 2));
+      console.log(`[listProducts] Query params:`, JSON.stringify(query, null, 2));
       const [totalCount, data] = await Promise.all([
         WomensShoe.countDocuments(womensShoeFilter),
         WomensShoe.find(womensShoeFilter).sort({ subCategory: 1, _id: 1 }).skip(skip).limit(limit)
       ]);
+      console.log(`[listProducts] Found ${totalCount} Women's Shoes products, returning ${data.length}`);
       const pagination = {
         currentPage: page,
         totalPages: Math.ceil(totalCount / limit) || 0,
@@ -976,8 +983,13 @@ export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
     
+    // Validate ID
+    if (!id || id === 'undefined' || id === 'null') {
+      return res.status(400).json({ message: "Invalid product ID" });
+    }
+    
     // Try MensShoe collection
-    product = await MensShoe.findById(id);
+    let product = await MensShoe.findById(id);
     if (product) {
       return res.json(normalizeMensShoe(product));
     }
@@ -997,6 +1009,11 @@ export const getProductById = async (req, res) => {
     // If not found in any collection
     return res.status(404).json({ message: "Product not found" });
   } catch (error) {
+    console.error("Error in getProductById:", error);
+    // Handle invalid ObjectId format
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: "Invalid product ID format" });
+    }
     res.status(500).json({ message: "Error fetching product", error: error?.message || String(error) });
   }
 };

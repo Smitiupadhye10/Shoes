@@ -17,7 +17,7 @@ const mensShoeSchema = new Schema({
   subCategory: { 
     type: String, 
     required: true, 
-    enum: ['Formal', 'Sneakers', 'Boots'],
+    enum: ['Formal', 'Sneakers', 'Boots', 'Loafers', 'Sandals'],
     description: 'The main shoe category'
   },
   subSubCategory: { type: String, trim: true }, // e.g., 'Oxfords', 'Running', 'Chelsea'

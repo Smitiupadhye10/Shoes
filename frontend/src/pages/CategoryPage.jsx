@@ -20,7 +20,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const categoryParam = useMemo(() => decodeURIComponent(category || ""), [category]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
-  const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 0, totalProducts: 0, productsPerPage: 18 });
+  const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 0, totalProducts: 0, productsPerPage: 50 });
   const [facets, setFacets] = useState({ priceBuckets: {}, genders: {}, colors: {}, subCategories: {} });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,7 +40,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const page = parseInt(searchParams.get("page") || "1", 10);
-  const limit = parseInt(searchParams.get("limit") || "18", 10);
+  const limit = parseInt(searchParams.get("limit") || "50", 10);
 
   const categoryLower = (category || "").toLowerCase();
   const isContactLenses = useMemo(() => /contact\s+lenses/i.test(category || ""), [category]);
@@ -49,6 +49,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const isBags = useMemo(() => /^bags$/i.test(category || ""), [category]);
   const isMensShoes = useMemo(() => /men'?s\s+shoes/i.test(category || ""), [category]);
   const isWomensShoes = useMemo(() => /women'?s\s+shoes/i.test(category || ""), [category]);
+  const isKidsShoes = useMemo(() => /kids'?\s+shoes?/i.test(category || ""), [category]);
   const isGlasses = useMemo(() => /^(eyeglasses|sunglasses|computer\s+glasses)$/i.test(category || ""), [category]);
   
   // Track previous category to detect category changes
@@ -229,8 +230,9 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     const accessoriesSubcategories = ["Necklace", "Bracelets", "Tie", "Anklets", "Earings", "Belts", "Scarfs"];
     const skincareSubcategories = ["Moisturizer", "Serum", "Cleanser", "Facewash", "Sunscreen"];
     const bagsSubcategories = ["Handbag", "Sling Bag", "Tote Bag", "Duffle Bag", "Wallet", "Laptop Bag", "Travel Bag", "Clutch", "Shoulder Bag"];
-    const mensShoesSubcategories = ["Formal", "Sneakers", "Boots"];
-    const womensShoesSubcategories = ["Heels", "Flats", "Sneakers", "Boots", "Sandals"];
+    const mensShoesSubcategories = ["Formal", "Sneakers", "Boots", "Loafers", "Sandals"];
+    const womensShoesSubcategories = ["Heels", "Flats", "Sneakers", "Boots", "Sandals", "Chappals"];
+    const kidsShoesSubcategories = ["Boys Footwear", "Girls Footwear"];
     const activeSubCategory = searchParams.get("subCategory") || "";
 
     const Section = ({ title, id, children }) => (
@@ -600,6 +602,49 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           </Section>
         )}
 
+        {/* Kids Shoes SubCategory Filter */}
+        {isKidsShoes && (
+          <Section title="Footwear Type" id="subCategory">
+            <div className="flex flex-col gap-2.5">
+              {kidsShoesSubcategories.map((subCat) => {
+                const count = subCategoryCounts[subCat.toUpperCase()] || 0;
+                const disabled = count === 0;
+                const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
+                return (
+                  <button
+                    key={subCat}
+                    onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
+                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
+                      isActive 
+                        ? "text-white shadow-md transform scale-[1.02]"
+                        : disabled 
+                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
+                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
+                    }`}
+                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
+                    disabled={disabled}
+                  >
+                    <span className="font-medium">{subCat}</span>
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                    }`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+              {activeSubCategory && (
+                <button 
+                  onClick={() => setParam("subCategory", null)} 
+                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
+                >
+                  Clear type
+                </button>
+              )}
+            </div>
+          </Section>
+        )}
+
         {isContactLenses && (
           <Section title="Explore by Color" id="color">
             <div className="flex flex-col gap-2.5">
@@ -683,24 +728,30 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     if (chips.length === 0) return null;
     return (
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <span className="text-sm font-medium text-gray-600">Active filters:</span>
+        <span className="text-sm font-medium text-gray-700">Active filters:</span>
         {chips.map((c) => (
           <span 
             key={c.k} 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm border"
-            style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)', borderColor: 'var(--text-primary)' }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm border-2"
+            style={{ 
+              backgroundColor: 'var(--text-primary)', 
+              color: '#ffffff', 
+              borderColor: 'var(--text-primary)' 
+            }}
           >
             {c.label}
             <button 
               onClick={() => clearKey(c.k)} 
-              className="hover:bg-indigo-200 rounded-full p-0.5 transition-colors duration-200 text-indigo-800 font-bold"
+              className="hover:bg-white/30 rounded-full p-0.5 transition-colors duration-200 text-white font-bold text-lg leading-none"
+              style={{ color: '#ffffff' }}
             >
               ×
             </button>
           </span>
         ))}
         <button 
-          className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline font-medium transition-colors duration-200" 
+          className="text-sm font-medium transition-colors duration-200 hover:underline" 
+          style={{ color: 'var(--text-primary)' }}
           onClick={clearAll}
         >
           Clear all

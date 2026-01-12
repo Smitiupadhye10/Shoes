@@ -24,6 +24,7 @@ const ProductDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const {
     addToCart,
@@ -36,20 +37,35 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
+      setError(null);
+      setProduct(null);
       try {
+        console.log("Fetching product with ID:", id);
         const { data } = await api.get(`/products/${id}`);
-        setProduct(data);
-
-        if (data.product_info?.powerOptions?.length > 0) {
-          setSelectedPower(data.product_info.powerOptions[0]);
+        console.log("Product data received:", data);
+        if (data && data._id) {
+          setProduct(data);
+          if (data.product_info?.powerOptions?.length > 0) {
+            setSelectedPower(data.product_info.powerOptions[0]);
+          }
+        } else {
+          setError("Product data is invalid");
         }
       } catch (err) {
         console.error("Error fetching product:", err);
+        console.error("Error response:", err.response);
+        setError(err.response?.data?.message || err.message || "Failed to load product");
+        setProduct(null);
       } finally {
         setLoading(false);
       }
     };
-    fetchProduct();
+    if (id) {
+      fetchProduct();
+    } else {
+      setError("Invalid product ID");
+      setLoading(false);
+    }
   }, [id]);
 
   // Wishlist state
@@ -131,7 +147,23 @@ const ProductDetails = () => {
     );
   }
 
-  if (!product) {
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="text-center">
+          <p className="text-optic-body text-lg mb-4" style={{ color: 'var(--text-primary)' }}>{error}</p>
+          <button
+            onClick={() => navigate(-1)}
+            className="btn-primary"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product && !loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="text-center">
@@ -192,10 +224,13 @@ const ProductDetails = () => {
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-4 sm:mb-6 transition-colors duration-200 text-sm sm:text-base"
+          className="flex items-center gap-2 mb-4 sm:mb-6 transition-colors duration-200 text-sm sm:text-base font-medium"
+          style={{ color: 'var(--text-primary)' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-heading)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
         >
           <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-          <span className="font-medium">Back</span>
+          <span>Back</span>
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
@@ -404,76 +439,76 @@ const ProductDetails = () => {
 
             {/* Card 2: Description */}
             {product.description && (
-              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Description</h3>
-                <p className="text-sm sm:text-base text-gray-700 leading-relaxed">{product.description}</p>
+              <div className="card-optic rounded-2xl shadow-lg p-4 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Description</h3>
+                <p className="text-sm sm:text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{product.description}</p>
               </div>
             )}
 
             {/* Card 3: Product Details */}
-            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Product Details</h3>
+            <div className="card-optic rounded-2xl shadow-lg p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4" style={{ color: 'var(--text-primary)' }}>Product Details</h3>
               <div className="space-y-3">
                 {product.product_info?.brand && (
-                  <div className="flex justify-between py-2 border-b border-gray-100 text-sm sm:text-base">
-                    <span className="text-gray-600">Brand</span>
-                    <span className="font-medium text-gray-900">
+                  <div className="flex justify-between py-2 border-b text-sm sm:text-base" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Brand</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                       {product.product_info.brand}
                     </span>
                   </div>
                 )}
                 {product.product_info?.gender && (
-                  <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Gender</span>
-                    <span className="font-medium text-gray-900">
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Gender</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                       {mapGender(product.product_info.gender)}
                     </span>
                   </div>
                 )}
                 {product.product_info?.size && (
-                  <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Size</span>
-                    <span className="font-medium text-gray-900">
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Size</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                       {product.product_info.size}
                     </span>
                   </div>
                 )}
                 {product.product_info?.frameShape && (
-                  <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Frame Shape</span>
-                    <span className="font-medium text-gray-900">
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Frame Shape</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                       {product.product_info.frameShape}
                     </span>
                   </div>
                 )}
                 {product.product_info?.frameMaterial && (
-                  <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Material</span>
-                    <span className="font-medium text-gray-900">
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Material</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                       {product.product_info.frameMaterial}
                     </span>
                   </div>
                 )}
                 {(product.product_info?.frameColor || product.product_info?.color) && (
-                  <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Color</span>
-                    <span className="font-medium text-gray-900">
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Color</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                       {product.product_info.frameColor || product.product_info.color}
                     </span>
                   </div>
                 )}
                 {(product.product_info?.rimDetails || product.product_info?.rimType) && (
-                  <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Rim</span>
-                    <span className="font-medium text-gray-900">
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Rim</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                       {product.product_info.rimDetails || product.product_info.rimType}
                     </span>
                   </div>
                 )}
                 {product.product_info?.warranty && (
                   <div className="flex justify-between py-2">
-                    <span className="text-gray-600">Warranty</span>
-                    <span className="font-medium text-gray-900">
+                    <span style={{ color: 'var(--text-secondary)' }}>Warranty</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                       {product.product_info.warranty}
                     </span>
                   </div>
@@ -483,49 +518,49 @@ const ProductDetails = () => {
                 {product.category?.toLowerCase().includes("lens") && (
                   <>
                     {product.product_info?.disposability && (
-                      <div className="flex justify-between py-2 border-t border-gray-100">
-                        <span className="text-gray-600">Disposability</span>
-                        <span className="font-medium text-gray-900">
+                      <div className="flex justify-between py-2 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Disposability</span>
+                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                           {product.product_info.disposability}
                         </span>
                       </div>
                     )}
                     {product.product_info?.usage && (
                       <div className="flex justify-between py-2">
-                        <span className="text-gray-600">Usage</span>
-                        <span className="font-medium text-gray-900">
+                        <span style={{ color: 'var(--text-secondary)' }}>Usage</span>
+                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                           {product.product_info.usage}
                         </span>
                       </div>
                     )}
                     {product.product_info?.waterContent && (
                       <div className="flex justify-between py-2">
-                        <span className="text-gray-600">Water Content</span>
-                        <span className="font-medium text-gray-900">
+                        <span style={{ color: 'var(--text-secondary)' }}>Water Content</span>
+                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                           {product.product_info.waterContent}
                         </span>
                       </div>
                     )}
                     {product.product_info?.baseCurve && (
                       <div className="flex justify-between py-2">
-                        <span className="text-gray-600">Base Curve</span>
-                        <span className="font-medium text-gray-900">
+                        <span style={{ color: 'var(--text-secondary)' }}>Base Curve</span>
+                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                           {product.product_info.baseCurve}
                         </span>
                       </div>
                     )}
                     {product.product_info?.diameter && (
                       <div className="flex justify-between py-2">
-                        <span className="text-gray-600">Diameter</span>
-                        <span className="font-medium text-gray-900">
+                        <span style={{ color: 'var(--text-secondary)' }}>Diameter</span>
+                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                           {product.product_info.diameter}
                         </span>
                       </div>
                     )}
                     {product.product_info?.packaging && (
                       <div className="flex justify-between py-2">
-                        <span className="text-gray-600">Packaging</span>
-                        <span className="font-medium text-gray-900">
+                        <span style={{ color: 'var(--text-secondary)' }}>Packaging</span>
+                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
                           {product.product_info.packaging}
                         </span>
                       </div>
@@ -537,8 +572,8 @@ const ProductDetails = () => {
 
             {/* Power Options (if present) */}
             {product.product_info?.powerOptions && (
-              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-                <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Select Power</h4>
+              <div className="card-optic rounded-2xl shadow-lg p-4 sm:p-6">
+                <h4 className="text-base sm:text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Select Power</h4>
                 <div className="flex flex-wrap gap-2">
                   {product.product_info.powerOptions.map((p, i) => (
                     <button
@@ -547,9 +582,12 @@ const ProductDetails = () => {
                       className={`px-4 py-2 rounded-lg border font-medium transition-all ${
                         selectedPower === p
                           ? "text-white"
-                          : "bg-white text-gray-700 border-gray-300 hover:border-red-800"
+                          : "border-gray-300 hover:border-red-800"
                       }`}
-                      style={selectedPower === p ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
+                      style={selectedPower === p 
+                        ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } 
+                        : { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }
+                      }
                     >
                       {p}
                     </button>
@@ -559,21 +597,27 @@ const ProductDetails = () => {
             )}
 
             {/* Quantity */}
-            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-              <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Quantity</h4>
+            <div className="card-optic rounded-2xl shadow-lg p-4 sm:p-6">
+              <h4 className="text-base sm:text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Quantity</h4>
               <div className="flex items-center gap-4">
-                <div className="flex items-center border border-gray-300 rounded-lg">
+                <div className="flex items-center border rounded-lg" style={{ borderColor: 'var(--border-color)' }}>
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="px-3 sm:px-4 py-2 hover:bg-gray-100 transition-colors text-sm sm:text-base"
+                    className="px-3 sm:px-4 py-2 transition-colors text-sm sm:text-base"
+                    style={{ color: 'var(--text-primary)' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     aria-label="Decrease quantity"
                   >
                     -
                   </button>
-                  <div className="px-4 sm:px-6 py-2 font-medium text-gray-900 text-sm sm:text-base">{quantity}</div>
+                  <div className="px-4 sm:px-6 py-2 font-medium text-sm sm:text-base" style={{ color: 'var(--text-primary)' }}>{quantity}</div>
                   <button
                     onClick={() => setQuantity((q) => q + 1)}
-                    className="px-4 py-2 hover:bg-gray-100 transition-colors"
+                    className="px-4 py-2 transition-colors"
+                    style={{ color: 'var(--text-primary)' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     aria-label="Increase quantity"
                   >
                     +
@@ -583,25 +627,25 @@ const ProductDetails = () => {
             </div>
 
             {/* Static Info Card */}
-            <div className="rounded-2xl p-4 sm:p-6 border" style={{ backgroundColor: 'var(--text-heading)', borderColor: 'var(--text-primary)' }}>
+            <div className="rounded-2xl p-4 sm:p-6 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-xs">✓</span>
                   </div>
-                  <span className="text-gray-800 font-medium text-sm sm:text-base">7 Days Returns</span>
+                  <span className="font-medium text-sm sm:text-base" style={{ color: 'var(--text-primary)' }}>7 Days Returns</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--text-primary)' }}>
                     <span className="text-white text-xs">↻</span>
                   </div>
-                  <span className="text-gray-800 font-medium text-sm sm:text-base">Exchange at 850+ stores</span>
+                  <span className="font-medium text-sm sm:text-base" style={{ color: 'var(--text-primary)' }}>Exchange at 850+ stores</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--text-primary)' }}>
                     <span className="text-white text-xs">🛡</span>
                   </div>
-                  <span className="text-gray-800 font-medium text-sm sm:text-base">
+                  <span className="font-medium text-sm sm:text-base" style={{ color: 'var(--text-primary)' }}>
                     Warranty: {product.product_info?.warranty || "As per product"}
                   </span>
                 </div>

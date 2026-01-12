@@ -12,7 +12,7 @@ const Footer = () => {
           <div className="flex items-center mb-3 sm:mb-4">
             <Link to="/" className="flex items-center">
               <img 
-                src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1766064439/logo_vwfmey.png" 
+                src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767693849/White_Teal_Yellow_And_Blue_Illustrative_Digital_Payment_Solutions_Presentation_100_x_100_px_2_fspuqo.png" 
                 alt="Sole mate" 
                 className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto object-contain"
                 style={{ maxWidth: '280px' }}

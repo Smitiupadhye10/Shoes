@@ -3,7 +3,7 @@ export const categories = {
     title: "Men's Shoes",
     fields: {
       Gender: ["Men"],
-      SubCategory: ["Formal", "Sneakers", "Boots"],
+      SubCategory: ["Formal", "Sneakers", "Boots", "Loafers", "Sandals"],
       Brands: [],
     },
   },
@@ -11,7 +11,7 @@ export const categories = {
     title: "Women's Shoes",
     fields: {
       Gender: ["Women"],
-      SubCategory: ["Heels", "Flats", "Sneakers", "Boots", "Sandals"],
+      SubCategory: ["Heels", "Flats", "Sneakers", "Boots", "Sandals", "Chappals"],
       Brands: [],
     },
   },
@@ -19,7 +19,7 @@ export const categories = {
     title: "Kids Shoes",
     fields: {
       Gender: ["Kids"],
-      SubCategory: ["School", "Sneakers", "Sandals", "Boots"],
+      SubCategory: ["Boys Footwear", "Girls Footwear"],
       Brands: [],
     },
   },

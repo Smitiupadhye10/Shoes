@@ -82,8 +82,8 @@ const MobileBottomNav = () => {
   };
 
   const allCategories = [
-    { icon: Footprints, name: "Men's Shoes", link: "/category/Men's%20Shoes", subcategories: ["Formal", "Sneakers", "Boots"] },
-    { icon: Footprints, name: "Women's Shoes", link: "/category/Women's%20Shoes", subcategories: ["Heels", "Flats", "Sneakers", "Boots", "Sandals"] },
+    { icon: Footprints, name: "Men's Shoes", link: "/category/Men's%20Shoes", subcategories: ["Formal", "Sneakers", "Boots", "Loafers", "Sandals"] },
+    { icon: Footprints, name: "Women's Shoes", link: "/category/Women's%20Shoes", subcategories: ["Heels", "Flats", "Sneakers", "Boots", "Sandals", "Chappals"] },
   ];
 
   const handleAccountClick = () => {

@@ -17,7 +17,7 @@ const kidsShoeSchema = new Schema({
   subCategory: { 
     type: String, 
     required: true, 
-    enum: ['School', 'Sneakers', 'Sandals', 'Boots'],
+    enum: ['Boys Footwear', 'Girls Footwear'],
     description: 'The main kids shoe category'
   },
   subSubCategory: { type: String, trim: true }, // e.g., 'Velcro', 'Lace-Up', 'Slip-On'

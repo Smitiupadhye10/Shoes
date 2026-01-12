@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  Eye, Shield, Truck, Star, Users, Award, Clock,
+  Footprints, Shield, Truck, Star, Users, Award, Clock,
   MapPin, Mail, Phone, ArrowRight, CheckCircle,
-  Target, Lightbulb, Heart
+  Target, Lightbulb, Heart, Sparkles, Zap, ShoppingBag
 } from "lucide-react";
 
 const About = () => {
@@ -19,21 +19,21 @@ const About = () => {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
                 style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}
               >
-                <Eye className="w-4 h-4" />
+                <Footprints className="w-4 h-4" />
                 Since {new Date().getFullYear()}
               </div>
 
               <h1 className="text-optic-heading text-4xl md:text-5xl lg:text-6xl leading-tight" style={{ color: 'var(--text-primary)' }}>
-                See the world{" "}
+                Step into{" "}
                 <span style={{ color: 'var(--text-heading)' }}>
-                  clearer
+                  style
                 </span>{" "}
-                — stylishly.
+                — comfortably.
               </h1>
               <p className="text-optic-body text-lg md:text-xl leading-relaxed max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-                At Sole mate we craft premium eyeglasses, sunglasses and contact
-                lenses with precision optics and modern design. Comfort, clarity
-                and confidence — all in one pair.
+                At Sole mate, we offer premium footwear for men, women, and kids. 
+                From elegant heels to comfortable sneakers, we have the perfect pair 
+                for every step of your journey. Quality, comfort, and style — all in one step.
               </p>
 
               {/* Buttons */}
@@ -42,7 +42,7 @@ const About = () => {
                   to="/shop"
                   className="btn-primary"
                 >
-                  Shop Glasses
+                  Shop Shoes
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <a
@@ -75,8 +75,8 @@ const About = () => {
               <div className="relative">
                 <div className="p-8 rounded-3xl shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                   <img
-                    src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1762756168/women_1262x519_xsp8do.webp"
-                    alt="Sunglasses Banner"
+                    src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg"
+                    alt="Shoes Collection"
                     width={400}
                     height={280}
                     className="object-cover rounded-lg shadow-md w-full"
@@ -108,7 +108,7 @@ const About = () => {
               Why Choose Sole mate?
             </h2>
             <p className="text-optic-body text-lg md:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-              We're dedicated to providing exceptional eyewear solutions
+              We're dedicated to providing exceptional footwear for the whole family
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -117,11 +117,11 @@ const About = () => {
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
                   style={{ backgroundColor: 'var(--text-heading)' }}
                 >
-                  <Eye className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
+                  <Footprints className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
                 </div>
-                <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Precision Optics</h3>
+                <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Premium Quality</h3>
                 <p className="text-optic-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  High-quality lenses crafted with advanced technology for sharp, comfortable vision.
+                  High-quality materials and expert craftsmanship ensure durability and comfort in every step.
                 </p>
               </div>
             </div>
@@ -130,11 +130,11 @@ const About = () => {
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
                   style={{ backgroundColor: 'var(--text-heading)' }}
                 >
-                  <Shield className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
+                  <Sparkles className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
                 </div>
-                <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Stylish Frames</h3>
+                <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Stylish Designs</h3>
                 <p className="text-optic-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  A curated collection of trendy frames to match your personality.
+                  A curated collection of trendy shoes for men, women, and kids to match every style and occasion.
                 </p>
               </div>
             </div>
@@ -145,10 +145,208 @@ const About = () => {
                 >
                   <Heart className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
                 </div>
-                <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Risk-free Try</h3>
+                <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Easy Returns</h3>
                 <p className="text-optic-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  30-day risk-free trial. Your satisfaction is our priority.
+                  30-day hassle-free returns. Your satisfaction is our priority.
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories Section */}
+      <section className="py-16 md:py-24" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="container-optic">
+          <div className="text-center mb-16">
+            <h2 className="text-optic-heading text-3xl md:text-4xl lg:text-5xl mb-4" style={{ color: 'var(--text-primary)' }}>
+              Footwear for Everyone
+            </h2>
+            <p className="text-optic-body text-lg md:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
+              Discover our extensive collection of premium shoes for men, women, and kids
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            {/* Men's Shoes */}
+            <Link 
+              to="/category/Men's%20Shoes"
+              className="group relative overflow-hidden rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+            >
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg"
+                  alt="Men's Shoes"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-white/20 backdrop-blur-sm"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
+                  >
+                    <Footprints className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Men's Shoes</h3>
+                  <p className="text-white/90 text-sm">Formal, Sneakers, Boots, Loafers, Sandals & More</p>
+                </div>
+              </div>
+              <div className="p-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                <p className="text-optic-body text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  From classic formal shoes to trendy sneakers, rugged boots, comfortable loafers, and casual sandals, find the perfect pair for every occasion.
+                </p>
+                <div className="mt-4 flex items-center gap-2 font-medium" style={{ color: 'var(--text-primary)' }}>
+                  <span className="text-sm">Explore Collection</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            {/* Women's Shoes */}
+            <Link 
+              to="/category/Women's%20Shoes"
+              className="group relative overflow-hidden rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+            >
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg"
+                  alt="Women's Shoes"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-white/20 backdrop-blur-sm"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
+                  >
+                    <Sparkles className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Women's Shoes</h3>
+                  <p className="text-white/90 text-sm">Heels, Flats, Sneakers, Chappals & More</p>
+                </div>
+              </div>
+              <div className="p-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                <p className="text-optic-body text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  Elegant heels, comfortable flats, stylish sneakers, trendy boots, and casual chappals to complement your unique style.
+                </p>
+                <div className="mt-4 flex items-center gap-2 font-medium" style={{ color: 'var(--text-primary)' }}>
+                  <span className="text-sm">Explore Collection</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            {/* Kids Shoes */}
+            <Link 
+              to="/category/Kids%20Shoes"
+              className="group relative overflow-hidden rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+            >
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg"
+                  alt="Kids Shoes"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-white/20 backdrop-blur-sm"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
+                  >
+                    <Zap className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Kids Shoes</h3>
+                  <p className="text-white/90 text-sm">Comfortable & Durable Designs</p>
+                </div>
+              </div>
+              <div className="p-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                <p className="text-optic-body text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  Durable, comfortable, and fun designs that keep up with your child's active lifestyle and growing feet.
+                </p>
+                <div className="mt-4 flex items-center gap-2 font-medium" style={{ color: 'var(--text-primary)' }}>
+                  <span className="text-sm">Explore Collection</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="py-16 md:py-24" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        <div className="container-optic">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
+                style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}
+              >
+                <Target className="w-4 h-4" />
+                Our Mission
+              </div>
+              <h2 className="text-optic-heading text-3xl md:text-4xl lg:text-5xl" style={{ color: 'var(--text-primary)' }}>
+                Quality Footwear for Every Step
+              </h2>
+              <p className="text-optic-body text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                At Sole mate, we believe that great shoes are the foundation of great style. We're committed to providing 
+                high-quality footwear that combines comfort, durability, and fashion-forward designs for men, women, and children.
+              </p>
+              <div className="space-y-4 pt-4">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: 'var(--text-heading)' }}
+                  >
+                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Premium Materials</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      We source only the finest materials to ensure durability and comfort
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: 'var(--text-heading)' }}
+                  >
+                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Family-Focused</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      Complete collections for men, women, and kids - one stop for the whole family
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: 'var(--text-heading)' }}
+                  >
+                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 className="text-optic-heading font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Customer Satisfaction</h4>
+                    <p className="text-optic-body text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      Your happiness is our priority - easy returns and excellent customer service
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="rounded-3xl overflow-hidden shadow-2xl">
+                <img
+                  src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg"
+                  alt="Quality Footwear"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute -bottom-6 -right-6 px-6 py-4 rounded-2xl shadow-xl"
+                style={{ backgroundColor: 'var(--text-primary)' }}
+              >
+                <div className="flex items-center gap-3">
+                  <Award className="w-8 h-8" style={{ color: 'var(--bg-secondary)' }} />
+                  <div>
+                    <div className="text-lg font-bold" style={{ color: 'var(--bg-secondary)' }}>Award Winning</div>
+                    <div className="text-sm" style={{ color: 'var(--bg-secondary)', opacity: 0.8 }}>Quality & Service</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -172,8 +370,8 @@ const About = () => {
               <div className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Average Rating</div>
             </div>
             <div className="space-y-2">
-              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>500+</div>
-              <div className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Products</div>
+              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>1000+</div>
+              <div className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Shoe Styles</div>
             </div>
             <div className="space-y-2">
               <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>30</div>
@@ -190,10 +388,10 @@ const About = () => {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
                 <h3 className="text-optic-heading text-3xl md:text-4xl" style={{ color: 'var(--bg-secondary)' }}>
-                  Need help finding the right pair?
+                  Need help finding the perfect pair?
                 </h3>
                 <p className="text-optic-body text-lg md:text-xl leading-relaxed" style={{ color: 'var(--bg-secondary)' }}>
-                  Our specialists are happy to help — free consultation and lens recommendations.
+                  Our specialists are happy to help — free consultation and size recommendations for men's, women's, and kids shoes.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a
@@ -207,7 +405,7 @@ const About = () => {
                     to="/shop"
                     className="btn-accent"
                   >
-                    Browse Frames
+                    Browse Shoes
                     <ArrowRight className="w-5 h-5" />
                   </Link>
                 </div>

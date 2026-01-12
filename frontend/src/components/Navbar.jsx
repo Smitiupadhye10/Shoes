@@ -358,7 +358,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                       >
                         All Men's Shoes
                       </Link>
-                      {["Formal", "Sneakers", "Boots"].map((category) => (
+                      {["Formal", "Sneakers", "Boots", "Loafers", "Sandals"].map((category) => (
                         <Link
                           key={category}
                           to={`/category/Men's%20Shoes?subCategory=${category}`}
@@ -402,7 +402,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                       >
                         All Women's Shoes
                       </Link>
-                      {["Heels", "Flats", "Sneakers", "Boots", "Sandals"].map((category) => (
+                      {["Heels", "Flats", "Sneakers", "Boots", "Sandals", "Chappals"].map((category) => (
                         <Link
                           key={category}
                           to={`/category/Women's%20Shoes?subCategory=${category}`}

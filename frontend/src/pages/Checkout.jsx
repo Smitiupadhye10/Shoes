@@ -126,10 +126,10 @@ const CheckoutPage = () => {
             <div className="flex items-center space-x-3">
               <span className="text-2xl sm:text-3xl">{PAYMENT_METHOD.icon}</span>
               <div>
-                <h3 className="font-bold text-base sm:text-lg" style={{ color: 'var(--text-primary)' }}>
+                <h3 className="font-bold text-base sm:text-lg" style={{ color: 'var(--text-heading)' }}>
                   {PAYMENT_METHOD.name}
                 </h3>
-                <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--text-primary)' }}>
                   {PAYMENT_METHOD.description}
                 </p>
               </div>
@@ -303,14 +303,14 @@ const CheckoutPage = () => {
               <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                 <div className="flex justify-between" style={{ color: 'var(--text-primary)' }}>
                   <span>Subtotal</span>
-                  <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
+                  <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>₹{subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between" style={{ color: 'var(--text-primary)' }}>
                   <span>Shipping</span>
-                  <span className="font-semibold">₹{shippingCost}</span>
+                  <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>₹{shippingCost}</span>
                 </div>
                 <div className="flex justify-between font-bold pt-2 sm:pt-3 border-t-2 text-base sm:text-lg" style={{ borderColor: 'var(--text-heading)' }}>
-                  <span style={{ color: 'var(--text-primary)' }}>Total</span>
+                  <span style={{ color: 'var(--text-heading)' }}>Total</span>
                   <span style={{ color: 'var(--text-heading)' }}>₹{total.toLocaleString()}</span>
                 </div>
               </div>
@@ -375,11 +375,10 @@ const CheckoutPage = () => {
 
           {/* Order Summary Card */}
           <div className="p-4 sm:p-6 rounded-2xl shadow-xl border-2" style={{ 
-            backgroundColor: 'var(--text-heading)',
-            borderColor: 'var(--text-heading)',
-            color: 'var(--text-primary)'
+            backgroundColor: 'var(--bg-secondary)',
+            borderColor: 'var(--text-heading)'
           }}>
-            <h3 className="font-bold text-lg sm:text-xl mb-4 sm:mb-6" style={{ color: 'var(--text-primary)' }}>Order Summary</h3>
+            <h3 className="font-bold text-lg sm:text-xl mb-4 sm:mb-6" style={{ color: 'var(--text-heading)' }}>Order Summary</h3>
             <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
               <div className="flex justify-between" style={{ color: 'var(--text-primary)' }}>
                 <span>Subtotal</span>
@@ -389,9 +388,9 @@ const CheckoutPage = () => {
                 <span>Shipping</span>
                 <span className="font-semibold">₹{shippingCost}</span>
               </div>
-              <div className="flex justify-between font-bold pt-3 sm:pt-4 border-t-2 mt-3 sm:mt-4 text-base sm:text-lg" style={{ borderColor: 'var(--text-primary)' }}>
-                <span style={{ color: 'var(--text-primary)' }}>Total</span>
-                <span className="text-xl sm:text-2xl" style={{ color: 'var(--text-primary)' }}>₹{total.toLocaleString()}</span>
+              <div className="flex justify-between font-bold pt-3 sm:pt-4 border-t-2 mt-3 sm:mt-4 text-base sm:text-lg" style={{ borderColor: 'var(--text-heading)' }}>
+                <span style={{ color: 'var(--text-heading)' }}>Total</span>
+                <span className="text-xl sm:text-2xl" style={{ color: 'var(--text-heading)' }}>₹{total.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -399,14 +398,13 @@ const CheckoutPage = () => {
           {/* Cash on Delivery Notice */}
           <div className="p-3 sm:p-4 rounded-lg text-xs sm:text-sm border-2" style={{ 
             backgroundColor: 'var(--bg-secondary)',
-            borderColor: 'var(--text-heading)',
-            color: 'var(--text-secondary)'
+            borderColor: 'var(--text-heading)'
           }}>
             <div className="flex items-center gap-2 mb-1 sm:mb-2">
               <span className="text-lg">💵</span>
-              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>Cash on Delivery</span>
+              <span className="font-medium" style={{ color: 'var(--text-heading)' }}>Cash on Delivery</span>
             </div>
-            <p className="leading-relaxed">Pay with cash when your order is delivered. No online payment required.</p>
+            <p className="leading-relaxed" style={{ color: 'var(--text-primary)' }}>Pay with cash when your order is delivered. No online payment required.</p>
           </div>
         </div>
         </div>
