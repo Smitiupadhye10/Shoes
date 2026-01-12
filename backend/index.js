@@ -30,7 +30,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load .env
-dotenv.config({ path: path.join(__dirname, ".env") });
+dotenv.config();
 
 // Required environment variables check
 if (!process.env.MONGO_URI) {
@@ -54,8 +54,8 @@ mongoose
 // Request logger
 app.use((req, res, next) => {
   console.log(`➡️  ${req.method} ${req.path}`);
-  console.log('🔍 Headers:', req.headers);
-  console.log('🔍 Body:', req.body);
+  console.log("🔍 Headers:", req.headers);
+  console.log("🔍 Body:", req.body);
   next();
 });
 
@@ -91,7 +91,7 @@ app.use((req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🩺 Health check: http://localhost:${PORT}/health`);
 });
