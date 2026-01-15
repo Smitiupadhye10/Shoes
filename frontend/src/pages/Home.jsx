@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useSearchParams, Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard.jsx";
+import LuxuryCarousel from "../components/LuxuryCarousel.jsx";
 import { Eye, Sun, Monitor, Phone, Star, Shield, Truck, ArrowRight, Plus, TrendingUp, Users, Award, Zap, Heart, Package, Clock, CheckCircle, Sparkles, ShoppingBag, Footprints } from 'lucide-react';
 
 const Home = ({ addToCart, addToWishlist }) => {
@@ -142,58 +143,119 @@ const Home = ({ addToCart, addToWishlist }) => {
         </div>
       </section>
 
-      {/* Categories Section - Brown for Autumn Style */}
+      {/* Categories Section - Explore Our Collections */}
       <section className="relative pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12 sm:mb-16">
+          <div className="text-center mb-0">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-4" style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }}>
               <TrendingUp className="w-4 h-4" />
               Trending Categories
             </div>
-            <h2 className="text-4xl lg:text-5xl font-bold mb-4 font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif' }}>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-0 font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif' }}>
               Explore Our Collections
             </h2>
-            <p className="text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-              From classic formal to modern sneakers, find the perfect pair of shoes for every occasion
-            </p>
           </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
-            {categories.map((cat, i) => {
-              return (
-              <Link 
-                key={i}
-                to={cat.link}
-                className={`group relative ${cat.color} rounded-2xl p-8 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden`}
-              >
-                {/* Background pattern */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
-                  <div className="absolute inset-0" style={{ backgroundColor: 'var(--text-primary)' }}></div>
-                </div>
-                
-                <div className="relative flex flex-col items-center text-center space-y-6">
-                  <div className="w-16 h-16 rounded-2xl shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                    <cat.icon size={32} style={{ color: 'var(--text-primary)' }} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{cat.name}</h3>
-                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Premium collection</p>
-                  </div>
-                  <div className="relative w-full">
-                    <img 
-                      src={cat.image} 
-                      alt={cat.name}
-                      className="w-full h-48 object-cover rounded-xl shadow-md " 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </div>
-                  <div className="flex items-center gap-2 font-medium transition-colors" style={{ color: 'var(--text-primary)' }}>
-                    <span>Shop Now</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </Link>
-              );
-            })}
+          
+          {/* Luxury Carousel */}
+          <div className="w-full -mx-4 sm:-mx-6">
+            <LuxuryCarousel
+              slides={[
+                // Men's Shoes Subcategories
+                {
+                  subCategory: "Formal",
+                  title: "Formal",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768383027/Design_to_Shine_18_rmz7ob.svg",
+                  link: "/category/Men's%20Shoes?subCategory=Formal",
+                  description: "Elegant and sophisticated"
+                },
+                {
+                  subCategory: "Sneakers",
+                  title: "Sneakers",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768373064/Design_to_Shine_1_ogmige.svg",
+                  link: "/category/Men's%20Shoes?subCategory=Sneakers",
+                  description: "Comfort meets style"
+                },
+                {
+                  subCategory: "Boots",
+                  title: "Boots",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768373148/Design_to_Shine_2_dx4nlv.svg",
+                  link: "/category/Men's%20Shoes?subCategory=Boots",
+                  description: "Durable and rugged"
+                },
+                {
+                  subCategory: "Loafers",
+                  title: "Loafers",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768374950/Design_to_Shine_5_jqaw2a.svg",
+                  link: "/category/Men's%20Shoes?subCategory=Loafers",
+                  description: "Classic and versatile"
+                },
+                {
+                  subCategory: "Sandals",
+                  title: "Sandals",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768373827/5fc31871-3ccd-415c-af7f-67d1a1b021f7.png",
+                  link: "/category/Men's%20Shoes?subCategory=Sandals",
+                  description: "Comfortable and casual"
+                },
+                // Women's Shoes Subcategories
+                {
+                  subCategory: "Heels",
+                  title: "Heels",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768375035/Design_to_Shine_6_yd9kvn.svg",
+                  link: "/category/Women's%20Shoes?subCategory=Heels",
+                  description: "Elegant and timeless"
+                },
+                {
+                  subCategory: "Flats",
+                  title: "Flats",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768377514/Design_to_Shine_7_h4ogqm.svg",
+                  link: "/category/Women's%20Shoes?subCategory=Flats",
+                  description: "Comfortable everyday style"
+                },
+                {
+                  subCategory: "Sneakers",
+                  title: "Sneakers",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768375416/Design_to_Shine_8_ve1mai.svg",
+                  link: "/category/Women's%20Shoes?subCategory=Sneakers",
+                  description: "Sporty and chic"
+                },
+                {
+                  subCategory: "Boots",
+                  title: "Boots",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768376681/Design_to_Shine_9_vv2rh7.svg",
+                  link: "/category/Women's%20Shoes?subCategory=Boots",
+                  description: "Stylish and practical"
+                },
+                {
+                  subCategory: "Sandals",
+                  title: "Sandals",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768376686/Design_to_Shine_10_ossnrx.svg",
+                  link: "/category/Women's%20Shoes?subCategory=Sandals",
+                  description: "Light and breezy"
+                },
+                {
+                  subCategory: "Chappals",
+                  title: "Chappals",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768377370/Design_to_Shine_15_ebfphr.svg",
+                  link: "/category/Women's%20Shoes?subCategory=Chappals",
+                  description: "Traditional comfort"
+                },
+                // Kids Shoes Subcategories
+                {
+                  subCategory: "Boys Footwear",
+                  title: "Boys Footwear",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768377162/a2a20b7a-d180-41d1-848f-62b889974700.png",
+                  link: "/category/Kids%20Shoes?subCategory=Boys%20Footwear",
+                  description: "Durable and fun"
+                },
+                {
+                  subCategory: "Girls Footwear",
+                  title: "Girls Footwear",
+                  image: "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768377620/Design_to_Shine_17_dntfxz.svg",
+                  link: "/category/Kids%20Shoes?subCategory=Girls%20Footwear",
+                  description: "Cute and comfortable"
+                }
+              ]}
+            />
           </div>
         </div>
       </section>

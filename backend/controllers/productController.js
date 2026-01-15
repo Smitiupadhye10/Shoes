@@ -589,8 +589,9 @@ function buildWomensShoeFilter(query) {
     // Trim and escape special regex characters
     const subCatValue = String(query.subCategory).trim();
     // Use case-insensitive exact match - MongoDB enum values are case-sensitive but we match case-insensitively
-    conditions.push({ subCategory: { $regex: `^${subCatValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, $options: "i" } });
-    console.log(`[buildWomensShoeFilter] Filtering by subCategory: "${subCatValue}"`);
+    const escapedSubCat = subCatValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    conditions.push({ subCategory: { $regex: `^${escapedSubCat}$`, $options: "i" } });
+    console.log(`[buildWomensShoeFilter] Filtering by subCategory: "${subCatValue}" (regex: "^${escapedSubCat}$")`);
   }
   
   if (query.subSubCategory) {
@@ -801,20 +802,38 @@ export const listProducts = async (req, res) => {
       const womensShoeFilter = buildWomensShoeFilter(query);
       console.log(`[listProducts] Women's Shoes filter:`, JSON.stringify(womensShoeFilter, null, 2));
       console.log(`[listProducts] Query params:`, JSON.stringify(query, null, 2));
-      const [totalCount, data] = await Promise.all([
-        WomensShoe.countDocuments(womensShoeFilter),
-        WomensShoe.find(womensShoeFilter).sort({ subCategory: 1, _id: 1 }).skip(skip).limit(limit)
-      ]);
-      console.log(`[listProducts] Found ${totalCount} Women's Shoes products, returning ${data.length}`);
-      const pagination = {
-        currentPage: page,
-        totalPages: Math.ceil(totalCount / limit) || 0,
-        totalProducts: totalCount,
-        productsPerPage: limit,
-        hasNextPage: page * limit < totalCount,
-        hasPrevPage: page > 1,
-      };
-      return res.json({ products: data.map(d => normalizeWomensShoe(d)), pagination });
+      console.log(`[listProducts] Requested category: "${requestedCategory}"`);
+      try {
+        const [totalCount, data] = await Promise.all([
+          WomensShoe.countDocuments(womensShoeFilter),
+          WomensShoe.find(womensShoeFilter).sort({ subCategory: 1, _id: 1 }).skip(skip).limit(limit)
+        ]);
+        console.log(`[listProducts] Found ${totalCount} Women's Shoes products, returning ${data.length}`);
+        const pagination = {
+          currentPage: page,
+          totalPages: Math.ceil(totalCount / limit) || 0,
+          totalProducts: totalCount,
+          productsPerPage: limit,
+          hasNextPage: page * limit < totalCount,
+          hasPrevPage: page > 1,
+        };
+        return res.json({ products: data.map(d => normalizeWomensShoe(d)), pagination });
+      } catch (error) {
+        console.error(`[listProducts] Error querying Women's Shoes:`, error);
+        return res.status(500).json({ 
+          message: "Error fetching products", 
+          error: error.message,
+          products: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalProducts: 0,
+            productsPerPage: limit,
+            hasNextPage: false,
+            hasPrevPage: false,
+          }
+        });
+      }
     }
     
     // Handle Kids Shoes
@@ -1116,15 +1135,26 @@ export const getFacets = async (req, res) => {
     // Handle Women's Shoes
     else if (/^women'?s?\s+shoes?$/i.test(requestedCategory)) {
       const womensShoeFilter = buildWomensShoeFilter(query);
-      dataAgg = await WomensShoe.aggregate([
-        { $match: womensShoeFilter },
-        { $facet: {
-          genders: [ { $group: { _id: { $toUpper: "$product_info.gender" }, count: { $sum: 1 } } } ],
-          subCategories: [ { $group: { _id: { $toUpper: "$subCategory" }, count: { $sum: 1 } } } ],
-          colors: [ { $group: { _id: { $toUpper: "$product_info.color" }, count: { $sum: 1 } } } ],
-          prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
-        } }
-      ]);
+      console.log(`[getFacets] Women's Shoes filter:`, JSON.stringify(womensShoeFilter, null, 2));
+      try {
+        dataAgg = await WomensShoe.aggregate([
+          { $match: womensShoeFilter },
+          { $facet: {
+            genders: [ { $group: { _id: { $toUpper: "$product_info.gender" }, count: { $sum: 1 } } } ],
+            subCategories: [ { $group: { _id: { $toUpper: "$subCategory" }, count: { $sum: 1 } } } ],
+            colors: [ { $group: { _id: { $toUpper: "$product_info.color" }, count: { $sum: 1 } } } ],
+            prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
+          } }
+        ]);
+      } catch (error) {
+        console.error(`[getFacets] Error querying Women's Shoes:`, error);
+        dataAgg = [{
+          genders: [],
+          colors: [],
+          subCategories: [],
+          prices: [{ values: [] }]
+        }];
+      }
     }
     // Handle Kids Shoes
     else if (/^kids'?\s+shoes?$/i.test(requestedCategory)) {

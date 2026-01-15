@@ -100,6 +100,7 @@ body {
 
 .btn-primary:hover {
   background-color: var(--accent-red-hover);
+  color: var(--bg-primary) !important;
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
@@ -123,7 +124,7 @@ body {
 
 .btn-secondary:hover {
   background-color: var(--text-primary);
-  color: var(--bg-primary);
+  color: var(--bg-primary) !important;
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }

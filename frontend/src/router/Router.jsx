@@ -4,6 +4,7 @@ import OutletLayout from "../components/OutletLayout.jsx";
 import Home from "../pages/Home.jsx";
 import About from "../pages/About.jsx";
 import Shop from "../pages/Shop.jsx";
+import Sale from "../pages/Sale.jsx";
 import Cart from "../pages/Cart.jsx";
 import PrivacyPolicy from "../pages/PrivacyPolicy.jsx";
 import TermsOfService from "../pages/TermsOfService.jsx";
@@ -36,6 +37,11 @@ const ShopWithCart = () => {
   return <Shop addToCart={addToCart} addToWishlist={addToWishlist} />;
 };
 
+const SaleWithCart = () => {
+  const { addToCart, addToWishlist } = useCart();
+  return <Sale addToCart={addToCart} addToWishlist={addToWishlist} />;
+};
+
 const ProductDetailWithCart = () => {
   const { addToCart, addToWishlist } = useCart();
   return <ProductDetail addToCart={addToCart} addToWishlist={addToWishlist} />;
@@ -58,6 +64,7 @@ const router = () =>
           <Route path="/home" element={<HomeWithCart />} />
           <Route path="/about" element={<About />} />
           <Route path="/shop" element={<ShopWithCart />} />
+          <Route path="/sale" element={<SaleWithCart />} />
           <Route path="/product/:id" element={<ProductDetailWithCart />} />
           <Route path="/category/:category" element={<CategoryPageWithCart />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

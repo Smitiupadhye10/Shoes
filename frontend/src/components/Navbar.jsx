@@ -17,6 +17,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
   const [skincareOpen, setSkincareOpen] = useState(false);
   const [mensShoesOpen, setMensShoesOpen] = useState(false);
   const [womensShoesOpen, setWomensShoesOpen] = useState(false);
+  const [kidsShoesOpen, setKidsShoesOpen] = useState(false);
   const navRef = useRef(null);
   const menuRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -43,6 +44,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
         setSkincareOpen(false);
         setMensShoesOpen(false);
         setWomensShoesOpen(false);
+        setKidsShoesOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -58,22 +60,23 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
     <div className="sticky top-0 z-50" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="container-optic">
         <div className="flex items-center justify-between py-1 sm:py-1.5">
-          {/* Menu Button (Mobile) */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-300 hover:scale-110"
-            style={{ 
-              backgroundColor: 'var(--bg-secondary)',
-              borderColor: 'var(--border-color)',
-              color: 'var(--text-primary)'
-            }}
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Left Side - Logo & Mobile Menu Button */}
+          <div className="flex items-center space-x-4 flex-1">
+            {/* Menu Button (Mobile) */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-300 hover:scale-110"
+              style={{ 
+                backgroundColor: 'var(--bg-secondary)',
+                borderColor: 'var(--border-color)',
+                color: 'var(--text-primary)'
+              }}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
 
-          {/* Logo - Centered on mobile, left on desktop */}
-          <div className="flex-1 flex justify-center md:justify-start md:flex-none">
+            {/* Logo - Left Side */}
             <Link to="/" className="flex items-center">
               <img 
                 src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767693849/White_Teal_Yellow_And_Blue_Illustrative_Digital_Payment_Solutions_Presentation_100_x_100_px_2_fspuqo.png" 
@@ -84,7 +87,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
+          {/* Center - Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 flex-1 justify-center">
             <Link 
               to="/" 
@@ -94,6 +97,13 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
               HOME
             </Link>
             <Link 
+              to="/about" 
+              className="text-optic-body text-sm font-medium uppercase tracking-wider hover:opacity-70 transition-opacity"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              ABOUT US
+            </Link>
+            <Link 
               to="/shop" 
               className="text-optic-body text-sm font-medium uppercase tracking-wider hover:opacity-70 transition-opacity"
               style={{ color: 'var(--text-primary)' }}
@@ -101,22 +111,25 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
               SHOP
             </Link>
             <Link 
-              to="/about" 
+              to="/sale" 
               className="text-optic-body text-sm font-medium uppercase tracking-wider hover:opacity-70 transition-opacity"
               style={{ color: 'var(--text-primary)' }}
             >
-              ABOUT US
+              SALE
             </Link>
-             
           </nav>
 
           {/* Right Side Actions */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4 relative z-10 flex-1 justify-end">
             {/* Search Bar - Inline for Desktop, Hidden for Mobile (will show below navbar) */}
-            <div className="relative hidden md:block">
+            <div className="relative hidden md:block z-10">
               {!isSearchOpen ? (
                 <button
-                  onClick={onSearchClick}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (onSearchClick) onSearchClick(e);
+                  }}
                   className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl border transition-all duration-300 hover:scale-110 hover:shadow-lg"
                   style={{ 
                     backgroundColor: 'var(--bg-secondary)',
@@ -124,6 +137,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                     color: 'var(--text-primary)'
                   }}
                   aria-label="Open search"
+                  type="button"
                 >
                   <Search className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
@@ -185,7 +199,11 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
             
             {/* Search Icon for Mobile - Will trigger search bar below navbar */}
             <button
-              onClick={onSearchClick}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (onSearchClick) onSearchClick(e);
+              }}
               className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-300 hover:scale-110 hover:shadow-lg"
               style={{ 
                 backgroundColor: 'var(--bg-secondary)',
@@ -193,6 +211,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                 color: 'var(--text-primary)'
               }}
               aria-label="Open search"
+              type="button"
             >
               <Search className="h-5 w-5" />
             </button>
@@ -324,6 +343,14 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                   SHOP
                 </Link>
                 <Link 
+                  to="/sale" 
+                  onClick={() => setMenuOpen(false)}
+                  className="text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  SALE
+                </Link>
+                <Link 
                   to="/about" 
                   onClick={() => setMenuOpen(false)}
                   className="text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
@@ -338,6 +365,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                     onClick={() => {
                       setMensShoesOpen(!mensShoesOpen);
                       setWomensShoesOpen(false);
+                      setKidsShoesOpen(false);
                     }}
                     className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
                     style={{ color: 'var(--text-primary)' }}
@@ -382,6 +410,7 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                     onClick={() => {
                       setWomensShoesOpen(!womensShoesOpen);
                       setMensShoesOpen(false);
+                      setKidsShoesOpen(false);
                     }}
                     className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
                     style={{ color: 'var(--text-primary)' }}
@@ -409,6 +438,51 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
                           onClick={() => {
                             setMenuOpen(false);
                             setWomensShoesOpen(false);
+                          }}
+                          className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+                          style={{ color: 'var(--text-secondary)' }}
+                        >
+                          {category}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Kids Shoes Section */}
+                <div>
+                  <button
+                    onClick={() => {
+                      setKidsShoesOpen(!kidsShoesOpen);
+                      setMensShoesOpen(false);
+                      setWomensShoesOpen(false);
+                    }}
+                    className="w-full text-left text-optic-body text-sm font-medium uppercase tracking-wider py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-between"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    <span>KIDS SHOES</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${kidsShoesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {kidsShoesOpen && (
+                    <div className="pl-4 mt-2 space-y-1">
+                      <Link
+                        to="/category/Kids%20Shoes"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setKidsShoesOpen(false);
+                        }}
+                        className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+                        style={{ color: 'var(--text-secondary)' }}
+                      >
+                        All Kids Shoes
+                      </Link>
+                      {["Boys Footwear", "Girls Footwear"].map((category) => (
+                        <Link
+                          key={category}
+                          to={`/category/Kids%20Shoes?subCategory=${encodeURIComponent(category)}`}
+                          onClick={() => {
+                            setMenuOpen(false);
+                            setKidsShoesOpen(false);
                           }}
                           className="block text-optic-body text-sm py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
                           style={{ color: 'var(--text-secondary)' }}

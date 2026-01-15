@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext.jsx";
 import api from "../api/axios";
 import { Heart, X, Star, ArrowLeft, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
@@ -19,9 +19,11 @@ const ProductDetails = () => {
 
   const [product, setProduct] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [selectedPower, setSelectedPower] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,8 +47,13 @@ const ProductDetails = () => {
         console.log("Product data received:", data);
         if (data && data._id) {
           setProduct(data);
-          if (data.product_info?.powerOptions?.length > 0) {
-            setSelectedPower(data.product_info.powerOptions[0]);
+          // Set default size if available
+          if (data.sizes_inventory && data.sizes_inventory.length > 0) {
+            setSelectedSize(data.sizes_inventory[0].size);
+          }
+          // Set default color if available
+          if (data.product_info?.color) {
+            setSelectedColor(data.product_info.color);
           }
         } else {
           setError("Product data is invalid");
@@ -75,7 +82,7 @@ const ProductDetails = () => {
     }
   }, [product, wishlist]);
 
-  // Get all images for the product - handle all product types
+  // Get all images for the product
   const getProductImages = () => {
     if (!product) return [];
     
@@ -89,12 +96,12 @@ const ProductDetails = () => {
       return [product.thumbnail];
     }
     
-    // Fallback to imageUrl (for skincare)
+    // Fallback to imageUrl
     if (product.imageUrl && product.imageUrl.trim() !== '') {
       return [product.imageUrl];
     }
     
-    // If images is a string (not array)
+    // If images is a string
     if (typeof product.images === 'string' && product.images.trim() !== '') {
       return [product.images];
     }
@@ -106,13 +113,39 @@ const ProductDetails = () => {
   const images = getProductImages();
   const selectedImage = images[selectedImageIndex] || "/placeholder.jpg";
   
-  // Get product title - handle all product types
+  // Get product title
   const getProductTitle = () => {
     if (!product) return "Product";
     return product.title || product.name || product.productName || "Product";
   };
   
   const productTitle = getProductTitle();
+
+  // Get available sizes
+  const getAvailableSizes = () => {
+    if (product?.sizes_inventory && product.sizes_inventory.length > 0) {
+      return product.sizes_inventory.map(item => item.size);
+    }
+    // Fallback sizes
+    return ['XS', 'S', 'M', 'L', 'XL'];
+  };
+
+  const availableSizes = getAvailableSizes();
+
+  // Get available colors (if multiple colors available)
+  const getAvailableColors = () => {
+    const colors = [];
+    if (product?.product_info?.color) {
+      colors.push(product.product_info.color);
+    }
+    // Add more colors if available in product data
+    if (product?.product_info?.frameColor && product.product_info.frameColor !== product.product_info.color) {
+      colors.push(product.product_info.frameColor);
+    }
+    return colors;
+  };
+
+  const availableColors = getAvailableColors();
 
   const nextImage = () => {
     setSelectedImageIndex((prev) => (prev + 1) % images.length);
@@ -180,30 +213,26 @@ const ProductDetails = () => {
   }
 
   const handleAddToCart = () => {
-    const item = { ...product, selectedPower, quantity };
+    const item = { ...product, selectedSize, selectedColor, quantity };
     addToCart(item);
   };
 
   const handleBuyNow = () => {
-    const item = { ...product, selectedPower, quantity };
+    const item = { ...product, selectedSize, selectedColor, quantity };
     addToCart(item);
     navigate("/cart");
   };
 
-  // Calculate prices - handle all product types
+  // Calculate prices
   const getPrices = () => {
-    // Price is the discounted price (finalPrice)
     const discountedPrice = Number(product.price || product.finalPrice || 0);
-    
-    // Original price (MRP) - use originalPrice if available, otherwise calculate from discount
     let originalPrice = Number(product.originalPrice || 0);
     const discountPercent = Number(product.discount || product.discountPercent || 0);
     
-    // If originalPrice is not provided, calculate it from discounted price and discount
     if (!originalPrice && discountPercent > 0 && discountedPrice > 0) {
       originalPrice = Math.round(discountedPrice / (1 - discountPercent / 100));
     } else if (!originalPrice) {
-      originalPrice = discountedPrice; // No discount, MRP equals discounted price
+      originalPrice = discountedPrice;
     }
     
     return { originalPrice, discountedPrice, discountPercent };
@@ -218,441 +247,390 @@ const ProductDetails = () => {
       maximumFractionDigits: 0,
     }).format(Number(num || 0));
 
+  // Get rating
+  const rating = product.ratings || product.rating || 0;
+  const reviewsCount = product.numReviews || 0;
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+
   return (
-    <div className="py-0 md:py-0 pt-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="container mx-auto px-4 sm:px-6">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 mb-4 sm:mb-6 transition-colors duration-200 text-sm sm:text-base font-medium"
-          style={{ color: 'var(--text-primary)' }}
-          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-heading)'}
-          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-        >
-          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-          <span>Back</span>
-        </button>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="container mx-auto px-4 sm:px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* Left Section - Product Images */}
+          <div className="space-y-4">
+            {/* Main Image Container */}
+            <div className="relative rounded-lg overflow-hidden group" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+              <img
+                src={selectedImage}
+                alt={productTitle}
+                className="w-full h-auto object-contain"
+                onError={(e) => {
+                  if (e.target.src !== "/placeholder.jpg") {
+                    e.target.src = "/placeholder.jpg";
+                  }
+                }}
+              />
+              
+              {/* Wishlist Icon - Top Right */}
+              <button
+                onClick={toggleWishlist}
+                className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all z-10"
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart
+                  className={`w-5 h-5 ${
+                    isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"
+                  }`}
+                />
+              </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
-          {/* Left Section - Image Carousel */}
-          <div className="lg:sticky lg:top-24 lg:h-fit">
-            <div className="card-optic p-4 sm:p-6">
-              {/* Wishlist Heart Icon */}
-              <div className="flex justify-end mb-4">
-                <button
-                  onClick={toggleWishlist}
-                  aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                  className="p-3 rounded-full shadow-md hover:scale-110 transition-all duration-200"
-                  style={{ backgroundColor: 'var(--bg-secondary)' }}
-                >
-                  <Heart
-                    className={`w-6 h-6 transition-colors ${
-                      isWishlisted
-                        ? "fill-red-500 text-red-500"
-                        : "hover:text-red-500"
+              {/* Navigation Arrows - Always Visible */}
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-gray-800/70 hover:bg-gray-800 rounded-full flex items-center justify-center text-white transition-all z-10"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-gray-800/70 hover:bg-gray-800 rounded-full flex items-center justify-center text-white transition-all z-10"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Image Carousel Dots */}
+            {images.length > 1 && (
+              <div className="flex justify-center gap-2">
+                {images.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImageIndex(i)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      selectedImageIndex === i
+                        ? "bg-pink-500 w-3"
+                        : "bg-gray-300 hover:bg-gray-400"
                     }`}
-                    style={{ color: 'var(--text-secondary)' }}
+                    aria-label={`Go to image ${i + 1}`}
                   />
-                </button>
-              </div>
-
-              {/* Image Carousel */}
-              <div className="relative mb-4">
-                {/* Main Image Container */}
-                <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] rounded-xl overflow-hidden group" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                  <img
-                    src={selectedImage}
-                    alt={productTitle}
-                    className="w-full h-full object-contain p-4 sm:p-6 md:p-8 cursor-pointer transition-transform duration-300 group-hover:scale-105"
-                    onClick={openImageModal}
-                    onError={(e) => {
-                      // Fallback to placeholder if image fails to load
-                      if (e.target.src !== "/placeholder.jpg") {
-                        e.target.src = "/placeholder.jpg";
-                      }
-                    }}
-                    loading="eager"
-                  />
-                  
-                  {/* Navigation Arrows */}
-                  {images.length > 1 && (
-                    <>
-                      <button
-                        onClick={prevImage}
-                        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-2 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100"
-                        aria-label="Previous image"
-                        style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-                      >
-                        <ChevronLeft className="w-6 h-6" />
-                      </button>
-                      <button
-                        onClick={nextImage}
-                        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-2 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100"
-                        aria-label="Next image"
-                        style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-                      >
-                        <ChevronRight className="w-6 h-6" />
-                      </button>
-                    </>
-                  )}
-
-                  {/* Image Counter */}
-                  {images.length > 1 && (
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}>
-                      {selectedImageIndex + 1} / {images.length}
-                    </div>
-                  )}
-                </div>
-
-                {/* Thumbnail Strip */}
-                {images.length > 1 && (
-                  <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4 overflow-x-auto pb-2 scrollbar-hide">
-                    {images.map((img, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setSelectedImageIndex(i)}
-                        className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 p-1 rounded-md sm:rounded-lg border-2 transition-all duration-200 ${
-                          selectedImageIndex === i
-                            ? "scale-105 ring-2 ring-offset-2"
-                            : "hover:scale-105"
-                        }`}
-                        style={{
-                          backgroundColor: 'var(--bg-primary)',
-                          borderColor: selectedImageIndex === i ? 'var(--text-heading)' : 'var(--border-color)',
-                          ringColor: selectedImageIndex === i ? 'var(--text-heading)' : 'transparent'
-                        }}
-                        aria-label={`Select image ${i + 1}`}
-                      >
-                        <img
-                          src={img}
-                          alt={`${productTitle}-${i}`}
-                          className="w-full h-full object-contain rounded p-0.5 sm:p-1"
-                          onError={(e) => {
-                            // Fallback to placeholder if thumbnail fails to load
-                            if (e.target.src !== "/placeholder.jpg") {
-                              e.target.src = "/placeholder.jpg";
-                            }
-                          }}
-                          loading="lazy"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="space-y-3 mt-4 sm:mt-6">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <button
-                    onClick={handleAddToCart}
-                    className="btn-primary flex-1 text-sm sm:text-base"
-                  >
-                    <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                    Add to Cart
-                  </button>
-                  <button
-                    onClick={handleBuyNow}
-                    className="btn-secondary flex-1 text-sm sm:text-base"
-                  >
-                    Buy Now
-                  </button>
-                </div>
-                <button
-                  onClick={toggleWishlist}
-                  className="w-full flex items-center justify-center gap-2 border-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200"
-                  style={{
-                    borderColor: 'var(--text-heading)',
-                    color: 'var(--text-primary)',
-                    backgroundColor: 'transparent'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--text-heading)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent'
-                  }}
-                >
-                  <Heart className={`w-5 h-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} style={{ color: isWishlisted ? '#ef4444' : 'var(--text-primary)' }} />
-                  {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Section - Product Info */}
-          <div className="space-y-6">
-            {/* Card 1: Title / Ratings / Price */}
-            <div className="card-optic p-4 sm:p-6">
-              <div className="mb-3">
-                <span className="inline-block px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium mb-2" style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}>
-                  {product.category}
-                </span>
-                {product.subCategory && (
-                  <span className="inline-block ml-2 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
-                    {product.subCategory}
-                  </span>
-                )}
-              </div>
-              <h1 className="text-optic-heading text-2xl sm:text-3xl font-bold mb-3 sm:mb-4" style={{ color: 'var(--text-primary)' }}>
-                {productTitle}
-              </h1>
-
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.round(product.ratings || 0)
-                          ? ""
-                          : "text-gray-300"
-                      }`}
-                      style={i < Math.round(product.ratings || 0) ? { fill: 'var(--text-heading)', color: 'var(--text-heading)' } : {}}
-                    />
-                  ))}
-                  <span className="ml-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    ({(product.ratings || 0).toFixed ? (product.ratings || 0).toFixed(1) : Number(product.ratings || 0).toFixed(1)}
-                    ) · {product.numReviews || 0} reviews
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 mb-3 sm:mb-4">
-                <div>
-                  <div className="text-3xl sm:text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                    {formatINR(discountedPrice)}
-                  </div>
-                  {originalPrice > discountedPrice && (
-                    <div className="text-base sm:text-lg line-through mt-1" style={{ color: 'var(--text-secondary)' }}>
-                      {formatINR(originalPrice)}
-                    </div>
-                  )}
-                </div>
-                {discountPercent > 0 && originalPrice > discountedPrice && (
-                  <div className="px-4 py-2 rounded-full text-sm font-bold shadow-md" style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}>
-                    {discountPercent.toFixed(1)}% OFF
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Card 2: Description */}
-            {product.description && (
-              <div className="card-optic rounded-2xl shadow-lg p-4 sm:p-6">
-                <h3 className="text-base sm:text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Description</h3>
-                <p className="text-sm sm:text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{product.description}</p>
+                ))}
               </div>
             )}
 
-            {/* Card 3: Product Details */}
-            <div className="card-optic rounded-2xl shadow-lg p-4 sm:p-6">
-              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4" style={{ color: 'var(--text-primary)' }}>Product Details</h3>
+            {/* Thumbnail Images */}
+            {images.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImageIndex(i)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                      selectedImageIndex === i
+                        ? "border-gray-800 scale-105"
+                        : "border-gray-200 hover:border-gray-400"
+                    }`}
+                    aria-label={`Select image ${i + 1}`}
+                  >
+                    <img
+                      src={img}
+                      alt={`${productTitle}-${i}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        if (e.target.src !== "/placeholder.jpg") {
+                          e.target.src = "/placeholder.jpg";
+                        }
+                      }}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* T&C Applied Banner */}
+            <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-2">
+              <p className="text-xs text-green-800 text-center">T&C Applied</p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={handleAddToCart}
+                className="w-full px-6 py-3 border-2 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+                style={{
+                  borderColor: 'var(--text-primary)',
+                  backgroundColor: 'var(--bg-primary)',
+                  color: 'var(--text-primary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--bg-secondary)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--bg-primary)';
+                }}
+              >
+                <ShoppingCart className="w-5 h-5" />
+                ADD TO CART
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="w-full px-6 py-3 rounded-lg font-semibold transition-all"
+                style={{
+                  backgroundColor: 'var(--text-primary)',
+                  color: 'var(--bg-primary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--accent-red-hover)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--text-primary)';
+                }}
+              >
+                BUY IT NOW
+              </button>
+            </div>
+          </div>
+
+          {/* Right Section - Product Information */}
+          <div className="space-y-6">
+            {/* Breadcrumbs */}
+            <nav className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <Link to="/" className="hover:opacity-70 transition-opacity" style={{ color: 'var(--text-secondary)' }}>Home</Link>
+              <span className="mx-2">/</span>
+              <Link to={`/category/${encodeURIComponent(product.category || '')}`} className="hover:opacity-70 transition-opacity" style={{ color: 'var(--text-secondary)' }}>
+                {product.category || 'Products'}
+              </Link>
+              <span className="mx-2">/</span>
+              <span style={{ color: 'var(--text-primary)' }}>{productTitle}</span>
+            </nav>
+
+            {/* Product Title */}
+            <h1 className="text-3xl sm:text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>
+              {productTitle}
+            </h1>
+
+            {/* Price */}
+            <div className="space-y-1">
+              <div className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                {formatINR(discountedPrice)}
+              </div>
+              {originalPrice > discountedPrice && (
+                <div className="text-lg line-through" style={{ color: 'var(--text-secondary)' }}>
+                  {formatINR(originalPrice)}
+                </div>
+              )}
+            </div>
+
+            {/* Rating */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                {[...Array(5)].map((_, i) => {
+                  if (i < fullStars) {
+                    return <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />;
+                  } else if (i === fullStars && hasHalfStar) {
+                    return <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" style={{ clipPath: 'inset(0 50% 0 0)' }} />;
+                  } else {
+                    return <Star key={i} className="w-5 h-5 fill-gray-300 text-gray-300" />;
+                  }
+                })}
+              </div>
+              <span className="font-medium" style={{ color: 'var(--text-secondary)' }}>
+                {rating.toFixed(1)} ({reviewsCount})
+              </span>
+            </div>
+
+            {/* Tax Information */}
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Inclusive of all taxes</p>
+
+            {/* SKU */}
+            {product.sku && (
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                SKU: <span className="font-medium">{product.sku}</span>
+              </p>
+            )}
+
+            {/* Shipping Promotion Banner */}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
+              <Star className="w-5 h-5 text-green-600 fill-green-600" />
+              <span className="text-sm font-medium text-green-800">
+                Free shipping on all pre-paid orders
+              </span>
+            </div>
+
+            {/* Size Selection */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold uppercase" style={{ color: 'var(--text-primary)' }}>Size</label>
+                <button 
+                  onClick={() => setIsSizeChartOpen(true)}
+                  className="text-sm underline hover:opacity-70 transition-opacity" 
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  Size Chart
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {availableSizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-4 py-2 border-2 rounded font-medium transition-all ${
+                      selectedSize === size
+                        ? ""
+                        : ""
+                    }`}
+                    style={selectedSize === size
+                      ? { borderColor: 'var(--text-primary)', backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }
+                      : { borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }
+                    }
+                    onMouseEnter={(e) => {
+                      if (selectedSize !== size) {
+                        e.currentTarget.style.borderColor = 'var(--text-primary)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (selectedSize !== size) {
+                        e.currentTarget.style.borderColor = 'var(--border-color)';
+                      }
+                    }}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Color Selection */}
+            {availableColors.length > 0 && (
               <div className="space-y-3">
+                <label className="text-sm font-semibold uppercase block" style={{ color: 'var(--text-primary)' }}>
+                  More Colors
+                </label>
+                <div className="flex gap-3">
+                  {availableColors.map((color, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedColor(color)}
+                      className={`w-12 h-12 rounded-lg border-2 overflow-hidden transition-all ${
+                        selectedColor === color
+                          ? "ring-2"
+                          : ""
+                      }`}
+                      style={{
+                        backgroundColor: color,
+                        borderColor: selectedColor === color ? 'var(--text-primary)' : 'var(--border-color)',
+                        ringColor: selectedColor === color ? 'var(--text-primary)' : 'transparent'
+                      }}
+                      aria-label={`Select color ${color}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Easy Returns Policy */}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 className="font-semibold text-green-800 mb-2">EASY RETURNS</h3>
+              <ul className="space-y-1 text-sm text-green-800">
+                <li>• Eligible for exchange/return under 7-day return policy</li>
+                <li>• Avail store credits on returns</li>
+                <li>• T&C Applied*</li>
+              </ul>
+            </div>
+
+            {/* Description */}
+            {product.description && (
+              <div className="pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                <h3 className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Description</h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{product.description}</p>
+              </div>
+            )}
+
+            {/* Product Details - Display All Available Information */}
+            <div className="pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
+              <h3 className="font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Product Details</h3>
+              <div className="space-y-2 text-sm">
                 {product.product_info?.brand && (
-                  <div className="flex justify-between py-2 border-b text-sm sm:text-base" style={{ borderColor: 'var(--border-color)' }}>
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Brand</span>
-                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {product.product_info.brand}
-                    </span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.product_info.brand}</span>
                   </div>
                 )}
                 {product.product_info?.gender && (
                   <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Gender</span>
-                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {mapGender(product.product_info.gender)}
-                    </span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{mapGender(product.product_info.gender)}</span>
                   </div>
                 )}
-                {product.product_info?.size && (
+                {product.subCategory && (
                   <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Size</span>
-                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {product.product_info.size}
-                    </span>
+                    <span style={{ color: 'var(--text-secondary)' }}>Category</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.subCategory}</span>
                   </div>
                 )}
-                {product.product_info?.frameShape && (
+                {product.subSubCategory && (
                   <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Frame Shape</span>
-                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {product.product_info.frameShape}
-                    </span>
+                    <span style={{ color: 'var(--text-secondary)' }}>Sub Category</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.subSubCategory}</span>
                   </div>
                 )}
-                {product.product_info?.frameMaterial && (
+                {product.product_info?.outerMaterial && (
                   <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Material</span>
-                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {product.product_info.frameMaterial}
-                    </span>
+                    <span style={{ color: 'var(--text-secondary)' }}>Outer Material</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.product_info.outerMaterial}</span>
                   </div>
                 )}
-                {(product.product_info?.frameColor || product.product_info?.color) && (
+                {product.product_info?.soleMaterial && (
                   <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Color</span>
-                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {product.product_info.frameColor || product.product_info.color}
-                    </span>
+                    <span style={{ color: 'var(--text-secondary)' }}>Sole Material</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.product_info.soleMaterial}</span>
                   </div>
                 )}
-                {(product.product_info?.rimDetails || product.product_info?.rimType) && (
+                {product.product_info?.innerMaterial && (
                   <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Rim</span>
-                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {product.product_info.rimDetails || product.product_info.rimType}
-                    </span>
+                    <span style={{ color: 'var(--text-secondary)' }}>Inner Material</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.product_info.innerMaterial}</span>
+                  </div>
+                )}
+                {product.product_info?.closureType && (
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Closure Type</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.product_info.closureType}</span>
+                  </div>
+                )}
+                {product.product_info?.toeShape && (
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Toe Shape</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.product_info.toeShape}</span>
+                  </div>
+                )}
+                {product.product_info?.heelHeight && (
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Heel Height</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.product_info.heelHeight}</span>
+                  </div>
+                )}
+                {product.product_info?.embellishments && product.product_info.embellishments.length > 0 && (
+                  <div className="flex justify-between py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Embellishments</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.product_info.embellishments.join(', ')}</span>
                   </div>
                 )}
                 {product.product_info?.warranty && (
                   <div className="flex justify-between py-2">
                     <span style={{ color: 'var(--text-secondary)' }}>Warranty</span>
-                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {product.product_info.warranty}
-                    </span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{product.product_info.warranty}</span>
                   </div>
                 )}
-
-                {/* Lens-only fields */}
-                {product.category?.toLowerCase().includes("lens") && (
-                  <>
-                    {product.product_info?.disposability && (
-                      <div className="flex justify-between py-2 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                        <span style={{ color: 'var(--text-secondary)' }}>Disposability</span>
-                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                          {product.product_info.disposability}
-                        </span>
-                      </div>
-                    )}
-                    {product.product_info?.usage && (
-                      <div className="flex justify-between py-2">
-                        <span style={{ color: 'var(--text-secondary)' }}>Usage</span>
-                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                          {product.product_info.usage}
-                        </span>
-                      </div>
-                    )}
-                    {product.product_info?.waterContent && (
-                      <div className="flex justify-between py-2">
-                        <span style={{ color: 'var(--text-secondary)' }}>Water Content</span>
-                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                          {product.product_info.waterContent}
-                        </span>
-                      </div>
-                    )}
-                    {product.product_info?.baseCurve && (
-                      <div className="flex justify-between py-2">
-                        <span style={{ color: 'var(--text-secondary)' }}>Base Curve</span>
-                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                          {product.product_info.baseCurve}
-                        </span>
-                      </div>
-                    )}
-                    {product.product_info?.diameter && (
-                      <div className="flex justify-between py-2">
-                        <span style={{ color: 'var(--text-secondary)' }}>Diameter</span>
-                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                          {product.product_info.diameter}
-                        </span>
-                      </div>
-                    )}
-                    {product.product_info?.packaging && (
-                      <div className="flex justify-between py-2">
-                        <span style={{ color: 'var(--text-secondary)' }}>Packaging</span>
-                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                          {product.product_info.packaging}
-                        </span>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Power Options (if present) */}
-            {product.product_info?.powerOptions && (
-              <div className="card-optic rounded-2xl shadow-lg p-4 sm:p-6">
-                <h4 className="text-base sm:text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Select Power</h4>
-                <div className="flex flex-wrap gap-2">
-                  {product.product_info.powerOptions.map((p, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setSelectedPower(p)}
-                      className={`px-4 py-2 rounded-lg border font-medium transition-all ${
-                        selectedPower === p
-                          ? "text-white"
-                          : "border-gray-300 hover:border-red-800"
-                      }`}
-                      style={selectedPower === p 
-                        ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } 
-                        : { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }
-                      }
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Quantity */}
-            <div className="card-optic rounded-2xl shadow-lg p-4 sm:p-6">
-              <h4 className="text-base sm:text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Quantity</h4>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center border rounded-lg" style={{ borderColor: 'var(--border-color)' }}>
-                  <button
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="px-3 sm:px-4 py-2 transition-colors text-sm sm:text-base"
-                    style={{ color: 'var(--text-primary)' }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    aria-label="Decrease quantity"
-                  >
-                    -
-                  </button>
-                  <div className="px-4 sm:px-6 py-2 font-medium text-sm sm:text-base" style={{ color: 'var(--text-primary)' }}>{quantity}</div>
-                  <button
-                    onClick={() => setQuantity((q) => q + 1)}
-                    className="px-4 py-2 transition-colors"
-                    style={{ color: 'var(--text-primary)' }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    aria-label="Increase quantity"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Static Info Card */}
-            <div className="rounded-2xl p-4 sm:p-6 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs">✓</span>
-                  </div>
-                  <span className="font-medium text-sm sm:text-base" style={{ color: 'var(--text-primary)' }}>7 Days Returns</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--text-primary)' }}>
-                    <span className="text-white text-xs">↻</span>
-                  </div>
-                  <span className="font-medium text-sm sm:text-base" style={{ color: 'var(--text-primary)' }}>Exchange at 850+ stores</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--text-primary)' }}>
-                    <span className="text-white text-xs">🛡</span>
-                  </div>
-                  <span className="font-medium text-sm sm:text-base" style={{ color: 'var(--text-primary)' }}>
-                    Warranty: {product.product_info?.warranty || "As per product"}
-                  </span>
-                </div>
               </div>
             </div>
           </div>
-          {/* End Right Section */}
         </div>
       </div>
 
@@ -672,12 +650,123 @@ const ProductDetails = () => {
               alt={productTitle}
               className="max-w-full max-h-[80vh] object-contain rounded-lg"
               onError={(e) => {
-                // Fallback to placeholder if image fails to load
                 if (e.target.src !== "/placeholder.jpg") {
                   e.target.src = "/placeholder.jpg";
                 }
               }}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Size Chart Modal */}
+      {isSizeChartOpen && (
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setIsSizeChartOpen(false)}
+        >
+          <div 
+            className="relative bg-white rounded-lg max-w-4xl max-h-[90vh] overflow-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsSizeChartOpen(false)}
+              className="absolute top-4 right-4 z-10 w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors"
+              aria-label="Close size chart"
+            >
+              <X className="w-5 h-5 text-gray-700" />
+            </button>
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Size Chart</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                      <th className="border px-4 py-3 text-left font-semibold" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>UK</th>
+                      <th className="border px-4 py-3 text-left font-semibold" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>US</th>
+                      <th className="border px-4 py-3 text-left font-semibold" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>EU</th>
+                      <th className="border px-4 py-3 text-left font-semibold" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>CM</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Women's Sizes */}
+                    <tr>
+                      <td colSpan="4" className="border px-4 py-2 font-semibold" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>Women's Sizes</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>3 (W)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>3.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>36</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>25</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>4 (W)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>4.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>37</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>25.5</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>5 (W)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>5.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>38</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>26</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>6 (W)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>6.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>39</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>26.5</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>7 (W)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>7.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>40</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>27</td>
+                    </tr>
+                    {/* Men's Sizes */}
+                    <tr>
+                      <td colSpan="4" className="border px-4 py-2 font-semibold" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>Men's Sizes</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>6 (M)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>6.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>40</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>27.5</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>7 (M)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>7.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>41</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>28</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>8 (M)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>8.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>42</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>28.5</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>9 (M)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>9.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>43</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>29</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>10 (M)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>10.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>44</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>30</td>
+                    </tr>
+                    <tr>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>11 (M)</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>11.5</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>45</td>
+                      <td className="border px-4 py-2" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>30.5</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       )}

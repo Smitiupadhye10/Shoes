@@ -83,12 +83,22 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
 
     const fadeTimeout = setTimeout(async () => {
       try {
-        const { data } = await api.get('/products', { params: Object.fromEntries(params) });
+        const requestParams = Object.fromEntries(params);
+        console.log("Fetching products with params:", requestParams);
+        const { data } = await api.get('/products', { params: requestParams });
+        console.log("Products response:", { 
+          isArray: Array.isArray(data), 
+          hasProducts: !!data.products, 
+          productsCount: Array.isArray(data) ? data.length : (Array.isArray(data.products) ? data.products.length : 0),
+          pagination: data.pagination 
+        });
         const newProducts = Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []);
         setProducts(newProducts);
         setPagination(
           data.pagination || { currentPage: page, totalPages: 0, totalProducts: 0, productsPerPage: limit }
         );
+        // Clear any previous errors
+        setError(null);
         // Show products immediately if clearing filters (no active filters)
         const hasActiveFilters = searchParams.get("priceRange") || searchParams.get("gender") || searchParams.get("color");
         if (newProducts.length > 0 && !hasActiveFilters) {
@@ -97,7 +107,9 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           setTimeout(() => setVisible(true), 80);
         }
       } catch (err) {
-        setError(err.message);
+        console.error("Error fetching products:", err);
+        const errorMessage = err.response?.data?.message || err.message || "Failed to load products";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -115,7 +127,10 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
         colors: f?.colors || {},
         subCategories: f?.subCategories || {},
       }))
-      .catch(() => {});
+      .catch((err) => {
+        console.error("Error fetching facets:", err);
+        // Don't set error state for facets, just log it
+      });
 
     return () => clearTimeout(fadeTimeout);
   }, [category, page, limit, searchParams]);
@@ -879,6 +894,27 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           return dateB - dateA;
         });
       }
+      if (sort === 'bestselling') {
+        arr.sort((a,b) => {
+          const ratingA = a.ratings || a.rating || 0;
+          const ratingB = b.ratings || b.rating || 0;
+          const reviewsA = a.numReviews || 0;
+          const reviewsB = b.numReviews || 0;
+          // Sort by rating first, then by number of reviews
+          if (ratingB !== ratingA) {
+            return ratingB - ratingA;
+          }
+          return reviewsB - reviewsA;
+        });
+      }
+      if (sort === 'trending') {
+        arr.sort((a,b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+          const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+          // Trending = newest first
+          return dateB - dateA;
+        });
+      }
     }
     return arr;
   }, [products, sort, isAccessories]);
@@ -1008,6 +1044,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                         className="transform transition-all duration-300 hover:scale-[1.02]"
                       >
                         <ProductCard
+                          showBestSeller={sort === 'bestselling' || sort === 'trending'}
                           product={product}
                           addToCart={() => addToCart?.(product)}
                           addToWishlist={() => addToWishlist?.(product)}

@@ -42,12 +42,7 @@ const Admin = () => {
         return;
       }
       try {
-        const api = await import("../api/axios.js");
-        const res = await api.default.get("/auth/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await api.get("/auth/me");
         if (res.data) {
           if (res.data.isAdmin) {
             setIsAdmin(true);
@@ -148,18 +143,8 @@ const Admin = () => {
 
     try {
       await api.delete(`/admin/products/${id}`);
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.ok) {
-        alert("Product deleted!");
-        fetchProducts();
-      } else {
-        alert("Error deleting product");
-      }
+      alert("Product deleted!");
+      fetchProducts();
     } catch (error) {
       alert("Error deleting product");
     }

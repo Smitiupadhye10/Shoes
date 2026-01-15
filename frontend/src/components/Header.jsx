@@ -326,24 +326,20 @@ const MensShoesDropdown = () => {
             {/* Top Section */}
             <div className="flex justify-between items-center mb-6">
               <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Featured:</span>
-              <div className="flex gap-2">
-                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-white">By Category</button>
-                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-gray-300" style={{ color: 'var(--text-primary)' }}>By Use</button>
-              </div>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column - Navigation */}
               <div className="lg:col-span-1 space-y-4">
                 <button 
-                  onClick={() => navigate(`/category/Men's%20Shoes`)}
+                  onClick={() => navigate(`/category/Men's%20Shoes?sort=bestselling`)}
                   className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
                 >
                   <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Best Selling</span>
                   <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                 </button>
                 <button 
-                  onClick={() => navigate(`/category/Men's%20Shoes`)}
+                  onClick={() => navigate(`/category/Men's%20Shoes?sort=trending`)}
                   className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
                 >
                   <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Trending</span>
@@ -447,24 +443,20 @@ const WomensShoesDropdown = () => {
             {/* Top Section */}
             <div className="flex justify-between items-center mb-6">
               <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Featured:</span>
-              <div className="flex gap-2">
-                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-white">By Category</button>
-                <button className="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-gray-300" style={{ color: 'var(--text-primary)' }}>By Use</button>
-              </div>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column - Navigation */}
               <div className="lg:col-span-1 space-y-4">
                 <button 
-                  onClick={() => navigate(`/category/Women's%20Shoes`)}
+                  onClick={() => navigate(`/category/Women's%20Shoes?sort=bestselling`)}
                   className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
                 >
                   <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Best Selling</span>
                   <ArrowRight className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                 </button>
                 <button 
-                  onClick={() => navigate(`/category/Women's%20Shoes`)}
+                  onClick={() => navigate(`/category/Women's%20Shoes?sort=trending`)}
                   className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
                 >
                   <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Trending</span>
@@ -568,27 +560,30 @@ const KidsShoesDropdown = () => {
             {/* Top Section */}
             <div className="flex justify-between items-center mb-3">
               <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>Featured:</span>
-              <div className="flex gap-2">
-                <button className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800 text-white">By Category</button>
-                <button className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-gray-300" style={{ color: 'var(--text-primary)' }}>By Use</button>
-              </div>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
               {/* Left Column - Navigation */}
               <div className="lg:col-span-1 space-y-2">
                 <button 
-                  onClick={() => navigate(`/category/Kids%20Shoes`)}
+                  onClick={() => navigate(`/category/Kids%20Shoes?sort=bestselling`)}
                   className="w-full flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors group"
                 >
                   <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>Best Selling</span>
                   <ArrowRight className="w-3 h-3" style={{ color: 'var(--text-secondary)' }} />
                 </button>
                 <button 
-                  onClick={() => navigate(`/category/Kids%20Shoes`)}
+                  onClick={() => navigate(`/category/Kids%20Shoes?sort=trending`)}
                   className="w-full flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors group"
                 >
                   <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>Trending</span>
+                  <ArrowRight className="w-3 h-3" style={{ color: 'var(--text-secondary)' }} />
+                </button>
+                <button 
+                  onClick={() => navigate(`/category/Kids%20Shoes`)}
+                  className="w-full flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors group"
+                >
+                  <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>All Products For Kids</span>
                   <ArrowRight className="w-3 h-3" style={{ color: 'var(--text-secondary)' }} />
                 </button>
               </div>
