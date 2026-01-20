@@ -392,7 +392,12 @@ function normalizeShoesAccessory(acc) {
     },
     images: imagesArray,
     ratings: doc.rating || doc.ratings || 0,
+    rating: doc.rating || doc.ratings || 0,
+    reviewsCount: doc.reviewsCount || 0,
+    ratingsCount: doc.ratingsCount || 0,
+    numReviews: doc.reviewsCount || doc.ratingsCount || 0,
     discount: discountPercent,
+    discountPercent: discountPercent,
     finalPrice: finalPrice,
     _type: 'shoesAccessory',
     // Preserve original fields that might be useful
