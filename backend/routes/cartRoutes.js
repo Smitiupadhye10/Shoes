@@ -4,6 +4,7 @@ import Cart from '../models/Cart.js';
 import MensShoe from '../models/MensShoe.js';
 import WomensShoe from '../models/WomensShoe.js';
 import KidsShoe from '../models/KidsShoe.js';
+import ShoesAccessory from '../models/ShoesAccessory.js';
 
 const cartRouter = express.Router();
 
@@ -136,6 +137,42 @@ async function resolveItem(productId) {
       finalPrice: finalPrice,
       images: imagesArray,
       Images: doc.Images
+    };
+  }
+  
+  // Try ShoesAccessory collection
+  doc = await ShoesAccessory.findById(productId).lean();
+  if (doc) {
+    // Handle images
+    let imagesArray = [];
+    if (Array.isArray(doc.images) && doc.images.length > 0) {
+      imagesArray = doc.images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+    }
+    if (imagesArray.length === 0 && doc.thumbnail) {
+      imagesArray = [doc.thumbnail];
+    }
+    
+    // Calculate originalPrice
+    const finalPrice = doc.finalPrice || doc.price || 0;
+    const discountPercent = doc.discountPercent || 0;
+    let originalPrice = doc.originalPrice;
+    if (!originalPrice && discountPercent > 0 && finalPrice > 0) {
+      originalPrice = Math.round(finalPrice / (1 - discountPercent / 100));
+    } else if (!originalPrice) {
+      originalPrice = finalPrice;
+    }
+    
+    return {
+      ...doc,
+      _type: 'shoesAccessory',
+      title: doc.title || '',
+      name: doc.title || '',
+      price: finalPrice,
+      originalPrice: originalPrice,
+      discount: discountPercent,
+      discountPercent: discountPercent,
+      finalPrice: finalPrice,
+      images: imagesArray
     };
   }
   

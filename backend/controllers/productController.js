@@ -1195,6 +1195,12 @@ export const getProductById = async (req, res) => {
       return res.json(normalizeKidsShoe(product));
     }
     
+    // Try ShoesAccessory collection
+    product = await ShoesAccessory.findById(id);
+    if (product) {
+      return res.json(normalizeShoesAccessory(product));
+    }
+    
     // If not found in any collection
     return res.status(404).json({ message: "Product not found" });
   } catch (error) {

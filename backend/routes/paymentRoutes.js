@@ -5,6 +5,7 @@ import Cart from '../models/Cart.js';
 import MensShoe from '../models/MensShoe.js';
 import WomensShoe from '../models/WomensShoe.js';
 import KidsShoe from '../models/KidsShoe.js';
+import ShoesAccessory from '../models/ShoesAccessory.js';
 import { verifyToken, requireAdmin } from '../middleware/authMiddleware.js';
 
 // -------- Resolve Item - Handle all product types --------
@@ -18,6 +19,9 @@ async function resolveItem(productId) {
   
   doc = await KidsShoe.findById(productId).lean();
   if (doc) return { ...doc, _type: 'kidsShoe', price: doc.finalPrice || doc.price || 0 };
+  
+  doc = await ShoesAccessory.findById(productId).lean();
+  if (doc) return { ...doc, _type: 'shoesAccessory', price: doc.finalPrice || doc.price || 0 };
   
   return null;
 }
