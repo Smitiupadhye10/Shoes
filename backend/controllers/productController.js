@@ -2,6 +2,7 @@ import Product from "../models/Product.js";
 import MensShoe from "../models/MensShoe.js";
 import WomensShoe from "../models/WomensShoe.js";
 import KidsShoe from "../models/KidsShoe.js";
+import ShoesAccessory from "../models/ShoesAccessory.js";
 
 const HIERARCHICAL_KEYS = new Set([
   "Gender",
@@ -255,7 +256,14 @@ function normalizeMensShoe(shoe) {
     },
     images: imagesArray,
     ratings: doc.rating || 0,
+    rating: doc.rating || 0,
+    reviewsCount: doc.reviewsCount || 0,
+    ratingsCount: doc.ratingsCount || 0,
+    numReviews: doc.reviewsCount || doc.ratingsCount || 0,
+    isFeatured: doc.isFeatured || false,
+    onSale: doc.onSale || false,
     discount: discountPercent,
+    discountPercent: discountPercent,
     finalPrice: finalPrice,
     sizes_inventory: doc.sizes_inventory || [],
     _type: 'mensShoe',
@@ -324,13 +332,76 @@ function normalizeKidsShoe(shoe) {
     },
     images: imagesArray,
     ratings: doc.rating || 0,
+    rating: doc.rating || 0,
+    reviewsCount: doc.reviewsCount || 0,
+    ratingsCount: doc.ratingsCount || 0,
+    numReviews: doc.reviewsCount || doc.ratingsCount || 0,
+    isFeatured: doc.isFeatured || false,
+    onSale: doc.onSale || false,
     discount: discountPercent,
+    discountPercent: discountPercent,
     finalPrice: finalPrice,
     sizes_inventory: doc.sizes_inventory || [],
     _type: 'kidsShoe',
     // Preserve original fields
     stock: doc.stock,
     inStock: doc.inStock
+  };
+}
+
+// Helper function to normalize ShoesAccessory to Product-like format
+function normalizeShoesAccessory(acc) {
+  const doc = acc._doc || acc;
+  
+  // Handle images - use images array if it has items, otherwise fall back to thumbnail
+  let imagesArray = [];
+  if (Array.isArray(doc.images) && doc.images.length > 0) {
+    imagesArray = doc.images.filter(img => img && typeof img === 'string' && img.trim() !== '');
+  }
+  if (imagesArray.length === 0 && doc.thumbnail && typeof doc.thumbnail === 'string' && doc.thumbnail.trim() !== '') {
+    imagesArray = [doc.thumbnail];
+  }
+  
+  // Calculate original price (MRP)
+  const finalPrice = doc.finalPrice || doc.price || 0;
+  const discountPercent = doc.discountPercent || doc.discount || 0;
+  let originalPrice = doc.originalPrice;
+  if (!originalPrice && discountPercent > 0 && finalPrice > 0) {
+    // Calculate original price from finalPrice and discountPercent
+    originalPrice = Math.round(finalPrice / (1 - discountPercent / 100));
+  } else if (!originalPrice) {
+    originalPrice = finalPrice; // No discount, original price equals final price
+  }
+
+  return {
+    _id: doc._id,
+    title: doc.title || '',
+    price: finalPrice, // This is the discounted price
+    originalPrice: originalPrice, // MRP
+    description: doc.description || '',
+    category: doc.category || "Shoes Accessories",
+    subCategory: doc.subCategory || doc.product_info?.accessoryType || '', // Map accessoryType to subCategory if subCategory is missing
+    product_info: {
+      brand: doc.product_info?.brand || doc.brand || '',
+      gender: doc.product_info?.gender || '',
+      material: doc.product_info?.material || '',
+      accessoryType: doc.product_info?.accessoryType || '',
+      usage: doc.product_info?.usage || '',
+      warranty: doc.product_info?.warranty || '',
+      color: doc.product_info?.color || ''
+    },
+    images: imagesArray,
+    ratings: doc.rating || doc.ratings || 0,
+    discount: discountPercent,
+    finalPrice: finalPrice,
+    _type: 'shoesAccessory',
+    // Preserve original fields that might be useful
+    thumbnail: doc.thumbnail,
+    stock: doc.stock,
+    inStock: doc.inStock,
+    isNewArrival: doc.isNewArrival,
+    onSale: doc.onSale,
+    isFeatured: doc.isFeatured
   };
 }
 
@@ -392,7 +463,14 @@ function normalizeWomensShoe(shoe) {
     },
     images: imagesArray,
     ratings: doc.rating || 0,
+    rating: doc.rating || 0,
+    reviewsCount: doc.reviewsCount || 0,
+    ratingsCount: doc.ratingsCount || 0,
+    numReviews: doc.reviewsCount || doc.ratingsCount || 0,
+    isFeatured: doc.isFeatured || false,
+    onSale: doc.onSale || false,
     discount: discountPercent,
+    discountPercent: discountPercent,
     finalPrice: finalPrice,
     sizes_inventory: doc.sizes_inventory || [],
     _type: 'womensShoe',
@@ -776,7 +854,22 @@ export const listProducts = async (req, res) => {
     const mongoFilter = andConditions.length > 0 ? { $and: andConditions } : {};
 
     // If a specific category is requested, route to the appropriate collection for reliable results
-    const requestedCategory = typeof query.category === 'string' ? query.category : '';
+    let requestedCategory = typeof query.category === 'string' ? query.category : '';
+    // Decode URL encoding if present (e.g., "Shoes%20Accessories" or "Shoes+Accessories" -> "Shoes Accessories")
+    if (requestedCategory) {
+      try {
+        // Replace + with space (URL query parameter encoding)
+        requestedCategory = requestedCategory.replace(/\+/g, ' ');
+        // Decode any other URL encoding
+        if (requestedCategory.includes('%')) {
+          requestedCategory = decodeURIComponent(requestedCategory);
+        }
+      } catch (e) {
+        // If decoding fails, use original
+        console.log(`[listProducts] Failed to decode category: ${e.message}`);
+      }
+    }
+    console.log(`[listProducts] Requested category (decoded): "${requestedCategory}", original: "${query.category}"`);
     
     
     // Handle Men's Shoes
@@ -854,10 +947,87 @@ export const listProducts = async (req, res) => {
       return res.json({ products: data.map(d => normalizeKidsShoe(d)), pagination });
     }
     
-    // Handle other categories - only allow Men's Shoes, Women's Shoes, and Kids Shoes
-    if (requestedCategory && !/^men'?s?\s+shoes?|women'?s?\s+shoes?|kids'?\s+shoes?|footwear$/i.test(requestedCategory)) {
+    // Handle Shoes Accessories
+    console.log(`[listProducts] Checking Shoes Accessories - requestedCategory: "${requestedCategory}"`);
+    if (/^shoes?\s+accessories?$/i.test(requestedCategory)) {
+      console.log(`[listProducts] Matched Shoes Accessories category`);
+      try {
+        const accessoriesFilter = {
+          category: { $regex: `^Shoes Accessories$`, $options: "i" },
+          ...(query.search && {
+            $or: [
+              { title: { $regex: query.search, $options: "i" } },
+              { description: { $regex: query.search, $options: "i" } },
+              { "product_info.brand": { $regex: query.search, $options: "i" } },
+            ],
+          }),
+          ...(query.subCategory && {
+            $or: [
+              { subCategory: { $regex: `^${query.subCategory}$`, $options: "i" } },
+              { "product_info.accessoryType": { $regex: `^${query.subCategory}$`, $options: "i" } }
+            ]
+          }),
+          ...(query.priceRange && (() => {
+            const pr = String(query.priceRange).trim();
+            let priceCond = {};
+            if (/^\d+\-\d+$/.test(pr)) {
+              const [min, max] = pr.split('-').map(n => parseInt(n, 10));
+              if (!isNaN(min)) priceCond.$gte = min;
+              if (!isNaN(max)) priceCond.$lte = max;
+            } else if (/^\d+\+$/.test(pr)) {
+              const min = parseInt(pr.replace('+',''), 10);
+              if (!isNaN(min)) priceCond.$gte = min;
+            }
+            return Object.keys(priceCond).length ? { $or: [{ price: priceCond }, { finalPrice: priceCond }] } : {};
+          })()),
+          ...(query.color && {
+            "product_info.color": { $regex: `^${query.color}$`, $options: "i" }
+          }),
+        };
+
+        const totalCount = await ShoesAccessory.countDocuments(accessoriesFilter);
+        const data = await ShoesAccessory.find(accessoriesFilter)
+          .sort({ subCategory: 1, _id: 1 })
+          .skip(skip)
+          .limit(limit)
+          .lean();
+
+        const pagination = {
+          currentPage: page,
+          totalPages: Math.ceil(totalCount / limit) || 0,
+          totalProducts: totalCount,
+          productsPerPage: limit,
+          hasNextPage: page * limit < totalCount,
+          hasPrevPage: page > 1,
+        };
+        return res.json({ products: data.map(d => normalizeShoesAccessory(d)), pagination });
+      } catch (error) {
+        console.error(`[listProducts] Error querying Shoes Accessories:`, error);
+        return res.status(500).json({ 
+          message: "Error fetching products", 
+          error: error.message,
+          products: [], 
+          pagination: { 
+            currentPage: page, 
+            totalPages: 0, 
+            totalProducts: 0, 
+            productsPerPage: limit, 
+            hasNextPage: false, 
+            hasPrevPage: false 
+          } 
+        });
+      }
+    }
+    
+    // Handle other categories - only allow Men's Shoes, Women's Shoes, Kids Shoes, and Shoes Accessories
+    const categoryPattern = /^men'?s?\s+shoes?|women'?s?\s+shoes?|kids'?\s+shoes?|shoes?\s+accessories?|footwear$/i;
+    const isValidCategory = !requestedCategory || categoryPattern.test(requestedCategory);
+    console.log(`[listProducts] Category validation - requestedCategory: "${requestedCategory}", isValid: ${isValidCategory}`);
+    
+    if (requestedCategory && !isValidCategory) {
+      console.log(`[listProducts] ❌ Invalid category rejected: "${requestedCategory}"`);
       return res.status(404).json({ 
-        message: "Category not found. Only Men's Shoes, Women's Shoes, and Kids Shoes are available.",
+        message: "Category not found. Only Men's Shoes, Women's Shoes, Kids Shoes, and Shoes Accessories are available.",
         products: [],
         pagination: {
           currentPage: page,
@@ -1116,7 +1286,21 @@ export const getFacets = async (req, res) => {
     const colorFacet = [ { $match: baseMatch }, { $group: { _id: { $toUpper: "$product_info.color" }, count: { $sum: 1 } } } ];
 
     // Use union when no specific category; otherwise query appropriate collection
-    const requestedCategory = typeof query.category === 'string' ? query.category : '';
+    let requestedCategory = typeof query.category === 'string' ? query.category : '';
+    // Decode URL encoding if present (e.g., "Shoes%20Accessories" or "Shoes+Accessories" -> "Shoes Accessories")
+    if (requestedCategory) {
+      try {
+        // Replace + with space (URL query parameter encoding)
+        requestedCategory = requestedCategory.replace(/\+/g, ' ');
+        // Decode any other URL encoding
+        if (requestedCategory.includes('%')) {
+          requestedCategory = decodeURIComponent(requestedCategory);
+        }
+      } catch (e) {
+        console.log(`[getFacets] Failed to decode category: ${e.message}`);
+      }
+    }
+    console.log(`[getFacets] Requested category (decoded): "${requestedCategory}", original: "${query.category}"`);
     let dataAgg;
     
     // Handle Men's Shoes
@@ -1169,7 +1353,46 @@ export const getFacets = async (req, res) => {
         } }
       ]);
     }
-    // Handle other categories - only allow Men's Shoes, Women's Shoes, and Kids Shoes
+    // Handle Shoes Accessories
+    else if (/^shoes?\s+accessories?$/i.test(requestedCategory)) {
+      const accessoriesFilter = {
+        category: { $regex: `^Shoes Accessories$`, $options: "i" },
+        ...(query.subCategory && {
+          $or: [
+            { subCategory: { $regex: `^${query.subCategory}$`, $options: "i" } },
+            { "product_info.accessoryType": { $regex: `^${query.subCategory}$`, $options: "i" } }
+          ]
+        }),
+      };
+      try {
+        dataAgg = await ShoesAccessory.aggregate([
+          { $match: accessoriesFilter },
+          { $facet: {
+            subCategories: [ 
+              { $group: { 
+                _id: { 
+                  $ifNull: [
+                    { $toUpper: "$subCategory" }, 
+                    { $toUpper: "$product_info.accessoryType" }
+                  ]
+                }, 
+                count: { $sum: 1 } 
+              } } 
+            ],
+            colors: [ { $group: { _id: { $toUpper: "$product_info.color" }, count: { $sum: 1 } } } ],
+            prices: [ { $group: { _id: null, values: { $push: { $ifNull: ["$finalPrice", "$price"] } } } } ]
+          } }
+        ]);
+      } catch (error) {
+        console.error(`[getFacets] Error querying Shoes Accessories:`, error);
+        dataAgg = [{
+          colors: [],
+          subCategories: [],
+          prices: [{ values: [] }]
+        }];
+      }
+    }
+    // Handle other categories - only allow Men's Shoes, Women's Shoes, Kids Shoes, and Shoes Accessories
     else if (requestedCategory) {
       // Return empty facets for invalid categories
       dataAgg = [{
