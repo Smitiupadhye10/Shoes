@@ -277,7 +277,7 @@ const Home = ({ addToCart, addToWishlist }) => {
         
         <div className="w-full">
           {/* Men's Shoes Panel - DYNAMIC */}
-          <div className="relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden group">
+          <div className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] overflow-hidden group">
             {/* Blurred Background Image */}
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -291,22 +291,22 @@ const Home = ({ addToCart, addToWishlist }) => {
             {/* Content Overlay */}
             <div className="relative z-10 h-full flex items-center justify-between">
               {/* Left: Text Content - Upper Left */}
-              <div className="absolute top-4 sm:top-6 md:top-8 lg:top-10 left-4 sm:left-6 md:left-8 lg:left-12 max-w-xs sm:max-w-sm md:max-w-xl z-20">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-2 sm:mb-3 text-white leading-tight sm:leading-none" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 10px rgba(0,0,0,0.7)' }}>
+              <div className="absolute top-3 sm:top-4 md:top-8 lg:top-10 left-3 sm:left-4 md:left-8 lg:left-12 max-w-[180px] sm:max-w-xs md:max-w-xl z-20">
+                <h2 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-1 sm:mb-2 md:mb-3 text-white leading-tight sm:leading-none" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 10px rgba(0,0,0,0.7)' }}>
                   DYNAMIC
                 </h2>
-                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-white mt-2 sm:mt-3 max-w-[200px] sm:max-w-md" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                <p className="text-sm sm:text-base md:text-base lg:text-lg text-white mt-1 sm:mt-2 md:mt-3 max-w-[160px] sm:max-w-[200px] md:max-w-md" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
                   For every dynamic individual who moves with confidence and style
                 </p>
               </div>
 
               {/* Right: Product Image - Centered Right */}
-              <div className="absolute right-2 sm:right-4 md:right-8 lg:right-12 bottom-0 flex items-end z-10">
+              <div className="absolute right-1 sm:right-2 md:right-8 lg:right-12 bottom-0 flex items-end z-10">
                 <div className="relative transform rotate-12 group-hover:rotate-6 transition-transform duration-500">
                   <img 
                     src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768373064/Design_to_Shine_1_ogmige.svg"
                     alt="Men's Shoes"
-                    className="w-40 sm:w-48 md:w-64 lg:w-72 xl:w-80 h-auto object-contain drop-shadow-2xl"
+                    className="w-48 sm:w-56 md:w-64 lg:w-72 xl:w-80 h-auto object-contain drop-shadow-2xl"
                   />
                 </div>
               </div>
@@ -314,7 +314,7 @@ const Home = ({ addToCart, addToWishlist }) => {
           </div>
 
           {/* Women's Shoes Panel - ELEGANT */}
-          <div className="relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden group">
+          <div className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] overflow-hidden group">
             {/* Blurred Background Image */}
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -328,22 +328,22 @@ const Home = ({ addToCart, addToWishlist }) => {
             {/* Content Overlay */}
             <div className="relative z-10 h-full flex items-center justify-between">
               {/* Left: Product Image - Centered Left */}
-              <div className="absolute left-2 sm:left-4 md:left-8 lg:left-16 bottom-0 flex items-end z-10">
+              <div className="absolute left-1 sm:left-2 md:left-8 lg:left-16 bottom-0 flex items-end z-10">
                 <div className="relative transform -rotate-12 group-hover:-rotate-6 transition-transform duration-500">
                   <img 
                     src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768375035/Design_to_Shine_6_yd9kvn.svg"
                     alt="Women's Shoes"
-                    className="w-40 sm:w-48 md:w-64 lg:w-72 xl:w-80 h-auto object-contain drop-shadow-2xl"
+                    className="w-48 sm:w-56 md:w-64 lg:w-72 xl:w-80 h-auto object-contain drop-shadow-2xl"
                   />
                 </div>
               </div>
                 
               {/* Right: Text Content - Lower Right */}
-              <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 right-4 sm:right-6 md:right-8 lg:right-16 max-w-xs sm:max-w-sm md:max-w-xl text-right z-20">
-                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-white mb-2 sm:mb-3 max-w-[200px] sm:max-w-md ml-auto" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+              <div className="absolute bottom-3 sm:bottom-4 md:bottom-8 lg:bottom-10 right-3 sm:right-4 md:right-8 lg:right-16 max-w-[180px] sm:max-w-xs md:max-w-xl text-right z-20">
+                <p className="text-sm sm:text-base md:text-base lg:text-lg text-white mb-1 sm:mb-2 md:mb-3 max-w-[160px] sm:max-w-[200px] md:max-w-md ml-auto" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
                   For those who persevere and gracefully seize every opportunity
                 </p>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight sm:leading-none" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 10px rgba(0,0,0,0.7)' }}>
+                <h2 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight sm:leading-none" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 10px rgba(0,0,0,0.7)' }}>
                   ELEGANT
                 </h2>
               </div>
@@ -351,7 +351,7 @@ const Home = ({ addToCart, addToWishlist }) => {
           </div>
 
           {/* Kids Shoes Panel - PLAYFUL */}
-          <div className="relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden group">
+          <div className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] overflow-hidden group">
             {/* Blurred Background Image */}
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -365,22 +365,22 @@ const Home = ({ addToCart, addToWishlist }) => {
             {/* Content Overlay */}
             <div className="relative z-10 h-full flex items-center justify-between">
               {/* Left: Text Content - Upper Left */}
-              <div className="absolute top-4 sm:top-6 md:top-8 lg:top-10 left-4 sm:left-6 md:left-8 lg:left-16 max-w-xs sm:max-w-sm md:max-w-xl z-20">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-2 sm:mb-3 text-white leading-tight sm:leading-none" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 10px rgba(0,0,0,0.7)' }}>
+              <div className="absolute top-3 sm:top-4 md:top-8 lg:top-10 left-3 sm:left-4 md:left-8 lg:left-16 max-w-[180px] sm:max-w-xs md:max-w-xl z-20">
+                <h2 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-1 sm:mb-2 md:mb-3 text-white leading-tight sm:leading-none" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 10px rgba(0,0,0,0.7)' }}>
                   PLAYFUL
                 </h2>
-                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-white mt-2 sm:mt-3 max-w-[200px] sm:max-w-md" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                <p className="text-sm sm:text-base md:text-base lg:text-lg text-white mt-1 sm:mt-2 md:mt-3 max-w-[160px] sm:max-w-[200px] md:max-w-md" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
                   For young spirits who care about comfort and fun in every step
                 </p>
               </div>
 
               {/* Right: Product Image - Centered Right */}
-              <div className="absolute right-2 sm:right-4 md:right-8 lg:right-16 bottom-0 flex items-end z-10">
+              <div className="absolute right-1 sm:right-2 md:right-8 lg:right-16 bottom-0 flex items-end z-10">
                 <div className="relative transform rotate-12 group-hover:rotate-6 transition-transform duration-500">
                   <img 
                     src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768377162/a2a20b7a-d180-41d1-848f-62b889974700.png"
                     alt="Kids Shoes"
-                    className="w-40 sm:w-48 md:w-64 lg:w-72 xl:w-80 h-auto object-contain drop-shadow-2xl"
+                    className="w-48 sm:w-56 md:w-64 lg:w-72 xl:w-80 h-auto object-contain drop-shadow-2xl"
                   />
                 </div>
               </div>
