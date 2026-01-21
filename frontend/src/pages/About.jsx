@@ -17,7 +17,7 @@ const About = () => {
             <div className="space-y-8">
               <div
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
-                style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}
+                style={{ backgroundColor: 'var(--text-heading)', color: 'var(--bg-primary)' }}
               >
                 <Footprints className="w-4 h-4" />
                 Since {new Date().getFullYear()}
@@ -75,7 +75,7 @@ const About = () => {
               <div className="relative">
                 <div className="p-8 rounded-3xl shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                   <img
-                    src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg"
+                    src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767696040/EDC0F91F-97FF-4715-81CD-E175A8CDE64E_1_201_a_nd6vfj.jpg"
                     alt="Shoes Collection"
                     width={400}
                     height={280}
@@ -85,12 +85,12 @@ const About = () => {
 
                 {/* Floating Labels */}
                 <div className="absolute -top-4 -right-4 px-4 py-2 rounded-full font-bold shadow-lg"
-                  style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}
+                  style={{ backgroundColor: 'var(--text-heading)', color: 'var(--bg-primary)' }}
                 >
                   Premium Quality
                 </div>
                 <div className="absolute -bottom-4 -left-4 px-4 py-2 rounded-full font-bold shadow-lg"
-                  style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-secondary)' }}
+                  style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }}
                 >
                   Trusted Brand
                 </div>
@@ -117,7 +117,7 @@ const About = () => {
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
                   style={{ backgroundColor: 'var(--text-heading)' }}
                 >
-                  <Footprints className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
+                  <Footprints className="w-8 h-8" style={{ color: 'var(--bg-primary)' }} />
                 </div>
                 <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Premium Quality</h3>
                 <p className="text-optic-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
@@ -130,7 +130,7 @@ const About = () => {
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
                   style={{ backgroundColor: 'var(--text-heading)' }}
                 >
-                  <Sparkles className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
+                  <Sparkles className="w-8 h-8" style={{ color: 'var(--bg-primary)' }} />
                 </div>
                 <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Stylish Designs</h3>
                 <p className="text-optic-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
@@ -143,7 +143,7 @@ const About = () => {
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
                   style={{ backgroundColor: 'var(--text-heading)' }}
                 >
-                  <Heart className="w-8 h-8" style={{ color: 'var(--text-primary)' }} />
+                  <Heart className="w-8 h-8" style={{ color: 'var(--bg-primary)' }} />
                 </div>
                 <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Easy Returns</h3>
                 <p className="text-optic-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
@@ -174,7 +174,7 @@ const About = () => {
             >
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg"
+                  src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768803998/856c975f66ac7693d0b98710d84764d5_tytkqj.jpg"
                   alt="Men's Shoes"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -207,7 +207,7 @@ const About = () => {
             >
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg"
+                  src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768804079/c6f3a08a4ecf9aadc2160080dcd405d0_sgouyc.jpg"
                   alt="Women's Shoes"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -240,7 +240,7 @@ const About = () => {
             >
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg"
+                  src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768804408/Kids_Sk8-Mid_Reissue_Hook_and_Loop_Shoes_4-8_Years_in_Green__Vans_UK_coxb35.jpg"
                   alt="Kids Shoes"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -275,7 +275,7 @@ const About = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
-                style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}
+                style={{ backgroundColor: 'var(--text-heading)', color: 'var(--bg-primary)' }}
               >
                 <Target className="w-4 h-4" />
                 Our Mission
@@ -292,7 +292,7 @@ const About = () => {
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: 'var(--text-heading)' }}
                   >
-                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
+                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--bg-primary)' }} />
                   </div>
                   <div>
                     <h4 className="text-optic-heading font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Premium Materials</h4>
@@ -305,7 +305,7 @@ const About = () => {
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: 'var(--text-heading)' }}
                   >
-                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
+                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--bg-primary)' }} />
                   </div>
                   <div>
                     <h4 className="text-optic-heading font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Family-Focused</h4>
@@ -318,7 +318,7 @@ const About = () => {
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: 'var(--text-heading)' }}
                   >
-                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
+                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--bg-primary)' }} />
                   </div>
                   <div>
                     <h4 className="text-optic-heading font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Customer Satisfaction</h4>
@@ -332,7 +332,7 @@ const About = () => {
             <div className="relative">
               <div className="rounded-3xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg"
+                  src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768804817/Sandals_The_Whole_Fam_Will_Love_ds4rh1.jpg"
                   alt="Quality Footwear"
                   className="w-full h-full object-cover"
                 />
@@ -357,25 +357,25 @@ const About = () => {
       <section className="py-16 md:py-24" style={{ backgroundColor: 'var(--text-heading)' }}>
         <div className="container-optic">
           <div className="text-center mb-12">
-            <h2 className="text-optic-heading text-3xl md:text-4xl mb-4" style={{ color: 'var(--text-primary)' }}>Our Impact in Numbers</h2>
-            <p className="text-optic-body text-lg" style={{ color: 'var(--text-secondary)' }}>Trusted by thousands of happy customers</p>
+            <h2 className="text-optic-heading text-3xl md:text-4xl mb-4" style={{ color: 'var(--bg-primary)' }}>Our Impact in Numbers</h2>
+            <p className="text-optic-body text-lg" style={{ color: 'var(--bg-secondary)' }}>Trusted by thousands of happy customers</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div className="space-y-2">
-              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>100k+</div>
-              <div className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Happy Customers</div>
+              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--bg-primary)' }}>100k+</div>
+              <div className="text-optic-body" style={{ color: 'var(--bg-secondary)' }}>Happy Customers</div>
             </div>
             <div className="space-y-2">
-              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>4.9 ★</div>
-              <div className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Average Rating</div>
+              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--bg-primary)' }}>4.9 ★</div>
+              <div className="text-optic-body" style={{ color: 'var(--bg-secondary)' }}>Average Rating</div>
             </div>
             <div className="space-y-2">
-              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>1000+</div>
-              <div className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Shoe Styles</div>
+              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--bg-primary)' }}>1000+</div>
+              <div className="text-optic-body" style={{ color: 'var(--bg-secondary)' }}>Shoe Styles</div>
             </div>
             <div className="space-y-2">
-              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>30</div>
-              <div className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Day Returns</div>
+              <div className="text-optic-heading text-4xl md:text-5xl font-bold" style={{ color: 'var(--bg-primary)' }}>30</div>
+              <div className="text-optic-body" style={{ color: 'var(--bg-secondary)' }}>Day Returns</div>
             </div>
           </div>
         </div>
@@ -415,7 +415,7 @@ const About = () => {
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                     style={{ backgroundColor: 'var(--text-heading)' }}
                   >
-                    <Phone className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                    <Phone className="w-6 h-6" style={{ color: 'var(--bg-primary)' }} />
                   </div>
                   <h4 className="text-optic-heading text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Call Us</h4>
                   <p className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>+91 98765 43210</p>
@@ -425,7 +425,7 @@ const About = () => {
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                     style={{ backgroundColor: 'var(--text-heading)' }}
                   >
-                    <MapPin className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                    <MapPin className="w-6 h-6" style={{ color: 'var(--bg-primary)' }} />
                   </div>
                   <h4 className="text-optic-heading text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Visit Us</h4>
                   <p className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Multiple Locations</p>

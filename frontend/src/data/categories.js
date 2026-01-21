@@ -23,4 +23,11 @@ export const categories = {
       Brands: [],
     },
   },
+  "Shoes Accessories": {
+    title: "Shoes Accessories",
+    fields: {
+      SubCategory: ["Shoe Laces", "Shoe Polish", "Shoe Insoles", "Shoe Bags", "Shoe Trees", "Shoe Care Kits"],
+      Brands: [],
+    },
+  },
 };

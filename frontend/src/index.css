@@ -219,3 +219,78 @@ body {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
+
+/* Remove blinking cursor effects from Featured Products section */
+.featured-products-section * {
+  caret-color: transparent !important;
+}
+
+/* Remove blinking cursor from product cards and related elements */
+.featured-products-section .bg-white.rounded-lg *,
+.featured-products-section [class*="ProductCard"] *,
+.featured-products-section .grid[class*="grid-cols"] * {
+  caret-color: transparent !important;
+}
+
+/* Remove any pseudo-elements that might create blinking effects */
+.featured-products-section *::before,
+.featured-products-section *::after {
+  animation: none !important;
+}
+
+/* Remove caret from buttons and links in Featured Products section */
+.featured-products-section button,
+.featured-products-section a,
+.featured-products-section [role="button"] {
+  caret-color: transparent !important;
+}
+
+/* Remove focus outline that might look like a cursor */
+.featured-products-section *:focus {
+  outline: none !important;
+  caret-color: transparent !important;
+}
+
+/* Ensure interactive elements keep pointer cursor, but remove text cursor */
+.featured-products-section button,
+.featured-products-section a,
+.featured-products-section [role="button"],
+.featured-products-section img,
+.featured-products-section [class*="cursor-pointer"] {
+  cursor: pointer !important;
+}
+
+/* Remove blinking background effects from Featured Products section */
+.featured-products-section {
+  /* Prevent any background animations or transitions */
+  animation: none !important;
+  background-color: var(--bg-primary) !important;
+  transition: background-color 0s !important;
+  will-change: auto !important;
+}
+
+/* Disable all animations on the section itself */
+.featured-products-section {
+  animation: none !important;
+  animation-name: none !important;
+  animation-duration: 0s !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0s !important;
+  animation-timing-function: none !important;
+  animation-fill-mode: none !important;
+}
+
+/* Remove any pseudo-elements that might cause blinking */
+.featured-products-section::before,
+.featured-products-section::after {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+  background: none !important;
+}
+
+/* Ensure background color stays constant */
+.featured-products-section[style*="background-color"] {
+  background-color: var(--bg-primary) !important;
+  transition: background-color 0s !important;
+}

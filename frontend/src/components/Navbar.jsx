@@ -62,19 +62,19 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
         <div className="flex items-center justify-between py-1 sm:py-1.5">
           {/* Left Side - Logo & Mobile Menu Button */}
           <div className="flex items-center space-x-4 flex-1">
-            {/* Menu Button (Mobile) */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-300 hover:scale-110"
-              style={{ 
-                backgroundColor: 'var(--bg-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-primary)'
-              }}
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+          {/* Menu Button (Mobile) */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-300 hover:scale-110"
+            style={{ 
+              backgroundColor: 'var(--bg-secondary)',
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-primary)'
+            }}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
 
             {/* Logo - Left Side */}
             <Link to="/" className="flex items-center">

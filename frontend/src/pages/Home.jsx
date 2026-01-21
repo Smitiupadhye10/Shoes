@@ -76,7 +76,7 @@ const Home = ({ addToCart, addToWishlist }) => {
   return (
     <div className="space-y-0">
       {/* Hero Section - Brown for Autumn Style with Card Design */}
-      <section className="relative min-h-[80vh] flex items-center py-12 md:py-16" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <section className="relative min-h-[80vh] flex items-center pt-4 pb-12 md:pt-6 md:pb-16" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container-optic w-full relative z-10">
           {/* Card Container */}
           <div 
@@ -145,8 +145,8 @@ const Home = ({ addToCart, addToWishlist }) => {
 
       {/* Categories Section - Explore Our Collections */}
       <section className="relative pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-0">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-center text-center mb-0">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-4" style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }}>
               <TrendingUp className="w-4 h-4" />
               Trending Categories
@@ -157,7 +157,7 @@ const Home = ({ addToCart, addToWishlist }) => {
           </div>
           
           {/* Luxury Carousel */}
-          <div className="w-full -mx-4 sm:-mx-6">
+          <div className="w-full">
             <LuxuryCarousel
               slides={[
                 // Men's Shoes Subcategories
@@ -259,8 +259,138 @@ const Home = ({ addToCart, addToWishlist }) => {
           </div>
         </div>
       </section>
+
+      {/* Three-Panel Category Section - Men's, Women's, Kids Shoes */}
+      <section className="relative pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Heading */}
+          <div className="flex flex-col items-center justify-center text-center mb-8 sm:mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-4" style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }}>
+              <Footprints className="w-4 h-4" />
+              Our Categories
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif' }}>
+              Discover Your Style
+            </h2>
+          </div>
+        </div>
+        
+        <div className="w-full">
+          {/* Men's Shoes Panel - DYNAMIC */}
+          <div className="relative w-full h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden group">
+            {/* Blurred Background Image */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+              style={{
+                backgroundImage: "url('https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768821919/photo-1542291026-7eec264c27ff_rcmoel.jpg')",
+                filter: 'blur(10px) brightness(0.3)',
+                transform: 'scale(1.1)'
+              }}
+            />
+            
+            {/* Content Overlay */}
+            <div className="relative z-10 h-full flex items-center justify-between">
+              {/* Left: Text Content - Upper Left */}
+              <div className="absolute top-8 md:top-10 lg:top-12 left-8 md:left-12 lg:left-16 max-w-xl">
+                <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-3 text-white leading-none" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 10px rgba(0,0,0,0.7)' }}>
+                  DYNAMIC
+                </h2>
+                <p className="text-sm md:text-base lg:text-lg text-white mt-3 max-w-md" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                  For every dynamic individual who moves with confidence and style
+                </p>
+              </div>
+
+              {/* Right: Product Image - Centered Right */}
+              <div className="absolute right-8 md:right-12 lg:right-16 bottom-0 flex items-end">
+                <div className="relative transform rotate-12 group-hover:rotate-6 transition-transform duration-500">
+                  <img 
+                    src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768373064/Design_to_Shine_1_ogmige.svg"
+                    alt="Men's Shoes"
+                    className="w-64 md:w-72 lg:w-80 h-auto object-contain drop-shadow-2xl"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Women's Shoes Panel - ELEGANT */}
+          <div className="relative w-full h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden group">
+            {/* Blurred Background Image */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+              style={{
+                backgroundImage: "url('https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768821882/photo-1543163521-1bf539c55dd2_cokxci.jpg')",
+                filter: 'blur(10px) brightness(0.3)',
+                transform: 'scale(1.1)'
+              }}
+            />
+            
+            {/* Content Overlay */}
+            <div className="relative z-10 h-full flex items-center justify-between">
+              {/* Left: Product Image - Centered Left */}
+              <div className="absolute left-8 md:left-16 lg:left-24 bottom-0 flex items-end">
+                <div className="relative transform -rotate-12 group-hover:-rotate-6 transition-transform duration-500">
+                  <img 
+                    src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768375035/Design_to_Shine_6_yd9kvn.svg"
+                    alt="Women's Shoes"
+                    className="w-64 md:w-72 lg:w-80 h-auto object-contain drop-shadow-2xl"
+                  />
+                </div>
+                </div>
+                
+              {/* Right: Text Content - Lower Right */}
+              <div className="absolute bottom-8 md:bottom-10 lg:bottom-12 right-8 md:right-16 lg:right-24 max-w-xl text-right">
+                <p className="text-sm md:text-base lg:text-lg text-white mb-3 max-w-md ml-auto" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                  For those who persevere and gracefully seize every opportunity
+                </p>
+                <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-none" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 10px rgba(0,0,0,0.7)' }}>
+                  ELEGANT
+                </h2>
+              </div>
+            </div>
+                  </div>
+
+          {/* Kids Shoes Panel - PLAYFUL */}
+          <div className="relative w-full h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden group">
+            {/* Blurred Background Image */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+              style={{
+                backgroundImage: "url('https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768821836/photo-1503454537195-1dcabb73ffb9_x6tngk.jpg')",
+                filter: 'blur(10px) brightness(0.3)',
+                transform: 'scale(1.1)'
+              }}
+            />
+            
+            {/* Content Overlay */}
+            <div className="relative z-10 h-full flex items-center justify-between">
+              {/* Left: Text Content - Upper Left */}
+              <div className="absolute top-8 md:top-10 lg:top-12 left-8 md:left-16 lg:left-24 max-w-xl">
+                <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-3 text-white leading-none" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 10px rgba(0,0,0,0.7)' }}>
+                  PLAYFUL
+                </h2>
+                <p className="text-sm md:text-base lg:text-lg text-white mt-3 max-w-md" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                  For young spirits who care about comfort and fun in every step
+                </p>
+                  </div>
+
+              {/* Right: Product Image - Centered Right */}
+              <div className="absolute right-8 md:right-16 lg:right-24 bottom-0 flex items-end">
+                <div className="relative transform rotate-12 group-hover:rotate-6 transition-transform duration-500">
+                  <img 
+                    src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768377162/a2a20b7a-d180-41d1-848f-62b889974700.png"
+                    alt="Kids Shoes"
+                    className="w-64 md:w-72 lg:w-80 h-auto object-contain drop-shadow-2xl"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products */}
-      <section className="relative pt-12 sm:pt-16 md:pt-20" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <section className="featured-products-section relative pt-12 sm:pt-16 md:pt-20" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-20">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6 border" style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)', borderColor: 'var(--text-primary)' }}>
@@ -341,7 +471,7 @@ const Home = ({ addToCart, addToWishlist }) => {
                 Footwear Collection
               </div>
               <h2 className="text-optic-heading text-4xl md:text-5xl lg:text-6xl font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif' }}>
-                Men's & Women's Shoes
+                Men's, Women's & Kids Shoes
               </h2>
               <p className="text-optic-body text-lg md:text-xl max-w-lg" style={{ color: 'var(--text-secondary)' }}>
                 Step out in style with our premium collection of footwear. From formal to casual, sneakers to elegant, discover the perfect pair for every occasion.
@@ -360,7 +490,7 @@ const Home = ({ addToCart, addToWishlist }) => {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--text-heading)' }}>
-                    <Star className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+                    <Star className="w-6 h-6" style={{ color: 'var(--bg-primary)' }} />
                   </div>
                   <div>
                     <h4 className="text-optic-heading font-semibold" style={{ color: 'var(--text-primary)' }}>Wide variety</h4>
@@ -369,14 +499,18 @@ const Home = ({ addToCart, addToWishlist }) => {
                 </div>
               </div>
               
-              {/* Two buttons for Men's and Women's */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/category/Men's%20Shoes" className="btn-primary flex-1">
+              {/* Three buttons for Men's, Women's, and Kids */}
+              <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
+                <Link to="/category/Men's%20Shoes" className="btn-primary flex-1 min-w-[140px]">
                   Men's Shoes
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
-                <Link to="/category/Women's%20Shoes" className="btn-secondary flex-1">
+                <Link to="/category/Women's%20Shoes" className="btn-secondary flex-1 min-w-[140px]">
                   Women's Shoes
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+                <Link to="/category/Kids%20Shoes" className="btn-primary flex-1 min-w-[140px]">
+                  Kids Shoes
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </div>
@@ -386,8 +520,10 @@ const Home = ({ addToCart, addToWishlist }) => {
             <div className="relative">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {[
-                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
-                  "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg"
+                  "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768821505/First_Look_at_the_SS21_Collection___Premium_Sneakers_Loafers_Collection_by_Hats_Off_Accessories_bgktex.gif",
+                  "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768821805/26274f67185568c4393e4f2b395c8844_mx8hzk.jpg",
+                  "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768822040/24d9b37df3ff261c23ea0cf1c09a5b19_htqo1x.jpg"
+                  
                 ].map((imageSrc, i) => (
                   <div key={i} className={`relative group ${i === 0 ? 'lg:col-span-2' : ''}`}>
                     <div className={`${i === 0 ? 'aspect-[2/1]' : 'aspect-square'} rounded-2xl overflow-hidden`} style={{ backgroundColor: 'var(--bg-secondary)' }}>
@@ -399,7 +535,7 @@ const Home = ({ addToCart, addToWishlist }) => {
                       />
                     </div>
                     <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }}>
-                      {i === 0 ? 'MEN\'S' : 'WOMEN\'S'}
+                      {i === 0 ? 'MEN\'S' : i === 1 ? 'WOMEN\'S' : i === 2 ? 'KID\'S' : ''}
                     </div>
                   </div>
                 ))}
@@ -430,7 +566,7 @@ const Home = ({ addToCart, addToWishlist }) => {
                 <Shield className="w-12 h-12" style={{ color: 'var(--text-primary)' }} />
               </div>
               <h3 className="text-optic-heading text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>100% Authentic</h3>
-              <p className="text-optic-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>All our products are sourced directly from manufacturers and come with authenticity guarantees.</p>
+              <p className="text-optic-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>All our products are sourced directly from manufacturers and come with authenticity.</p>
               <div className="mt-6 flex items-center justify-center gap-2 font-medium" style={{ color: 'var(--text-primary)' }}>
                 <CheckCircle className="w-4 h-4" />
                 <span className="text-sm">Verified Products</span>

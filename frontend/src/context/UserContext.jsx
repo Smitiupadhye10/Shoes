@@ -32,8 +32,17 @@ export const UserProvider = ({ children }) => {
 
         setUser(userData);
       } catch (err) {
-        console.error("❌ Error fetching user:", err);
-        localStorage.removeItem("token");
+        // 403/401 are expected when user is not authenticated - don't log as error
+        const status = err?.response?.status;
+        if (status === 403 || status === 401) {
+          // Silently clear invalid token
+          localStorage.removeItem("token");
+          delete api.defaults.headers.common["Authorization"];
+        } else {
+          // Only log unexpected errors
+          console.error("❌ Error fetching user:", err);
+          localStorage.removeItem("token");
+        }
       } finally {
         setLoading(false);
       }

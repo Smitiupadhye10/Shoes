@@ -251,21 +251,29 @@ const categoryImages = {
   "Men's Shoes": {
     "Formal": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767962144/Burgundy_6c4b8044-875f-4f4d-8c5d-48594fd5c2e8_xsihes.png",
     "Sneakers": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767962100/Ivory_3317ac8f-5280-4a25-96d7-446175aff87e_le5bn3.png",
-    "Boots": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
-    "Loafers": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
-    "Sandals": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+    "Boots": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768819095/Design_to_Shine_10_pbnjsz.png",
+    "Loafers": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768815438/Design_to_Shine_2_nsvvj4.png",
+    "Sandals": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768888263/Design_to_Shine_12_y8db8l.png",
   },
   "Women's Shoes": {
-    "Heels": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg",
+    "Heels": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768816813/Design_to_Shine_6_nnvd09.png",
     "Flats": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767961863/Black_413baa88-b0de-4fc3-b05f-e105fd8ee46c_ujdcky.png",
     "Sneakers": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767961928/Knit_gliders_Ivory_Brown_sgvmfq.png",
-    "Boots": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg",
-    "Sandals": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg",
-    "Chappals": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765633228/Step_into_style_ouhtyb.jpg",
+    "Boots": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768817045/Design_to_Shine_7_c8yl08.png",
+    "Sandals": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768817708/Design_to_Shine_8_scnj6k.png",
+    "Chappals": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768818744/Design_to_Shine_9_l0gcjq.png",
   },
   "Kids Shoes": {
-    "Boys Footwear": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
-    "Girls Footwear": "https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765632321/-4_rmrf0v.jpg",
+    "Boys Footwear": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768816257/Design_to_Shine_5_u0hral.png",
+    "Girls Footwear": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768816178/Design_to_Shine_4_d24zsv.png",
+  },
+  "Shoes Accessories": {
+    "Shoe Laces": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767962144/Burgundy_6c4b8044-875f-4f4d-8c5d-48594fd5c2e8_xsihes.png",
+    "Shoe Polish": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767962100/Ivory_3317ac8f-5280-4a25-96d7-446175aff87e_le5bn3.png",
+    "Shoe Insoles": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768819095/Design_to_Shine_10_pbnjsz.png",
+    "Shoe Bags": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768815438/Design_to_Shine_2_nsvvj4.png",
+    "Shoe Trees": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768888263/Design_to_Shine_12_y8db8l.png",
+    "Shoe Care Kits": "https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768816813/Design_to_Shine_6_nnvd09.png",
   },
 };
 
@@ -376,7 +384,7 @@ const MensShoesDropdown = () => {
                       </div>
                     </button>
                   ))}
-                </div>
+                    </div>
               </div>
             </div>
           </div>
@@ -493,7 +501,7 @@ const WomensShoesDropdown = () => {
                       </div>
                     </button>
                   ))}
-                </div>
+                    </div>
               </div>
             </div>
           </div>
@@ -610,7 +618,7 @@ const KidsShoesDropdown = () => {
                       </div>
                     </button>
                   ))}
-                </div>
+                    </div>
               </div>
             </div>
           </div>
@@ -910,7 +918,15 @@ const Header = () => {
           <div className="flex justify-center items-center gap-2 md:gap-3 flex-wrap">
             <MensShoesDropdown />
             <WomensShoesDropdown />
-                <KidsShoesDropdown />
+            <KidsShoesDropdown />
+            <button
+              onClick={() => navigate(`/category/${encodeURIComponent("Shoes Accessories")}`)}
+              className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg sm:rounded-xl hover:border-purple-800 hover:bg-purple-50 hover:shadow-lg transition-all duration-300 text-xs sm:text-sm font-medium text-gray-700 shadow-sm min-w-[100px] sm:min-w-[140px]"
+            >
+              <span className="group-hover:text-purple-800 transition-colors truncate">
+                Shoes Accessories
+              </span>
+            </button>
           </div>
         </div>
       </div>

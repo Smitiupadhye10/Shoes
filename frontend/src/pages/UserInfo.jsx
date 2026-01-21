@@ -360,7 +360,7 @@ const NavItem = ({ icon, children, active, onClick, badge }) => (
     }`}
     style={{
       backgroundColor: active ? 'var(--text-heading)' : 'transparent',
-      color: active ? 'var(--text-primary)' : 'var(--text-secondary)'
+      color: active ? 'var(--bg-primary)' : 'var(--text-secondary)'
     }}
   >
     <div className="flex items-center space-x-3">
@@ -726,7 +726,7 @@ const AddressesTab = ({
                 </p>
                 {address.isDefault && (
                   <span className="text-xs px-2 py-1 rounded-full font-medium"
-                    style={{ backgroundColor: 'var(--text-heading)', color: 'var(--text-primary)' }}
+                    style={{ backgroundColor: 'var(--text-heading)', color: 'var(--bg-primary)' }}
                   >
                     Default
                   </span>

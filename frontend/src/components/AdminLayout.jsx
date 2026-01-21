@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { Package, ShoppingCart, LayoutDashboard } from "lucide-react";
+import { Package, ShoppingCart, LayoutDashboard, Menu, X } from "lucide-react";
 import { useUser } from "../context/UserContext";
 
 const AdminLayout = () => {
   const location = useLocation();
   const { user } = useUser();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Use user from context instead of separate API call
   if (!user || !user.isAdmin) {
@@ -20,20 +21,62 @@ const AdminLayout = () => {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen flex flex-col md:flex-row" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <h1 className="text-optic-heading text-xl font-bold" style={{
+          backgroundColor: 'var(--text-heading)',
+          color: 'var(--bg-primary)',
+          padding: '0.5rem 1rem',
+          borderRadius: '0.5rem'
+        }}>Admin</h1>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-2 rounded-lg transition-colors"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
       {/* Sidebar */}
-      <div className="w-64 shadow-2xl" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-        <div className="p-6">
-          <h1 className="text-optic-heading text-2xl font-bold mb-8" style={{
-            backgroundColor: 'var(--text-heading)',
-            color: 'var(--bg-primary)',
-            padding: '0.75rem 1rem',
-            borderRadius: '0.5rem'
-          }}
-          >Admin</h1>
+      <div className={`
+        fixed md:static inset-y-0 left-0 z-40
+        w-64 shadow-2xl transform transition-transform duration-300 ease-in-out
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `} style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        <div className="p-4 md:p-6 h-full overflow-y-auto">
+          {/* Desktop Admin Header */}
+          <div className="hidden md:block mb-8">
+            <h1 className="text-optic-heading text-2xl font-bold" style={{
+              backgroundColor: 'var(--text-heading)',
+              color: 'var(--bg-primary)',
+              padding: '0.75rem 1rem',
+              borderRadius: '0.5rem'
+            }}>Admin</h1>
+          </div>
+          
+          {/* Mobile Close Button */}
+          <div className="md:hidden flex items-center justify-between mb-6">
+            <h1 className="text-optic-heading text-xl font-bold" style={{
+              backgroundColor: 'var(--text-heading)',
+              color: 'var(--bg-primary)',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.5rem'
+            }}>Admin</h1>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-2 rounded-lg transition-colors"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              <X size={20} />
+            </button>
+          </div>
+
           <nav className="space-y-2">
             <Link
               to="/admin/dashboard"
+              onClick={() => setSidebarOpen(false)}
               className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors"
               style={{
                 backgroundColor: location.pathname === "/admin/dashboard" ? 'var(--text-heading)' : 'transparent',
@@ -45,6 +88,7 @@ const AdminLayout = () => {
             </Link>
             <Link
               to="/admin/products"
+              onClick={() => setSidebarOpen(false)}
               className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors"
               style={{
                 backgroundColor: location.pathname === "/admin/products" ? 'var(--text-heading)' : 'transparent',
@@ -56,6 +100,7 @@ const AdminLayout = () => {
             </Link>
             <Link
               to="/admin/orders"
+              onClick={() => setSidebarOpen(false)}
               className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors"
               style={{
                 backgroundColor: location.pathname === "/admin/orders" ? 'var(--text-heading)' : 'transparent',
@@ -69,9 +114,17 @@ const AdminLayout = () => {
         </div>
       </div>
 
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        <div className="p-8">
+      <div className="flex-1 overflow-auto w-full">
+        <div className="p-4 sm:p-6 md:p-8">
           <Outlet />
         </div>
       </div>

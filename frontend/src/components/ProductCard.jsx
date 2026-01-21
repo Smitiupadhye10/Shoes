@@ -36,9 +36,17 @@ const ProductCard = ({ product, showBestSeller = true }) => {
 
   // Get rating and reviews count
   const rating = product.ratings || product.rating || 0;
-  const reviewsCount = product.reviewsCount || product.ratingsCount || 0;
+  const reviewsCount = product.reviewsCount || product.ratingsCount || product.numReviews || 0;
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.5;
+
+  // Determine if product should show "Best Seller" badge
+  // Show badge if: featured, on sale, has discount, high rating (>=4.0), or has many reviews (>=10)
+  const isBestSeller = product.isFeatured || 
+                       product.onSale || 
+                       discountPercent > 0 || 
+                       rating >= 4.0 || 
+                       reviewsCount >= 10;
 
   // Render star ratings
   const renderStars = () => {
@@ -58,9 +66,9 @@ const ProductCard = ({ product, showBestSeller = true }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative">
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative h-full flex flex-col">
       {/* Best Seller Badge - Top Left */}
-      {showBestSeller && (product.isFeatured || product.onSale || discountPercent > 0) && (
+      {showBestSeller && isBestSeller && (
         <div className="absolute top-3 left-3 z-10 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">
           Best Seller
         </div>
@@ -83,7 +91,7 @@ const ProductCard = ({ product, showBestSeller = true }) => {
       </div>
 
       {/* Product Image */}
-      <div className="relative w-full aspect-square overflow-hidden bg-gray-50">
+      <div className="relative w-full aspect-square overflow-hidden bg-gray-50 flex-shrink-0">
         <img
           src={imageSrc}
           alt={product.title}
@@ -105,17 +113,17 @@ const ProductCard = ({ product, showBestSeller = true }) => {
       </div>
 
       {/* Product Info */}
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-grow">
         {/* Product Title */}
         <h3 
-          className="text-sm font-semibold text-gray-900 mb-2 cursor-pointer hover:text-gray-600 transition-colors line-clamp-2"
+          className="text-sm font-semibold text-gray-900 mb-2 cursor-pointer hover:text-gray-600 transition-colors line-clamp-2 min-h-[2.5rem]"
           onClick={() => navigate(`/product/${product._id}`)}
         >
           {product.title}
         </h3>
         
         {/* Star Ratings and Reviews */}
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-2 flex-shrink-0">
           {renderStars()}
           {reviewsCount > 0 && (
             <span className="text-xs text-gray-600">
@@ -125,7 +133,7 @@ const ProductCard = ({ product, showBestSeller = true }) => {
         </div>
         
         {/* Price */}
-        <div className="text-base font-bold text-gray-900">
+        <div className="text-base font-bold text-gray-900 mt-auto">
           ₹ {discountedPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           {originalPrice > discountedPrice && (
             <span className="text-xs font-normal text-gray-500 line-through ml-2">

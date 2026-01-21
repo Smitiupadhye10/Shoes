@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useRef } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import api from "../api/axios";
-import { Filter, X } from "lucide-react";
+import { Filter, X, ChevronDown } from "lucide-react";
 
 const PRICE_RANGES = [
   "300-1000",
@@ -28,13 +28,8 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const [sort, setSort] = useState(searchParams.get("sort") || "relevance");
   const [expanded, setExpanded] = useState({ 
     price: true, 
-    gender: true, 
     color: true, 
-    brand: false, 
-    frameShape: false, 
-    frameMaterial: false, 
-    frameColor: false, 
-    disposability: false,
+    size: false,
     subCategory: false 
   });
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -50,13 +45,14 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const isMensShoes = useMemo(() => /men'?s\s+shoes/i.test(category || ""), [category]);
   const isWomensShoes = useMemo(() => /women'?s\s+shoes/i.test(category || ""), [category]);
   const isKidsShoes = useMemo(() => /kids'?\s+shoes?/i.test(category || ""), [category]);
+  const isShoesAccessories = useMemo(() => /shoes?\s+accessories?/i.test(category || ""), [category]);
   const isGlasses = useMemo(() => /^(eyeglasses|sunglasses|computer\s+glasses)$/i.test(category || ""), [category]);
   
   // Track previous category to detect category changes
   const prevCategoryRef = useRef(categoryParam);
 
   useEffect(() => {
-    const hasFilters = searchParams.get("priceRange") || searchParams.get("gender") || searchParams.get("color");
+    const hasFilters = searchParams.get("priceRange") || searchParams.get("color") || searchParams.get("subCategory") || searchParams.get("size");
     const categoryChanged = prevCategoryRef.current !== categoryParam;
     prevCategoryRef.current = categoryParam;
     
@@ -80,6 +76,10 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
     if (sort && sort !== 'relevance') {
       params.set("sort", sort);
     }
+    
+    // Remove availability from params - we'll filter on frontend
+    const availabilityFilter = params.get("availability");
+    params.delete("availability");
 
     const fadeTimeout = setTimeout(async () => {
       try {
@@ -92,7 +92,17 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           productsCount: Array.isArray(data) ? data.length : (Array.isArray(data.products) ? data.products.length : 0),
           pagination: data.pagination 
         });
-        const newProducts = Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []);
+        let newProducts = Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []);
+        
+        // Apply availability filter on frontend
+        if (availabilityFilter) {
+          if (availabilityFilter === "inStock") {
+            newProducts = newProducts.filter(p => p.inStock !== false);
+          } else if (availabilityFilter === "outOfStock") {
+            newProducts = newProducts.filter(p => p.inStock === false);
+          }
+        }
+        
         setProducts(newProducts);
         setPagination(
           data.pagination || { currentPage: page, totalPages: 0, totalProducts: 0, productsPerPage: limit }
@@ -100,7 +110,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
         // Clear any previous errors
         setError(null);
         // Show products immediately if clearing filters (no active filters)
-        const hasActiveFilters = searchParams.get("priceRange") || searchParams.get("gender") || searchParams.get("color");
+        const hasActiveFilters = searchParams.get("priceRange") || searchParams.get("color") || searchParams.get("subCategory") || searchParams.get("size");
         if (newProducts.length > 0 && !hasActiveFilters) {
           setVisible(true);
         } else {
@@ -153,7 +163,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
 
   const clearAll = () => {
     const params = new URLSearchParams(searchParams);
-    ["priceRange", "gender", "color", "subCategory", "brand", "frameShape", "frameMaterial", "frameColor", "disposability"].forEach((k) => params.delete(k));
+    ["priceRange", "color", "subCategory", "size"].forEach((k) => params.delete(k));
     params.set("page", "1");
     // Keep products visible when clearing filters - don't trigger loading state
     setSearchParams(params, { replace: true });
@@ -167,14 +177,9 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const clearKey = (k) => setParam(k, null);
 
   const activePrice = searchParams.get("priceRange") || "";
-  const activeGender = searchParams.get("gender") || "";
   const activeColor = searchParams.get("color") || "";
   const activeSubCategory = searchParams.get("subCategory") || "";
-  const activeBrand = searchParams.get("brand") || "";
-  const activeFrameShape = searchParams.get("frameShape") || "";
-  const activeFrameMaterial = searchParams.get("frameMaterial") || "";
-  const activeFrameColor = searchParams.get("frameColor") || "";
-  const activeDisposability = searchParams.get("disposability") || "";
+  const activeSize = searchParams.get("size") || "";
 
   const goToPage = (p) => {
     if (p < 1 || p > (pagination.totalPages || 1)) return;
@@ -236,340 +241,102 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
 
   const FiltersSidebar = () => {
     const priceCounts = facets.priceBuckets || {};
-    const genderCounts = facets.genders || {};
     const colorCounts = facets.colors || {};
     const subCategoryCounts = facets.subCategories || {};
     const colorsList = Object.keys(colorCounts).length ? Object.keys(colorCounts) : COLORS_FALLBACK;
     
-    // Accessories subcategories
-    const accessoriesSubcategories = ["Necklace", "Bracelets", "Tie", "Anklets", "Earings", "Belts", "Scarfs"];
-    const skincareSubcategories = ["Moisturizer", "Serum", "Cleanser", "Facewash", "Sunscreen"];
-    const bagsSubcategories = ["Handbag", "Sling Bag", "Tote Bag", "Duffle Bag", "Wallet", "Laptop Bag", "Travel Bag", "Clutch", "Shoulder Bag"];
-    const mensShoesSubcategories = ["Formal", "Sneakers", "Boots", "Loafers", "Sandals"];
-    const womensShoesSubcategories = ["Heels", "Flats", "Sneakers", "Boots", "Sandals", "Chappals"];
-    const kidsShoesSubcategories = ["Boys Footwear", "Girls Footwear"];
-    const activeSubCategory = searchParams.get("subCategory") || "";
+      const mensShoesSubcategories = ["Formal", "Sneakers", "Boots", "Loafers", "Sandals"];
+      const womensShoesSubcategories = ["Heels", "Flats", "Sneakers", "Boots", "Sandals", "Chappals"];
+      const kidsShoesSubcategories = ["Boys Footwear", "Girls Footwear"];
+      const shoesAccessoriesSubcategories = ["Shoe Laces", "Shoe Polish", "Shoe Insoles", "Shoe Bags", "Shoe Trees", "Shoe Care Kits"];
+      const activeSubCategory = searchParams.get("subCategory") || "";
 
-    const Section = ({ title, id, children }) => (
-      <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+    const Section = ({ title, id, children, count }) => (
+      <div className="border-b" style={{ borderColor: 'var(--border-color)' }}>
         <button
           onClick={() => setExpanded((s) => ({ ...s, [id]: !s[id] }))}
-          className="w-full flex items-center justify-between px-5 py-4 bg-gradient-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 transition-all duration-200"
+          className="w-full flex items-center justify-between py-3 transition-all duration-200"
         >
-          <span className="font-semibold" style={{ color: 'var(--text-heading)' }}>{title}</span>
-          <span className={`text-lg font-bold transition-transform duration-200 ${expanded[id] ? 'rotate-180' : ''} text-indigo-600`}>
-            ▼
+          <span className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>
+            {title} {count !== undefined && `(${count})`}
           </span>
+          <ChevronDown 
+            className={`w-4 h-4 transition-transform duration-200 ${expanded[id] ? 'rotate-180' : ''}`}
+            style={{ color: 'var(--text-secondary)' }}
+          />
         </button>
-        {expanded[id] && <div className="px-4 pb-4 pt-2 transition-opacity duration-200">{children}</div>}
+        {expanded[id] && <div className="pb-3 transition-opacity duration-200">{children}</div>}
       </div>
     );
 
     return (
-      <aside className="space-y-5 md:sticky md:top-24">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>
-            Filters
+      <aside>
+        <div className="flex items-center justify-between mb-4 pb-3 border-b" style={{ borderColor: 'var(--border-color)' }}>
+          <h3 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+            Filter
           </h3>
-          {(activePrice || activeGender || activeColor || activeSubCategory || activeBrand || activeFrameShape || activeFrameMaterial || activeFrameColor || activeDisposability) && (
+          {(activePrice || activeColor || activeSubCategory || activeSize) && (
             <button 
               onClick={clearAll} 
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:underline transition-colors duration-200"
+              className="text-xs font-medium hover:underline transition-colors duration-200"
+              style={{ color: 'var(--text-primary)' }}
             >
-              Clear all
+              Remove all
             </button>
           )}
         </div>
+        
+        <div className="space-y-0">
 
         <Section title="Price" id="price">
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2">
             {PRICE_RANGES.map((r) => {
               const count = priceCounts[r] || 0;
               const disabled = count === 0;
+              const isActive = activePrice === r;
               return (
-                <button
-                  key={r}
-                  onClick={() => !disabled && setParam("priceRange", activePrice === r ? null : r)}
-                  className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                    activePrice === r 
-                      ? "text-white shadow-md transform scale-[1.02]"
-                      : disabled 
-                        ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                        : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                  }`}
-                  style={activePrice === r ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                  disabled={disabled}
-                >
-                  <span className="font-medium">₹{r}</span>
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                    activePrice === r ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                  }`}>
-                    {count}
+                <label key={r} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isActive}
+                    onChange={() => !disabled && setParam("priceRange", isActive ? null : r)}
+                    disabled={disabled}
+                    className="w-4 h-4 rounded border-gray-300"
+                    style={{ accentColor: 'var(--text-primary)' }}
+                  />
+                  <span className={`text-sm flex-1 ${disabled ? 'opacity-50' : ''}`} style={{ color: 'var(--text-primary)' }}>
+                    ₹{r} ({count})
                   </span>
-                </button>
+                </label>
               );
             })}
-            {activePrice && (
-              <button 
-                onClick={() => setParam("priceRange", null)} 
-                className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-              >
-                Clear price
-              </button>
-            )}
           </div>
         </Section>
-
-        {/* Gender filter - only for Glasses (Eyeglasses, Sunglasses, Computer Glasses) */}
-        {isGlasses && (
-          <Section title="Gender" id="gender">
-            <div className="flex flex-col gap-2.5">
-              {GENDERS.map((g) => {
-                const count = genderCounts[g.toUpperCase()] || 0;
-                const disabled = count === 0;
-                return (
-                  <button
-                    key={g}
-                    onClick={() => !disabled && setParam("gender", activeGender === g ? null : g)}
-                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                      activeGender === g 
-                        ? "text-white shadow-md transform scale-[1.02]"
-                        : disabled 
-                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                    }`}
-                    style={activeGender === g ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                    disabled={disabled}
-                  >
-                    <span className="font-medium">{g}</span>
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      activeGender === g ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-              {activeGender && (
-                <button 
-                  onClick={() => setParam("gender", null)} 
-                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-                >
-                  Clear gender
-                </button>
-              )}
-            </div>
-          </Section>
-        )}
-
-        {isAccessories && (
-          <Section title="Category" id="subCategory">
-            <div className="flex flex-col gap-2.5">
-              {accessoriesSubcategories.map((subCat) => {
-                const count = subCategoryCounts[subCat.toUpperCase()] || 0;
-                const disabled = count === 0;
-                const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
-                return (
-                  <button
-                    key={subCat}
-                    onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
-                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                      isActive 
-                        ? "text-white shadow-md transform scale-[1.02]"
-                        : disabled 
-                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                    }`}
-                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                    disabled={disabled}
-                  >
-                    <span className="font-medium">{subCat}</span>
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-              {activeSubCategory && (
-                <button 
-                  onClick={() => setParam("subCategory", null)} 
-                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-                >
-                  Clear category
-                </button>
-              )}
-            </div>
-          </Section>
-        )}
-        
-        {isBags && (
-          <>
-            <Section title="Gender" id="gender">
-              <div className="flex flex-col gap-2.5">
-                {["Men", "Women", "Unisex"].map((g) => {
-                  const count = genderCounts[g.toUpperCase()] || 0;
-                  const disabled = count === 0;
-                  return (
-                    <button
-                      key={g}
-                      onClick={() => !disabled && setParam("gender", activeGender === g ? null : g)}
-                      className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                        activeGender === g 
-                          ? "text-white shadow-md transform scale-[1.02]"
-                          : disabled 
-                            ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                            : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                      }`}
-                      style={activeGender === g ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                      disabled={disabled}
-                    >
-                      <span className="font-medium">{g}</span>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                        activeGender === g ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                      }`}>
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
-                {activeGender && (
-                  <button 
-                    onClick={() => setParam("gender", null)} 
-                    className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-                  >
-                    Clear gender
-                  </button>
-                )}
-              </div>
-            </Section>
-            
-            {/* Bags SubCategory Filter */}
-            <Section title="Bag Type" id="subCategory">
-              <div className="flex flex-col gap-2.5">
-                {bagsSubcategories.map((subCat) => {
-                  const count = subCategoryCounts[subCat.toUpperCase()] || 0;
-                  const disabled = count === 0;
-                  const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
-                  return (
-                    <button
-                      key={subCat}
-                      onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
-                      className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                        isActive 
-                          ? "text-white shadow-md transform scale-[1.02]"
-                          : disabled 
-                            ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                            : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                      }`}
-                      style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                      disabled={disabled}
-                    >
-                      <span className="font-medium">{subCat}</span>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                        isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                      }`}>
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
-                {activeSubCategory && (
-                  <button 
-                    onClick={() => setParam("subCategory", null)} 
-                    className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-                  >
-                    Clear type
-                  </button>
-                )}
-              </div>
-            </Section>
-          </>
-        )}
-
-        {/* Skincare SubCategory Filter */}
-        {isSkincare && (
-          <Section title="Product Type" id="subCategory">
-            <div className="flex flex-col gap-2.5">
-              {skincareSubcategories.map((subCat) => {
-                const count = subCategoryCounts[subCat.toUpperCase()] || 0;
-                const disabled = count === 0;
-                const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
-                return (
-                  <button
-                    key={subCat}
-                    onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
-                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                      isActive 
-                        ? "text-white shadow-md transform scale-[1.02]"
-                        : disabled 
-                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                    }`}
-                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                    disabled={disabled}
-                  >
-                    <span className="font-medium">{subCat}</span>
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-              {activeSubCategory && (
-                <button 
-                  onClick={() => setParam("subCategory", null)} 
-                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-                >
-                  Clear type
-                </button>
-              )}
-            </div>
-          </Section>
-        )}
 
         {/* Men's Shoes SubCategory Filter */}
         {isMensShoes && !isWomensShoes && (
           <Section title="Shoe Type" id="subCategory">
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               {mensShoesSubcategories.map((subCat) => {
                 const count = subCategoryCounts[subCat.toUpperCase()] || 0;
                 const disabled = count === 0;
                 const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
                 return (
-                  <button
-                    key={subCat}
-                    onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
-                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                      isActive 
-                        ? "text-white shadow-md transform scale-[1.02]"
-                        : disabled 
-                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                    }`}
-                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                    disabled={disabled}
-                  >
-                    <span className="font-medium">{subCat}</span>
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {count}
+                  <label key={subCat} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isActive}
+                      onChange={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
+                      disabled={disabled}
+                      className="w-4 h-4 rounded border-gray-300"
+                      style={{ accentColor: 'var(--text-primary)' }}
+                    />
+                    <span className={`text-sm flex-1 ${disabled ? 'opacity-50' : ''}`} style={{ color: 'var(--text-primary)' }}>
+                      {subCat} ({count})
                     </span>
-                  </button>
+                  </label>
                 );
               })}
-              {activeSubCategory && (
-                <button 
-                  onClick={() => setParam("subCategory", null)} 
-                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-                >
-                  Clear type
-                </button>
-              )}
             </div>
           </Section>
         )}
@@ -577,42 +344,27 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
         {/* Women's Shoes SubCategory Filter */}
         {isWomensShoes && (
           <Section title="Shoe Type" id="subCategory">
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               {womensShoesSubcategories.map((subCat) => {
                 const count = subCategoryCounts[subCat.toUpperCase()] || 0;
                 const disabled = count === 0;
                 const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
                 return (
-                  <button
-                    key={subCat}
-                    onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
-                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                      isActive 
-                        ? "text-white shadow-md transform scale-[1.02]"
-                        : disabled 
-                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                    }`}
-                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                    disabled={disabled}
-                  >
-                    <span className="font-medium">{subCat}</span>
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {count}
+                  <label key={subCat} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isActive}
+                      onChange={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
+                      disabled={disabled}
+                      className="w-4 h-4 rounded border-gray-300"
+                      style={{ accentColor: 'var(--text-primary)' }}
+                    />
+                    <span className={`text-sm flex-1 ${disabled ? 'opacity-50' : ''}`} style={{ color: 'var(--text-primary)' }}>
+                      {subCat} ({count})
                     </span>
-                  </button>
+                  </label>
                 );
               })}
-              {activeSubCategory && (
-                <button 
-                  onClick={() => setParam("subCategory", null)} 
-                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-                >
-                  Clear type
-                </button>
-              )}
             </div>
           </Section>
         )}
@@ -620,106 +372,116 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
         {/* Kids Shoes SubCategory Filter */}
         {isKidsShoes && (
           <Section title="Footwear Type" id="subCategory">
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               {kidsShoesSubcategories.map((subCat) => {
                 const count = subCategoryCounts[subCat.toUpperCase()] || 0;
                 const disabled = count === 0;
                 const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
                 return (
-                  <button
-                    key={subCat}
-                    onClick={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
-                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                      isActive 
-                        ? "text-white shadow-md transform scale-[1.02]"
-                        : disabled 
-                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                    }`}
-                    style={isActive ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                    disabled={disabled}
-                  >
-                    <span className="font-medium">{subCat}</span>
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {count}
+                  <label key={subCat} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isActive}
+                      onChange={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
+                      disabled={disabled}
+                      className="w-4 h-4 rounded border-gray-300"
+                      style={{ accentColor: 'var(--text-primary)' }}
+                    />
+                    <span className={`text-sm flex-1 ${disabled ? 'opacity-50' : ''}`} style={{ color: 'var(--text-primary)' }}>
+                      {subCat} ({count})
                     </span>
-                  </button>
+                  </label>
                 );
               })}
-              {activeSubCategory && (
-                <button 
-                  onClick={() => setParam("subCategory", null)} 
-                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-                >
-                  Clear type
-                </button>
-              )}
             </div>
           </Section>
         )}
 
-        {isContactLenses && (
-          <Section title="Explore by Color" id="color">
-            <div className="flex flex-col gap-2.5">
-              {colorsList.map((c) => {
-                const count = colorCounts[c.toUpperCase()] || 0;
-                const disabled = Object.keys(colorCounts).length ? count === 0 : false;
+        {/* Shoes Accessories SubCategory Filter */}
+        {isShoesAccessories && (
+          <Section title="Accessory Type" id="subCategory">
+            <div className="flex flex-col gap-2">
+              {shoesAccessoriesSubcategories.map((subCat) => {
+                const count = subCategoryCounts[subCat.toUpperCase()] || 0;
+                const disabled = count === 0;
+                const isActive = activeSubCategory.toLowerCase() === subCat.toLowerCase();
                 return (
-                  <button
-                    key={c}
-                    onClick={() => !disabled && setParam("color", activeColor === c ? null : c)}
-                    className={`text-left px-4 py-2.5 rounded-lg border-2 flex items-center justify-between transition-all duration-200 ${
-                      activeColor === c 
-                        ? "text-white shadow-md transform scale-[1.02]"
-                        : disabled 
-                          ? "text-gray-400 border-gray-200 cursor-not-allowed bg-gray-50" 
-                          : "hover:bg-red-50 hover:border-red-800 hover:shadow-sm border-gray-200"
-                    }`}
-                    style={activeColor === c ? { backgroundColor: 'var(--text-primary)', borderColor: 'var(--text-primary)' } : {}}
-                    disabled={disabled}
-                  >
-                    <span className="font-medium">{c}</span>
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      activeColor === c ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {count || ""}
+                  <label key={subCat} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isActive}
+                      onChange={() => !disabled && setParam("subCategory", isActive ? null : subCat.toLowerCase())}
+                      disabled={disabled}
+                      className="w-4 h-4 rounded border-gray-300"
+                      style={{ accentColor: 'var(--text-primary)' }}
+                    />
+                    <span className={`text-sm flex-1 ${disabled ? 'opacity-50' : ''}`} style={{ color: 'var(--text-primary)' }}>
+                      {subCat} ({count})
                     </span>
-                  </button>
+                  </label>
                 );
               })}
-              {activeColor && (
-                <button 
-                  onClick={() => setParam("color", null)} 
-                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline self-start font-medium mt-1"
-                >
-                  Clear color
-                </button>
-              )}
             </div>
           </Section>
         )}
+
+        {/* Color filter */}
+        {(isMensShoes || isWomensShoes || isKidsShoes || isShoesAccessories) && (
+          <Section title="Color" id="color">
+            <div className="flex flex-col gap-2">
+              {colorsList.map((c) => {
+                const count = colorCounts[c.toUpperCase()] || 0;
+                const disabled = Object.keys(colorCounts).length ? count === 0 : false;
+                const isActive = activeColor === c;
+                return (
+                  <label key={c} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isActive}
+                      onChange={() => !disabled && setParam("color", isActive ? null : c)}
+                      disabled={disabled}
+                      className="w-4 h-4 rounded border-gray-300"
+                      style={{ accentColor: 'var(--text-primary)' }}
+                    />
+                    <span className={`text-sm flex-1 ${disabled ? 'opacity-50' : ''}`} style={{ color: 'var(--text-primary)' }}>
+                      {c} ({count || 0})
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </Section>
+        )}
+
+        {/* Size filter - for shoes */}
+        {(isMensShoes || isWomensShoes || isKidsShoes) && (
+          <Section title="Size" id="size">
+            <div className="flex flex-col gap-2">
+              <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Size filter coming soon</p>
+            </div>
+          </Section>
+        )}
+        </div>
       </aside>
     );
   };
 
 
   const Breadcrumb = () => (
-    <nav className="text-sm mb-6" aria-label="Breadcrumb">
+    <nav className="text-sm mb-4 sm:mb-6 md:px-6" aria-label="Breadcrumb">
       <ol className="list-none p-0 inline-flex items-center space-x-2">
         <li className="flex items-center">
-          <Link to="/" className="text-gray-500 hover:text-indigo-600 transition-colors duration-200 font-medium">
+          <Link to="/" className="transition-colors duration-200 font-medium" style={{ color: 'var(--text-secondary)' }}>
             Home
           </Link>
         </li>
-        <li className="flex items-center text-gray-400">/</li>
+        <li className="flex items-center" style={{ color: 'var(--text-secondary)' }}>/</li>
         <li className="flex items-center">
-          <Link to="/shop" className="text-gray-500 hover:text-indigo-600 transition-colors duration-200 font-medium">
+          <Link to="/shop" className="transition-colors duration-200 font-medium" style={{ color: 'var(--text-secondary)' }}>
             Shop
           </Link>
         </li>
-        <li className="flex items-center text-gray-400">/</li>
+        <li className="flex items-center" style={{ color: 'var(--text-secondary)' }}>/</li>
         <li className="flex items-center">
           <span className="font-semibold" style={{ color: 'var(--text-heading)' }}>
             {category}
@@ -732,45 +494,31 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   const ActiveChips = () => {
     const chips = [];
     if (activePrice) chips.push({ k: 'priceRange', label: `₹${activePrice}` });
-    if (activeGender) chips.push({ k: 'gender', label: activeGender });
-    if (activeColor) chips.push({ k: 'color', label: activeColor });
     if (activeSubCategory) chips.push({ k: 'subCategory', label: activeSubCategory.charAt(0).toUpperCase() + activeSubCategory.slice(1) });
-    if (activeBrand) chips.push({ k: 'brand', label: activeBrand });
-    if (activeFrameShape) chips.push({ k: 'frameShape', label: activeFrameShape });
-    if (activeFrameMaterial) chips.push({ k: 'frameMaterial', label: activeFrameMaterial });
-    if (activeFrameColor) chips.push({ k: 'frameColor', label: activeFrameColor });
-    if (activeDisposability) chips.push({ k: 'disposability', label: activeDisposability });
+    if (activeColor) chips.push({ k: 'color', label: activeColor });
+    if (activeSize) chips.push({ k: 'size', label: activeSize });
     if (chips.length === 0) return null;
     return (
-      <div className="flex flex-wrap items-center gap-3 mb-6">
-        <span className="text-sm font-medium text-gray-700">Active filters:</span>
+      <div className="flex flex-wrap items-center gap-2 mb-4 md:px-6">
         {chips.map((c) => (
           <span 
             key={c.k} 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm border-2"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium"
             style={{ 
               backgroundColor: 'var(--text-primary)', 
-              color: '#ffffff', 
-              borderColor: 'var(--text-primary)' 
+              color: '#ffffff'
             }}
           >
             {c.label}
             <button 
               onClick={() => clearKey(c.k)} 
-              className="hover:bg-white/30 rounded-full p-0.5 transition-colors duration-200 text-white font-bold text-lg leading-none"
+              className="hover:bg-white/30 rounded-full p-0.5 transition-colors duration-200 text-white font-bold text-sm leading-none w-4 h-4 flex items-center justify-center"
               style={{ color: '#ffffff' }}
             >
               ×
             </button>
           </span>
         ))}
-        <button 
-          className="text-sm font-medium transition-colors duration-200 hover:underline" 
-          style={{ color: 'var(--text-primary)' }}
-          onClick={clearAll}
-        >
-          Clear all
-        </button>
       </div>
     );
   };
@@ -929,30 +677,35 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="w-full">
         <Breadcrumb />
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-6 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 md:px-6">
           <div>
-            <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--text-heading)' }}>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2" style={{ color: 'var(--text-heading)' }}>
               {category}
             </h1>
-            <p className="text-gray-600 font-medium">
-              {pagination.totalProducts || 0} {pagination.totalProducts === 1 ? 'product' : 'products'} available
-            </p>
           </div>
           <div className="flex items-center gap-3">
-            <label className="text-sm font-semibold text-gray-700">Sort by:</label>
+            <label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Sort by:</label>
             <select
               value={sort}
               onChange={(e) => { setSort(e.target.value); setParamNoReset('sort', e.target.value); }}
-              className="border-2 border-gray-300 rounded-lg px-4 py-2.5 text-sm font-medium bg-white hover:border-indigo-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition-all duration-200 shadow-sm"
+              className="border rounded-lg px-3 py-2 text-sm font-medium transition-all"
+              style={{
+                backgroundColor: 'var(--bg-secondary)',
+                borderColor: 'var(--border-color)',
+                color: 'var(--text-primary)'
+              }}
             >
-              <option value="relevance">Relevance</option>
+              <option value="relevance">Featured</option>
               <option value="newest">Newest First</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
             </select>
+            <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+              {sortedProducts.length} of {pagination.totalProducts || 0} products
+            </span>
           </div>
         </div>
 
@@ -973,7 +726,7 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
             <span>Filters</span>
             {filtersOpen && <X className="w-4 h-4" />}
           </button>
-          {(activePrice || activeGender || activeColor || activeSubCategory || activeBrand || activeFrameShape || activeFrameMaterial || activeFrameColor || activeDisposability) && (
+          {(activePrice || activeColor || activeSubCategory || activeSize) && (
             <button
               onClick={clearAll}
               className="text-sm font-medium px-3 py-2 rounded-lg border transition-colors"
@@ -995,12 +748,12 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           ></div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-6 relative">
           {/* Left sidebar - Hidden on mobile unless filtersOpen */}
-          <div className={`md:col-span-1 ${filtersOpen ? 'fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-white z-50 overflow-y-auto p-4 shadow-2xl transform transition-transform duration-300' : 'hidden md:block'}`}>
+          <div className={`md:col-span-1 ${filtersOpen ? 'fixed left-0 top-0 h-full w-80 max-w-[85vw] z-50 overflow-y-auto p-4 shadow-2xl transform transition-transform duration-300' : 'hidden md:block'}`} style={{ backgroundColor: 'var(--bg-primary)' }}>
             {filtersOpen && (
-              <div className="flex items-center justify-between mb-4 pb-4 border-b sticky top-0 bg-white z-10">
-                <h3 className="text-lg font-bold" style={{ color: 'var(--text-heading)' }}>Filters</h3>
+              <div className="flex items-center justify-between mb-4 pb-4 border-b sticky top-0 z-10" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
+                <h3 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>Filter</h3>
                 <button
                   onClick={() => setFiltersOpen(false)}
                   className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -1011,11 +764,11 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
                 </button>
               </div>
             )}
-            <div onClick={(e) => e.stopPropagation()}>
+            <div onClick={(e) => e.stopPropagation()} className="rounded-2xl p-4 sm:p-6 shadow-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
               <FiltersSidebar />
             </div>
             {filtersOpen && (
-              <div className="sticky bottom-0 bg-white border-t pt-4 mt-4">
+              <div className="sticky bottom-0 border-t pt-4 mt-4" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                 <button
                   onClick={() => setFiltersOpen(false)}
                   className="w-full py-3 px-4 rounded-lg font-semibold text-white transition-colors"
@@ -1028,9 +781,9 @@ export default function CategoryPage({ addToCart, addToWishlist }) {
           </div>
 
           {/* Products grid */}
-          <div className="md:col-span-3">
+          <div className="md:col-span-3 md:px-6">
             <div
-              className={`grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 transition-all duration-500 ease-in-out ${
+              className={`grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 md:gap-6 transition-all duration-500 ease-in-out ${
                 visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
               }`}
             >

@@ -20,13 +20,10 @@ const Admin = () => {
     subCategory: "",
     subSubCategory: "",
     brand: "",
-    gender: "",
     size: "",
-    frameShape: "",
-    frameMaterial: "",
-    frameColor: "",
-    rimDetails: "",
-    warranty: "",
+    color: "",
+    material: "",
+    style: "",
     images: ["", ""],
     ratings: 0,
     discount: 0,
@@ -107,13 +104,10 @@ const Admin = () => {
       subSubCategory: formData.subSubCategory || undefined,
       product_info: {
         brand: formData.brand || undefined,
-        gender: formData.gender || undefined,
         size: formData.size || undefined,
-        frameShape: formData.frameShape || undefined,
-        frameMaterial: formData.frameMaterial || undefined,
-        frameColor: formData.frameColor || undefined,
-        rimDetails: formData.rimDetails || undefined,
-        warranty: formData.warranty || undefined,
+        color: formData.color || undefined,
+        material: formData.material || undefined,
+        style: formData.style || undefined,
       },
       images: formData.images.filter((img) => img.trim()),
       ratings: parseFloat(formData.ratings) || 0,
@@ -126,11 +120,11 @@ const Admin = () => {
       } else {
         await api.post("/admin/products", payload);
       }
-      alert(editingProduct ? "Product updated!" : "Product added!");
-      setShowProductForm(false);
-      setEditingProduct(null);
-      resetForm();
-      fetchProducts();
+        alert(editingProduct ? "Product updated!" : "Product added!");
+        setShowProductForm(false);
+        setEditingProduct(null);
+        resetForm();
+        fetchProducts();
     } catch (error) {
       alert(error.response?.data?.message || "Error saving product");
     } finally {
@@ -143,8 +137,8 @@ const Admin = () => {
 
     try {
       await api.delete(`/admin/products/${id}`);
-      alert("Product deleted!");
-      fetchProducts();
+        alert("Product deleted!");
+        fetchProducts();
     } catch (error) {
       alert("Error deleting product");
     }
@@ -160,13 +154,10 @@ const Admin = () => {
       subCategory: product.subCategory || "",
       subSubCategory: product.subSubCategory || "",
       brand: product.product_info?.brand || "",
-      gender: product.product_info?.gender || "",
       size: product.product_info?.size || "",
-      frameShape: product.product_info?.frameShape || "",
-      frameMaterial: product.product_info?.frameMaterial || "",
-      frameColor: product.product_info?.frameColor || "",
-      rimDetails: product.product_info?.rimDetails || "",
-      warranty: product.product_info?.warranty || "",
+      color: product.product_info?.color || "",
+      material: product.product_info?.material || "",
+      style: product.product_info?.style || "",
       images: Array.isArray(product.images) ? product.images : [product.images?.image1 || "", product.images?.image2 || ""],
       ratings: product.ratings || 0,
       discount: product.discount || 0,
@@ -183,13 +174,10 @@ const Admin = () => {
       subCategory: "",
       subSubCategory: "",
       brand: "",
-      gender: "",
       size: "",
-      frameShape: "",
-      frameMaterial: "",
-      frameColor: "",
-      rimDetails: "",
-      warranty: "",
+      color: "",
+      material: "",
+      style: "",
       images: ["", ""],
       ratings: 0,
       discount: 0,
@@ -199,8 +187,8 @@ const Admin = () => {
   const handleOrderStatusUpdate = async (orderId, newStatus) => {
     try {
       await api.put(`/admin/orders/${orderId}/status`, { status: newStatus });
-      alert("Order status updated!");
-      fetchOrders();
+        alert("Order status updated!");
+        fetchOrders();
     } catch (error) {
       alert("Error updating order status");
     }
@@ -310,10 +298,9 @@ const Admin = () => {
                           className="w-full px-3 py-2 border rounded"
                         >
                           <option value="">Select</option>
-                          <option value="Eyeglasses">Eyeglasses</option>
-                          <option value="Sunglasses">Sunglasses</option>
-                          <option value="Computer Glasses">Computer Glasses</option>
-                          <option value="Contact Lenses">Contact Lenses</option>
+                          <option value="Men's Shoes">Men's Shoes</option>
+                          <option value="Women's Shoes">Women's Shoes</option>
+                          <option value="Kids Shoes">Kids Shoes</option>
                         </select>
                       </div>
                       <div>
@@ -344,62 +331,7 @@ const Admin = () => {
                           value={formData.brand}
                           onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                           className="w-full px-3 py-2 border rounded"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Gender</label>
-                        <select
-                          value={formData.gender}
-                          onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                          className="w-full px-3 py-2 border rounded"
-                        >
-                          <option value="">Select</option>
-                          <option value="Unisex">Unisex</option>
-                          <option value="Men">Men</option>
-                          <option value="Women">Women</option>
-                          <option value="Kids">Kids</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Frame Shape</label>
-                        <input
-                          type="text"
-                          value={formData.frameShape}
-                          onChange={(e) => setFormData({ ...formData, frameShape: e.target.value })}
-                          className="w-full px-3 py-2 border rounded"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Frame Material</label>
-                        <input
-                          type="text"
-                          value={formData.frameMaterial}
-                          onChange={(e) => setFormData({ ...formData, frameMaterial: e.target.value })}
-                          className="w-full px-3 py-2 border rounded"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Frame Color</label>
-                        <input
-                          type="text"
-                          value={formData.frameColor}
-                          onChange={(e) => setFormData({ ...formData, frameColor: e.target.value })}
-                          className="w-full px-3 py-2 border rounded"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Rim Details</label>
-                        <input
-                          type="text"
-                          value={formData.rimDetails}
-                          onChange={(e) => setFormData({ ...formData, rimDetails: e.target.value })}
-                          className="w-full px-3 py-2 border rounded"
+                          placeholder="e.g., Nike, Adidas"
                         />
                       </div>
                       <div>
@@ -409,6 +341,68 @@ const Admin = () => {
                           value={formData.size}
                           onChange={(e) => setFormData({ ...formData, size: e.target.value })}
                           className="w-full px-3 py-2 border rounded"
+                          placeholder="e.g., 7, 8, 9 or S, M, L"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Color</label>
+                        <input
+                          type="text"
+                          value={formData.color}
+                          onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                          className="w-full px-3 py-2 border rounded"
+                          placeholder="e.g., Black, Brown, White"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Material</label>
+                        <input
+                          type="text"
+                          value={formData.material}
+                          onChange={(e) => setFormData({ ...formData, material: e.target.value })}
+                          className="w-full px-3 py-2 border rounded"
+                          placeholder="e.g., Leather, Canvas, Synthetic"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Style</label>
+                        <input
+                          type="text"
+                          value={formData.style}
+                          onChange={(e) => setFormData({ ...formData, style: e.target.value })}
+                          className="w-full px-3 py-2 border rounded"
+                          placeholder="e.g., Casual, Formal, Sports"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Discount (%)</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={formData.discount}
+                          onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+                          className="w-full px-3 py-2 border rounded"
+                          placeholder="0"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Ratings</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="5"
+                          step="0.1"
+                          value={formData.ratings}
+                          onChange={(e) => setFormData({ ...formData, ratings: e.target.value })}
+                          className="w-full px-3 py-2 border rounded"
+                          placeholder="0"
                         />
                       </div>
                     </div>

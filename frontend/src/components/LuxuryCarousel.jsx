@@ -2,6 +2,23 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+// Color palette for each slide - extracted from shoe colors
+const getColorForSlide = (index, total) => {
+  const colors = [
+    { bg: '#F5F1E8', strip: '#E8D5C4' }, // Beige/Tan
+    { bg: '#E8E8E8', strip: '#D4D4D4' }, // Light Gray
+    { bg: '#F0E6D2', strip: '#E0D4B8' }, // Cream
+    { bg: '#E5E3DF', strip: '#D4D2CE' }, // Warm Gray
+    { bg: '#F2EDE5', strip: '#E5D9C8' }, // Beige
+    { bg: '#E8E5E0', strip: '#D6D3CD' }, // Light Beige
+    { bg: '#F5F0E8', strip: '#E8DDD0' }, // Cream Beige
+    { bg: '#EDE8E0', strip: '#DDD4C8' }, // Warm Beige
+    { bg: '#F0ECE5', strip: '#E3DBCF' }, // Soft Beige
+    { bg: '#E8E5DF', strip: '#D6D3CC' }, // Neutral Beige
+  ];
+  return colors[index % colors.length];
+};
+
 const LuxuryCarousel = ({ slides = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -35,7 +52,7 @@ const LuxuryCarousel = ({ slides = [] }) => {
             const next = (prev + 1) % slides.length;
             return next;
           });
-        }, 1500);
+        }, 2500); // Increased to 2.5 seconds for smoother viewing
       }
     };
 
@@ -151,10 +168,17 @@ const LuxuryCarousel = ({ slides = [] }) => {
 
   const visibleSlides = getVisibleSlides();
 
+  const currentSlide = slides[currentIndex];
+  const currentColors = getColorForSlide(currentIndex, slides.length);
+
   return (
     <div
       className="relative w-full overflow-hidden"
-      style={{ backgroundColor: 'var(--bg-primary)' }}
+      style={{ 
+        backgroundColor: 'var(--bg-primary)',
+        background: `linear-gradient(180deg, ${currentColors.bg} 0%, ${currentColors.bg} 50%, ${currentColors.strip} 50%, ${currentColors.strip} 100%)`,
+        transition: 'background 1.2s cubic-bezier(0.4, 0, 0.2, 1)'
+      }}
       onMouseEnter={(e) => {
         setIsPaused(true);
       }}
@@ -197,16 +221,17 @@ const LuxuryCarousel = ({ slides = [] }) => {
       </button>
 
       {/* Carousel Container */}
-      <div className="relative h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden">
+      <div className="relative h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden py-8 md:py-12">
         <div className="flex items-center justify-center h-full relative">
           {visibleSlides.map(({ index, position, slide }) => {
             const isCurrent = position === 'current';
             const isPrev = position === 'prev';
             const isNext = position === 'next';
+            const slideColors = getColorForSlide(index, slides.length);
             
             // Calculate sizing and positioning for horizontal layout
             let scale = 0.85;
-            let opacity = 0.7;
+            let opacity = 0.6;
             let zIndex = 10;
             let width = '35vw';
             let maxWidth = '450px';
@@ -221,14 +246,14 @@ const LuxuryCarousel = ({ slides = [] }) => {
               translateX = 0;
             } else if (isPrev) {
               scale = 0.85;
-              opacity = 0.7;
+              opacity = 0.6;
               zIndex = 5;
               width = '35vw';
               maxWidth = '450px';
               translateX = -120;
             } else if (isNext) {
               scale = 0.85;
-              opacity = 0.7;
+              opacity = 0.6;
               zIndex = 5;
               width = '35vw';
               maxWidth = '450px';
@@ -241,7 +266,7 @@ const LuxuryCarousel = ({ slides = [] }) => {
             return (
               <div
                 key={`slide-${index}`}
-                className="absolute h-full"
+                className="absolute h-full flex items-center justify-center"
                 style={{
                   transform: `translateX(calc(${translateX}% + ${dragOffsetValue}px)) scale(${scale})`,
                   transformOrigin: 'center center',
@@ -252,14 +277,18 @@ const LuxuryCarousel = ({ slides = [] }) => {
                   left: `calc(50% - ${widthValue / 2}vw)`,
                   transition: isDragging 
                     ? 'none' 
-                    : 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease-in-out, scale 0.8s ease-in-out',
+                    : 'transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), scale 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   willChange: 'transform, opacity, scale',
-                  boxShadow: 'none',
-                  filter: 'none',
                   pointerEvents: isCurrent ? 'auto' : 'none',
                 }}
               >
-                <SlideContent slide={slide} isActive={isCurrent} />
+                <SlideContent 
+                  slide={slide} 
+                  isActive={isCurrent} 
+                  colors={slideColors}
+                  isPrev={isPrev}
+                  isNext={isNext}
+                />
               </div>
             );
           })}
@@ -267,17 +296,20 @@ const LuxuryCarousel = ({ slides = [] }) => {
       </div>
 
       {/* Navigation Dots */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-2">
+      <div className="absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-2 items-center">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
             className={`transition-all duration-300 rounded-full ${
               index === currentIndex
-                ? 'w-8 h-2 bg-white'
-                : 'w-2 h-2 bg-white/40 hover:bg-white/60'
+                ? 'w-2.5 h-2.5 bg-gray-800 shadow-md'
+                : 'w-2 h-2 bg-white/60 hover:bg-white/80 border border-white/40'
             }`}
             aria-label={`Go to slide ${index + 1}`}
+            style={{
+              transition: 'all 0.3s ease-in-out',
+            }}
           />
         ))}
       </div>
@@ -287,15 +319,15 @@ const LuxuryCarousel = ({ slides = [] }) => {
 };
 
 // Slide Content Component
-const SlideContent = ({ slide, isActive }) => {
+const SlideContent = ({ slide, isActive, colors, isPrev, isNext }) => {
   return (
-    <div className="relative w-full h-full">
-      {/* Background Image */}
+    <div className="relative w-full h-full flex items-center justify-center px-4 md:px-8">
+      {/* Shoe Image - No card/panel, just the shoe */}
       <div
-        className="absolute inset-0"
+        className="relative z-10 w-full h-full flex items-center justify-center"
         style={{
-          transform: isActive ? 'scale(1)' : 'scale(0.95)',
-          transition: 'transform 0.8s ease-in-out',
+          transform: isActive ? 'scale(1) translateY(-10px)' : 'scale(0.95)',
+          transition: 'transform 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         <img
@@ -304,9 +336,8 @@ const SlideContent = ({ slide, isActive }) => {
           className="w-full h-full object-contain"
           loading="lazy"
           style={{
-            filter: 'none',
-            boxShadow: 'none',
-            transition: 'opacity 0.3s ease-in-out',
+            filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.1))',
+            transition: 'all 0.3s ease-in-out',
           }}
         />
       </div>

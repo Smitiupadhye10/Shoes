@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../context/UserContext.jsx";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
@@ -12,6 +12,14 @@ const Signin = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Disable body scrolling when component mounts
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,11 +39,11 @@ const Signin = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="h-screen overflow-hidden flex flex-col md:flex-row" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Left Side - Image */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-0 overflow-hidden">
         <img 
-          src="https://res.cloudinary.com/dfhjtmvrz/image/upload/v1765261167/zcpcbu8sfea2uy3urzr8.jpg" 
+          src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1768806794/0082814518a48318cbf77196757ded98_fsqt5a.jpg" 
           alt="Eyewear Collection"
           className="w-full h-full object-cover hidden lg:block"
         />

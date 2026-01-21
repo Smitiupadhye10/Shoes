@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     description: { type: String },
     category: { type: String, required: true,
-      enum: ["Men's Shoes", "Women's Shoes", "Kids Shoes"],
+      enum: ["Men's Shoes", "Women's Shoes", "Kids Shoes", "Shoes Accessories"],
      },
     subCategory: { type: String },
     subSubCategory: { type: String },

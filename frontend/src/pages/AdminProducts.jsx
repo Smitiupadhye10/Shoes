@@ -23,13 +23,10 @@ const AdminProducts = () => {
     subCategory: "",
     subSubCategory: "",
     brand: "",
-    gender: "",
     size: "",
-    frameShape: "",
-    frameMaterial: "",
-    frameColor: "",
-    rimDetails: "",
-    warranty: "",
+    color: "",
+    material: "",
+    style: "",
     images: ["", ""],
     ratings: 0,
     discount: 0,
@@ -85,8 +82,8 @@ const AdminProducts = () => {
 
     try {
       await api.delete(`/admin/products/${id}`);
-      alert("Product deleted!");
-      fetchProducts();
+        alert("Product deleted!");
+        fetchProducts();
     } catch (error) {
       alert("Error deleting product");
     }
@@ -103,13 +100,10 @@ const AdminProducts = () => {
       subCategory: product.subCategory || "",
       subSubCategory: product.subSubCategory || "",
       brand: product.product_info?.brand || "",
-      gender: product.product_info?.gender || "",
       size: product.product_info?.size || "",
-      frameShape: product.product_info?.frameShape || "",
-      frameMaterial: product.product_info?.frameMaterial || "",
-      frameColor: product.product_info?.frameColor || "",
-      rimDetails: product.product_info?.rimDetails || "",
-      warranty: product.product_info?.warranty || "",
+      color: product.product_info?.color || "",
+      material: product.product_info?.material || "",
+      style: product.product_info?.style || "",
       images: Array.isArray(product.images)
         ? product.images
         : [product.images?.image1 || "", product.images?.image2 || ""],
@@ -128,13 +122,10 @@ const AdminProducts = () => {
       subCategory: "",
       subSubCategory: "",
       brand: "",
-      gender: "",
       size: "",
-      frameShape: "",
-      frameMaterial: "",
-      frameColor: "",
-      rimDetails: "",
-      warranty: "",
+      color: "",
+      material: "",
+      style: "",
       images: ["", ""],
       ratings: 0,
       discount: 0,
@@ -146,27 +137,58 @@ const AdminProducts = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Ensure required fields are present
+    if (!formData.title || !formData.title.trim()) {
+      alert("Title is required");
+      setLoading(false);
+      return;
+    }
+    if (!formData.price || formData.price <= 0) {
+      alert("Price is required and must be greater than 0");
+      setLoading(false);
+      return;
+    }
+    if (!formData.category) {
+      alert("Category is required");
+      setLoading(false);
+      return;
+    }
+    if (!formData.subCategory || !formData.subCategory.trim()) {
+      alert("SubCategory is required");
+      setLoading(false);
+      return;
+    }
+    if (!formData.brand || !formData.brand.trim()) {
+      alert("Brand is required");
+      setLoading(false);
+      return;
+    }
+    if (!formData.images || formData.images.length === 0 || !formData.images[0] || !formData.images[0].trim()) {
+      alert("At least one image URL is required");
+      setLoading(false);
+      return;
+    }
+
     const payload = {
-      title: formData.title,
+      title: formData.title.trim(),
       price: parseFloat(formData.price),
-      description: formData.description,
+      description: formData.description || "",
       category: formData.category,
-      subCategory: formData.subCategory || undefined,
-      subSubCategory: formData.subSubCategory || undefined,
+      subCategory: formData.subCategory.trim(),
+      subSubCategory: formData.subSubCategory ? formData.subSubCategory.trim() : undefined,
       product_info: {
-        brand: formData.brand || undefined,
-        gender: formData.gender || undefined,
-        size: formData.size || undefined,
-        frameShape: formData.frameShape || undefined,
-        frameMaterial: formData.frameMaterial || undefined,
-        frameColor: formData.frameColor || undefined,
-        rimDetails: formData.rimDetails || undefined,
-        warranty: formData.warranty || undefined,
+        brand: formData.brand.trim(),
+        size: formData.size ? formData.size.trim() : undefined,
+        color: formData.color ? formData.color.trim() : undefined,
+        material: formData.material ? formData.material.trim() : undefined,
+        style: formData.style ? formData.style.trim() : undefined,
       },
-      images: formData.images.filter((img) => img.trim()),
+      images: formData.images.filter((img) => img && img.trim()),
       ratings: parseFloat(formData.ratings) || 0,
       discount: parseFloat(formData.discount) || 0,
     };
+
+    console.log("Sending payload:", JSON.stringify(payload, null, 2));
 
     try {
       if (editingProduct) {
@@ -176,12 +198,56 @@ const AdminProducts = () => {
         await api.post("/admin/products", payload);
         alert("Product added!");
       }
-      setShowProductForm(false);
-      setEditingProduct(null);
-      resetForm();
-      fetchProducts();
+        setShowProductForm(false);
+        setEditingProduct(null);
+        resetForm();
+        fetchProducts();
     } catch (error) {
-      alert(error.response?.data?.message || "Error saving product");
+      console.error("Full error:", error);
+      console.error("Error response:", error.response);
+      console.error("Error response data:", JSON.stringify(error.response?.data, null, 2));
+      
+      const errorData = error.response?.data;
+      let errorMessage = "Error saving product";
+      
+      if (errorData) {
+        // Try to get the most descriptive error message
+        if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+        if (errorData.error) {
+          errorMessage += `\n\nError: ${errorData.error}`;
+        }
+        if (errorData.received) {
+          errorMessage += `\n\nReceived: ${errorData.received}`;
+        }
+        
+        // Handle validation errors
+        if (errorData.errors) {
+          const errorFields = Object.keys(errorData.errors);
+          errorMessage += "\n\nValidation Errors:\n" + errorFields.map(field => {
+            const fieldError = errorData.errors[field];
+            return `- ${field}: ${fieldError?.message || fieldError || 'Invalid value'}`;
+          }).join("\n");
+        }
+        
+        // Handle details array
+        if (errorData.details && Array.isArray(errorData.details)) {
+          errorMessage += "\n\nDetails:\n" + errorData.details.map(d => `- ${d.field}: ${d.message}`).join("\n");
+        } else if (errorData.details) {
+          errorMessage += `\n\nDetails: ${JSON.stringify(errorData.details, null, 2)}`;
+        }
+        
+        // If no specific message, show the whole error data
+        if (errorMessage === "Error saving product" && Object.keys(errorData).length > 0) {
+          errorMessage += `\n\n${JSON.stringify(errorData, null, 2)}`;
+        }
+      } else {
+        errorMessage += `\n\nStatus: ${error.response?.status || 'Unknown'}\n${error.message}`;
+      }
+      
+      console.error("Final error message:", errorMessage);
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -189,20 +255,20 @@ const AdminProducts = () => {
 
   return (
     <div style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="container-optic p-6">
+      <div className="container-optic p-4 sm:p-6">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-optic-heading text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>Product Management</h1>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+          <h1 className="text-optic-heading text-2xl sm:text-3xl md:text-4xl font-bold" style={{ color: 'var(--text-primary)' }}>Product Management</h1>
           <button
             onClick={() => {
               setEditingProduct(null);
               resetForm();
               setShowProductForm(true);
             }}
-            className="btn-primary"
+            className="btn-primary w-full sm:w-auto"
           >
             <Plus size={20} />
-            Add Product
+            <span className="ml-2">Add Product</span>
           </button>
         </div>
 
@@ -233,7 +299,7 @@ const AdminProducts = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {currentProducts.map((product) => (
                 <div
                   key={product._id}
@@ -246,28 +312,28 @@ const AdminProducts = () => {
                         : product.images?.image1 || "/placeholder.jpg"
                     }
                     alt={product.title}
-                    className="w-full h-40 object-contain mb-4 rounded-lg"
+                    className="w-full h-32 sm:h-40 object-contain mb-3 sm:mb-4 rounded-lg"
                     style={{ backgroundColor: 'var(--bg-secondary)' }}
                   />
-                  <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>{product.title}</h3>
-                  <p className="text-xl font-bold mb-1" style={{ color: 'var(--text-heading)' }}>₹{product.price}</p>
-                  <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>{product.category}</p>
+                  <h3 className="font-bold text-base sm:text-lg mb-2 truncate" style={{ color: 'var(--text-primary)' }}>{product.title}</h3>
+                  <p className="text-lg sm:text-xl font-bold mb-1" style={{ color: 'var(--text-heading)' }}>₹{product.price}</p>
+                  <p className="text-xs sm:text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>{product.category}</p>
 
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <button
                       onClick={() => handleEdit(product)}
-                      className="flex-1 btn-secondary text-sm flex items-center justify-center gap-2"
+                      className="flex-1 btn-secondary text-xs sm:text-sm flex items-center justify-center gap-2 py-2"
                     >
-                      <Edit size={16} />
-                      Edit
+                      <Edit size={14} className="sm:w-4 sm:h-4" />
+                      <span>Edit</span>
                     </button>
                     <button
                       onClick={() => handleDelete(product._id)}
-                      className="flex-1 px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2 transition-all"
+                      className="flex-1 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm flex items-center justify-center gap-2 transition-all"
                       style={{ backgroundColor: '#ef4444', color: 'white' }}
                     >
-                      <Trash2 size={16} />
-                      Delete
+                      <Trash2 size={14} className="sm:w-4 sm:h-4" />
+                      <span>Delete</span>
                     </button>
                   </div>
                 </div>
@@ -312,10 +378,10 @@ const AdminProducts = () => {
 
       {/* Product Form Modal */}
       {showProductForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="card-optic w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-optic-heading text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="card-optic w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h2 className="text-optic-heading text-xl sm:text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                 {editingProduct ? 'Edit Product' : 'Add New Product'}
               </h2>
               <button
@@ -324,15 +390,15 @@ const AdminProducts = () => {
                   setEditingProduct(null);
                   resetForm();
                 }}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0"
                 style={{ color: 'var(--text-secondary)' }}
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Title *</label>
                   <input
@@ -340,7 +406,7 @@ const AdminProducts = () => {
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
@@ -356,7 +422,7 @@ const AdminProducts = () => {
                     step="0.01"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
@@ -372,7 +438,7 @@ const AdminProducts = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
-                  className="w-full p-3 rounded-lg border transition-colors"
+                  className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                   style={{
                     backgroundColor: 'var(--bg-secondary)',
                     borderColor: 'var(--border-color)',
@@ -381,14 +447,14 @@ const AdminProducts = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Category *</label>
                   <select
                     required
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
@@ -396,10 +462,9 @@ const AdminProducts = () => {
                     }}
                   >
                     <option value="">Select Category</option>
-                    <option value="Eyeglasses">Eyeglasses</option>
-                    <option value="Sunglasses">Sunglasses</option>
-                    <option value="Computer Glasses">Computer Glasses</option>
-                    <option value="Contact Lenses">Contact Lenses</option>
+                    <option value="Men's Shoes">Men's Shoes</option>
+                    <option value="Women's Shoes">Women's Shoes</option>
+                    <option value="Kids Shoes">Kids Shoes</option>
                   </select>
                 </div>
                 <div>
@@ -408,7 +473,7 @@ const AdminProducts = () => {
                     type="text"
                     value={formData.subCategory}
                     onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
@@ -416,13 +481,13 @@ const AdminProducts = () => {
                     }}
                   />
                 </div>
-                <div>
+                <div className="sm:col-span-2 lg:col-span-1">
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Brand</label>
                   <input
                     type="text"
                     value={formData.brand}
                     onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
@@ -432,42 +497,73 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Gender</label>
-                  <select
-                    value={formData.gender}
-                    onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                    className="w-full p-3 rounded-lg border transition-colors"
-                    style={{
-                      backgroundColor: 'var(--bg-secondary)',
-                      borderColor: 'var(--border-color)',
-                      color: 'var(--text-primary)'
-                    }}
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Unisex">Unisex</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Frame Material</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Size</label>
                   <input
                     type="text"
-                    value={formData.frameMaterial}
-                    onChange={(e) => setFormData({ ...formData, frameMaterial: e.target.value })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    value={formData.size}
+                    onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
                       color: 'var(--text-primary)'
                     }}
+                    placeholder="e.g., 7, 8, 9 or S, M, L"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Color</label>
+                  <input
+                    type="text"
+                    value={formData.color}
+                    onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                    placeholder="e.g., Black, Brown, White"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Material</label>
+                  <input
+                    type="text"
+                    value={formData.material}
+                    onChange={(e) => setFormData({ ...formData, material: e.target.value })}
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                    placeholder="e.g., Leather, Canvas, Synthetic"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Style</label>
+                  <input
+                    type="text"
+                    value={formData.style}
+                    onChange={(e) => setFormData({ ...formData, style: e.target.value })}
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
+                    placeholder="e.g., Casual, Formal, Sports"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Image URL 1 *</label>
                   <input
@@ -475,7 +571,7 @@ const AdminProducts = () => {
                     required
                     value={formData.images[0]}
                     onChange={(e) => setFormData({ ...formData, images: [e.target.value, formData.images[1]] })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
@@ -489,7 +585,7 @@ const AdminProducts = () => {
                     type="url"
                     value={formData.images[1]}
                     onChange={(e) => setFormData({ ...formData, images: [formData.images[0], e.target.value] })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
@@ -499,7 +595,7 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Discount (%)</label>
                   <input
@@ -508,35 +604,40 @@ const AdminProducts = () => {
                     max="100"
                     value={formData.discount}
                     onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
                       color: 'var(--text-primary)'
                     }}
+                    placeholder="0"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Warranty</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Ratings</label>
                   <input
-                    type="text"
-                    value={formData.warranty}
-                    onChange={(e) => setFormData({ ...formData, warranty: e.target.value })}
-                    className="w-full p-3 rounded-lg border transition-colors"
+                    type="number"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    value={formData.ratings}
+                    onChange={(e) => setFormData({ ...formData, ratings: e.target.value })}
+                    className="w-full p-2 sm:p-3 rounded-lg border transition-colors text-sm sm:text-base"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: 'var(--border-color)',
                       color: 'var(--text-primary)'
                     }}
+                    placeholder="0"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary flex-1"
+                  className="btn-primary flex-1 order-2 sm:order-1"
                 >
                   {loading ? 'Saving...' : (editingProduct ? 'Update Product' : 'Add Product')}
                 </button>
@@ -547,7 +648,7 @@ const AdminProducts = () => {
                     setEditingProduct(null);
                     resetForm();
                   }}
-                  className="btn-secondary"
+                  className="btn-secondary order-1 sm:order-2"
                 >
                   Cancel
                 </button>

@@ -63,22 +63,19 @@ const AdminDashboard = () => {
         ? orderData.orders
         : [];
 
-      // ✅ Calculate product stats by category
+      // ✅ Calculate product stats by category - exact matches only
       const totalProducts = productsArray.length;
       const mensShoes = productsArray.filter((p) => 
         p.category === "Men's Shoes" || 
-        p._type === 'mensShoe' ||
-        (p.category && p.category.toLowerCase().includes("men"))
+        p._type === 'mensShoe'
       ).length;
       const womensShoes = productsArray.filter((p) => 
         p.category === "Women's Shoes" || 
-        p._type === 'womensShoe' ||
-        (p.category && p.category.toLowerCase().includes("women"))
+        p._type === 'womensShoe'
       ).length;
       const kidsShoes = productsArray.filter((p) => 
         p.category === "Kids Shoes" || 
-        p._type === 'kidsShoe' ||
-        (p.category && p.category.toLowerCase().includes("kids"))
+        p._type === 'kidsShoe'
       ).length;
 
       // ✅ Calculate order stats

@@ -18,13 +18,12 @@ const Shop = ({ addToCart, addToWishlist }) => {
   const [limit] = useState(18);
   const [searchParams] = useSearchParams();
 
-  const category = searchParams.get("category");
   const search = searchParams.get("search") || "";
 
-  // Reset to page 1 when search or category changes
+  // Reset to page 1 when search changes
   useEffect(() => {
     setPage(1);
-  }, [search, category]);
+  }, [search]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -34,7 +33,7 @@ const Shop = ({ addToCart, addToWishlist }) => {
 
         const qs = new URLSearchParams();
         if (search) qs.set("search", search);
-        if (category) qs.set("category", category);
+        // Don't set category - fetch from all categories
         qs.set("page", page);
         qs.set("limit", limit);
 
@@ -57,7 +56,7 @@ const Shop = ({ addToCart, addToWishlist }) => {
     };
 
     fetchProducts();
-  }, [page, limit, search, category]);
+  }, [page, limit, search]);
 
   const goToPage = (p) => {
     if (p < 1 || p > pagination.totalPages) return;
@@ -126,7 +125,7 @@ const Shop = ({ addToCart, addToWishlist }) => {
       <div style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container-optic pt-0 pb-6 sm:pb-8 px-4 sm:px-6">
           <h1 className="text-optic-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-8 sm:mb-12 md:mb-16 text-center" style={{ color: 'var(--text-primary)' }}>
-            {search ? `Search Results for: "${search}"` : category ? category : 'All Products'}
+            {search ? `Search Results for: "${search}"` : 'All Products'}
           </h1>
           {search && products.length > 0 && (
             <p className="text-center mb-8 text-lg" style={{ color: 'var(--text-secondary)' }}>

@@ -26,11 +26,21 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const status = error.response?.status;
+    const url = error.config?.url;
+    
+    // Don't log 403/401 errors for /auth/me - these are expected when user is not authenticated
+    if ((status === 403 || status === 401) && url === '/auth/me') {
+      // Silently handle authentication errors
+      return Promise.reject(error);
+    }
+    
+    // Log other errors
     console.error("API Error:", {
       message: error.message,
-      url: error.config?.url,
+      url: url,
       baseURL: error.config?.baseURL,
-      status: error.response?.status,
+      status: status,
       data: error.response?.data,
     });
     return Promise.reject(error);

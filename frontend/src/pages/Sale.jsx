@@ -21,8 +21,9 @@ const Sale = ({ addToCart, addToWishlist }) => {
         setLoading(true);
         setError(null);
 
-        // Fetch all products with a high limit to get all discounted products
-        const { data } = await api.get(`/products?limit=500`);
+        // Fetch all products from all categories (no category specified = all categories)
+        // Use a high limit to get all products, then filter for discounted ones
+        const { data } = await api.get(`/products?limit=2000&page=1`);
         
         const allProducts = Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []);
         
@@ -34,8 +35,9 @@ const Sale = ({ addToCart, addToWishlist }) => {
           
           // Product has discount if:
           // 1. discountPercent > 0, OR
-          // 2. originalPrice > finalPrice (meaning there's a discount)
-          return discountPercent > 0 || (originalPrice > 0 && originalPrice > finalPrice);
+          // 2. originalPrice > finalPrice (meaning there's a discount), OR
+          // 3. onSale flag is true
+          return discountPercent > 0 || (originalPrice > 0 && originalPrice > finalPrice) || product.onSale === true;
         });
 
         // Calculate pagination
@@ -108,7 +110,7 @@ const Sale = ({ addToCart, addToWishlist }) => {
       <div style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container-optic pt-0 pb-6 sm:pb-8 px-4 sm:px-6">
           <h1 className="text-optic-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-8 sm:mb-12 md:mb-16 text-center" style={{ color: 'var(--text-primary)' }}>
-            Sale - Discounted Products
+            Sale  
           </h1>
           {!loading && products.length > 0 && (
             <p className="text-center mb-8 text-lg" style={{ color: 'var(--text-secondary)' }}>
