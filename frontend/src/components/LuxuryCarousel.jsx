@@ -25,8 +25,19 @@ const LuxuryCarousel = ({ slides = [] }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const carouselRef = useRef(null);
   const intervalRef = useRef(null);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Reset drag offset when index changes (but not during drag)
   useEffect(() => {
@@ -197,13 +208,13 @@ const LuxuryCarousel = ({ slides = [] }) => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Hidden on mobile, visible on desktop */}
       <button
         onClick={(e) => {
           e.stopPropagation();
           goToPrev();
         }}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-110 active:scale-95 group"
+        className="hidden md:flex absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-110 active:scale-95 group"
         aria-label="Previous slide"
       >
         <ChevronLeft className="w-6 h-6 md:w-7 md:h-7 text-white group-hover:text-white transition-colors" />
@@ -214,7 +225,7 @@ const LuxuryCarousel = ({ slides = [] }) => {
           e.stopPropagation();
           goToNext();
         }}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-110 active:scale-95 group"
+        className="hidden md:flex absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-110 active:scale-95 group"
         aria-label="Next slide"
       >
         <ChevronRight className="w-6 h-6 md:w-7 md:h-7 text-white group-hover:text-white transition-colors" />
@@ -230,47 +241,49 @@ const LuxuryCarousel = ({ slides = [] }) => {
             const slideColors = getColorForSlide(index, slides.length);
             
             // Calculate sizing and positioning for horizontal layout
-            // Mobile: Larger shoes, smaller container
-            let scale = 0.75;
-            let opacity = 0.4;
-            let zIndex = 10;
-            let translateX = 0;
+            // Mobile: Larger images, smaller container
+            // Desktop: Original sizing
+            let scale, opacity, width, maxWidth, translateX;
             
             if (isCurrent) {
               scale = 1;
               opacity = 1;
               zIndex = 20;
+              // Mobile: 70vw for larger images, Desktop: 45vw
+              width = isMobile ? '70vw' : '45vw';
+              maxWidth = isMobile ? '600px' : '650px';
               translateX = 0;
             } else if (isPrev) {
-              scale = 0.75;
-              opacity = 0.4;
+              scale = isMobile ? 0.75 : 0.85;
+              opacity = isMobile ? 0.4 : 0.6;
               zIndex = 5;
-              translateX = -100;
+              width = isMobile ? '40vw' : '35vw';
+              maxWidth = isMobile ? '400px' : '450px';
+              translateX = isMobile ? -100 : -120;
             } else if (isNext) {
-              scale = 0.75;
-              opacity = 0.4;
+              scale = isMobile ? 0.75 : 0.85;
+              opacity = isMobile ? 0.4 : 0.6;
               zIndex = 5;
-              translateX = 100;
+              width = isMobile ? '40vw' : '35vw';
+              maxWidth = isMobile ? '400px' : '450px';
+              translateX = isMobile ? 100 : 120;
             }
             
+            const widthValue = parseFloat(width);
             const dragOffsetValue = isCurrent ? dragOffset : (isPrev ? dragOffset * 0.3 : dragOffset * 0.3);
             
             return (
               <div
                 key={`slide-${index}`}
-                className={`absolute h-full flex items-center justify-center ${
-                  isCurrent 
-                    ? 'w-[85vw] sm:w-[70vw] md:w-[45vw] max-w-[400px] sm:max-w-[500px] md:max-w-[650px]' 
-                    : 'w-[30vw] sm:w-[35vw] md:w-[35vw] max-w-[300px] sm:max-w-[400px] md:max-w-[450px]'
-                }`}
+                className="absolute h-full flex items-center justify-center"
                 style={{
-                  transform: isCurrent
-                    ? `translateX(calc(-50% + ${dragOffsetValue}px)) scale(${scale})`
-                    : `translateX(calc(${translateX}% + ${dragOffsetValue}px)) scale(${scale})`,
+                  transform: `translateX(calc(${translateX}% + ${dragOffsetValue}px)) scale(${scale})`,
                   transformOrigin: 'center center',
                   opacity,
                   zIndex,
-                  left: isCurrent ? '50%' : (isPrev ? '0%' : '100%'),
+                  width,
+                  maxWidth,
+                  left: `calc(50% - ${widthValue / 2}vw)`,
                   transition: isDragging 
                     ? 'none' 
                     : 'transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), scale 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -292,15 +305,15 @@ const LuxuryCarousel = ({ slides = [] }) => {
       </div>
 
       {/* Navigation Dots */}
-      <div className="absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-2 items-center">
+      <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-1.5 sm:gap-2 items-center">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
             className={`transition-all duration-300 rounded-full ${
               index === currentIndex
-                ? 'w-2.5 h-2.5 bg-gray-800 shadow-md'
-                : 'w-2 h-2 bg-white/60 hover:bg-white/80 border border-white/40'
+                ? 'w-2.5 h-2.5 sm:w-3 sm:h-3 bg-gray-800 shadow-md'
+                : 'w-2 h-2 sm:w-2.5 sm:h-2.5 bg-white/60 hover:bg-white/80 border border-white/40'
             }`}
             aria-label={`Go to slide ${index + 1}`}
             style={{
@@ -329,11 +342,12 @@ const SlideContent = ({ slide, isActive, colors, isPrev, isNext }) => {
         <img
           src={slide.image}
           alt={slide.title || slide.subCategory}
-          className="w-full h-full object-contain scale-110 sm:scale-100"
+          className="w-full h-full object-contain"
           loading="lazy"
           style={{
             filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.1))',
             transition: 'all 0.3s ease-in-out',
+            maxHeight: '100%',
           }}
         />
       </div>
