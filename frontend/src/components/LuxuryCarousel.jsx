@@ -243,7 +243,7 @@ const LuxuryCarousel = ({ slides = [] }) => {
             // Calculate sizing and positioning for horizontal layout
             // Mobile: Larger images, smaller container
             // Desktop: Original sizing
-            let scale, opacity, width, maxWidth, translateX;
+            let scale, opacity, width, maxWidth, translateX, zIndex;
             
             if (isCurrent) {
               scale = 1;
