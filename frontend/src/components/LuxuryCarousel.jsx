@@ -221,7 +221,7 @@ const LuxuryCarousel = ({ slides = [] }) => {
       </button>
 
       {/* Carousel Container */}
-      <div className="relative h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden py-8 md:py-12">
+      <div className="relative h-[400px] sm:h-[450px] md:h-[600px] lg:h-[700px] overflow-hidden py-4 sm:py-6 md:py-8 lg:py-12">
         <div className="flex items-center justify-center h-full relative">
           {visibleSlides.map(({ index, position, slide }) => {
             const isCurrent = position === 'current';
@@ -230,51 +230,47 @@ const LuxuryCarousel = ({ slides = [] }) => {
             const slideColors = getColorForSlide(index, slides.length);
             
             // Calculate sizing and positioning for horizontal layout
-            let scale = 0.85;
-            let opacity = 0.6;
+            // Mobile: Larger shoes, smaller container
+            let scale = 0.75;
+            let opacity = 0.4;
             let zIndex = 10;
-            let width = '35vw';
-            let maxWidth = '450px';
             let translateX = 0;
             
             if (isCurrent) {
               scale = 1;
               opacity = 1;
               zIndex = 20;
-              width = '45vw';
-              maxWidth = '650px';
               translateX = 0;
             } else if (isPrev) {
-              scale = 0.85;
-              opacity = 0.6;
+              scale = 0.75;
+              opacity = 0.4;
               zIndex = 5;
-              width = '35vw';
-              maxWidth = '450px';
-              translateX = -120;
+              translateX = -100;
             } else if (isNext) {
-              scale = 0.85;
-              opacity = 0.6;
+              scale = 0.75;
+              opacity = 0.4;
               zIndex = 5;
-              width = '35vw';
-              maxWidth = '450px';
-              translateX = 120;
+              translateX = 100;
             }
             
-            const widthValue = parseFloat(width);
             const dragOffsetValue = isCurrent ? dragOffset : (isPrev ? dragOffset * 0.3 : dragOffset * 0.3);
             
             return (
               <div
                 key={`slide-${index}`}
-                className="absolute h-full flex items-center justify-center"
+                className={`absolute h-full flex items-center justify-center ${
+                  isCurrent 
+                    ? 'w-[85vw] sm:w-[70vw] md:w-[45vw] max-w-[400px] sm:max-w-[500px] md:max-w-[650px]' 
+                    : 'w-[30vw] sm:w-[35vw] md:w-[35vw] max-w-[300px] sm:max-w-[400px] md:max-w-[450px]'
+                }`}
                 style={{
-                  transform: `translateX(calc(${translateX}% + ${dragOffsetValue}px)) scale(${scale})`,
+                  transform: isCurrent
+                    ? `translateX(calc(-50% + ${dragOffsetValue}px)) scale(${scale})`
+                    : `translateX(calc(${translateX}% + ${dragOffsetValue}px)) scale(${scale})`,
                   transformOrigin: 'center center',
                   opacity,
                   zIndex,
-                  width,
-                  maxWidth,
-                  left: `calc(50% - ${widthValue / 2}vw)`,
+                  left: isCurrent ? '50%' : (isPrev ? '0%' : '100%'),
                   transition: isDragging 
                     ? 'none' 
                     : 'transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), scale 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -321,7 +317,7 @@ const LuxuryCarousel = ({ slides = [] }) => {
 // Slide Content Component
 const SlideContent = ({ slide, isActive, colors, isPrev, isNext }) => {
   return (
-    <div className="relative w-full h-full flex items-center justify-center px-4 md:px-8">
+    <div className="relative w-full h-full flex items-center justify-center px-2 sm:px-4 md:px-8">
       {/* Shoe Image - No card/panel, just the shoe */}
       <div
         className="relative z-10 w-full h-full flex items-center justify-center"
@@ -333,7 +329,7 @@ const SlideContent = ({ slide, isActive, colors, isPrev, isNext }) => {
         <img
           src={slide.image}
           alt={slide.title || slide.subCategory}
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain scale-110 sm:scale-100"
           loading="lazy"
           style={{
             filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.1))',
