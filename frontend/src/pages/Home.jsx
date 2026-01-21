@@ -76,50 +76,50 @@ const Home = ({ addToCart, addToWishlist }) => {
   return (
     <div className="space-y-0">
       {/* Hero Section - Brown for Autumn Style with Card Design */}
-      <section className="relative min-h-[80vh] flex items-center pt-4 pb-12 md:pt-6 md:pb-16" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="container-optic w-full relative z-10">
+      <section className="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] flex items-center pt-4 pb-8 sm:pt-6 sm:pb-12 md:pt-6 md:pb-16" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="container-optic w-full relative z-10 px-4 sm:px-6 lg:px-8">
           {/* Card Container */}
           <div 
-            className="relative rounded-3xl p-8 md:p-12 lg:p-16"
+            className="relative rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16"
             style={{
               backgroundColor: 'var(--bg-secondary)',
               border: '2px solid var(--border-color)',
               boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05)',
             }}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-20 items-center">
               {/* Left Content */}
-              <div className="space-y-6 lg:space-y-8 relative pl-8 z-20" style={{ fontFamily: 'Georgia, serif' }}>
+              <div className="space-y-4 sm:space-y-6 lg:space-y-8 relative pl-6 sm:pl-8 z-20" style={{ fontFamily: 'Georgia, serif' }}>
                 {/* Vertical lines on the left */}
                 <div className="absolute left-0 top-0 bottom-0 flex flex-col gap-2">
-                  <div className="w-0.5 h-16" style={{ backgroundColor: 'var(--text-primary)' }}></div>
-                  <div className="w-0.5 h-16" style={{ backgroundColor: 'var(--text-primary)' }}></div>
+                  <div className="w-0.5 h-12 sm:h-16" style={{ backgroundColor: 'var(--text-primary)' }}></div>
+                  <div className="w-0.5 h-12 sm:h-16" style={{ backgroundColor: 'var(--text-primary)' }}></div>
                 </div>
-                <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-none font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif', textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl leading-tight sm:leading-none font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif', textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>
                   Brown for<br />Autumn
                 </h1>
-                <p className="text-base md:text-lg max-w-lg font-serif" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm sm:text-base md:text-lg max-w-lg font-serif" style={{ color: 'var(--text-secondary)' }}>
                   The best shoes you have.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
                   <Link 
                     to="/shop" 
-                    className="btn-primary flex items-center gap-2"
+                    className="btn-primary flex items-center gap-2 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3"
                   >
                     Shop Now
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Link>
                   <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
-                    <Star className="w-5 h-5" style={{ fill: 'var(--text-primary)', color: 'var(--text-primary)' }} />
-                    <span className="text-sm font-medium">4.9 Average Customer Rating</span>
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5" style={{ fill: 'var(--text-primary)', color: 'var(--text-primary)' }} />
+                    <span className="text-xs sm:text-sm font-medium">4.9 Average Customer Rating</span>
                   </div>
                 </div>
               </div>
 
               {/* Right Product Image */}
-              <div className="relative z-10">
+              <div className="relative z-10 order-first lg:order-last">
                 <div 
-                  className="relative rounded-2xl overflow-hidden"
+                  className="relative rounded-xl sm:rounded-2xl overflow-hidden"
                   style={{
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     transition: 'transform 0.3s ease'
