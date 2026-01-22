@@ -75,8 +75,8 @@ const Home = ({ addToCart, addToWishlist }) => {
 
   return (
     <div className="space-y-0">
-      {/* Video Hero Section - Mobile Only */}
-      <section className="relative w-full h-[60vh] sm:h-[70vh] md:hidden overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      {/* Video Hero Section - Mobile Only - Full Screen */}
+      <section className="relative w-full h-screen md:hidden overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <video
           autoPlay
           loop
