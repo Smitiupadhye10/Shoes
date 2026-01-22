@@ -59,25 +59,25 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
   return (
     <div className="sticky top-0 z-50" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="container-optic">
-        <div className="flex items-center justify-between py-1 sm:py-1.5">
-          {/* Left Side - Logo & Mobile Menu Button */}
-          <div className="flex items-center space-x-4 flex-1">
-          {/* Menu Button (Mobile) */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-300 hover:scale-110"
-            style={{ 
-              backgroundColor: 'var(--bg-secondary)',
-              borderColor: 'var(--border-color)',
-              color: 'var(--text-primary)'
-            }}
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+        <div className="flex items-center justify-between py-1 sm:py-1.5 relative">
+          {/* Left Side - Mobile Menu Button */}
+          <div className="flex items-center md:flex-1">
+            {/* Menu Button (Mobile) */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-300 hover:scale-110"
+              style={{ 
+                backgroundColor: 'var(--bg-secondary)',
+                borderColor: 'var(--border-color)',
+                color: 'var(--text-primary)'
+              }}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
 
-            {/* Logo - Left Side */}
-            <Link to="/" className="flex items-center">
+            {/* Logo - Desktop Left Side */}
+            <Link to="/" className="hidden md:flex items-center ml-4">
               <img 
                 src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767693849/White_Teal_Yellow_And_Blue_Illustrative_Digital_Payment_Solutions_Presentation_100_x_100_px_2_fspuqo.png" 
                 alt="Sole mate" 
@@ -86,6 +86,16 @@ const Navbar = ({ onSearchClick, isSearchOpen, onSearchClose, searchTerm, onSear
               />
             </Link>
           </div>
+
+          {/* Logo - Mobile Center */}
+          <Link to="/" className="md:hidden absolute left-1/2 transform -translate-x-1/2 flex items-center">
+            <img 
+              src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767693849/White_Teal_Yellow_And_Blue_Illustrative_Digital_Payment_Solutions_Presentation_100_x_100_px_2_fspuqo.png" 
+              alt="Sole mate" 
+              className="h-8 sm:h-10 w-auto object-contain"
+              style={{ maxWidth: '200px' }}
+            />
+          </Link>
 
           {/* Center - Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 flex-1 justify-center">
