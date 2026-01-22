@@ -75,8 +75,25 @@ const Home = ({ addToCart, addToWishlist }) => {
 
   return (
     <div className="space-y-0">
-      {/* Hero Section - Brown for Autumn Style with Card Design */}
-      <section className="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] flex items-center pt-4 pb-8 sm:pt-6 sm:pb-12 md:pt-6 md:pb-16" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      {/* Video Hero Section - Mobile Only */}
+      <section className="relative w-full h-[60vh] sm:h-[70vh] md:hidden overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          style={{ objectFit: 'cover' }}
+        >
+          <source src="https://res.cloudinary.com/dvkxgrcbv/video/upload/v1769062178/Black_White_Animated_Fashion_Shoes_Store_Promo_Instagram_Reel_Instagram_Post_45_vg4ina.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        {/* Optional overlay for better text readability if needed */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+      </section>
+
+      {/* Hero Section - Brown for Autumn Style with Card Design - Desktop Only */}
+      <section className="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] hidden md:flex items-center pt-4 pb-8 sm:pt-6 sm:pb-12 md:pt-6 md:pb-16" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container-optic w-full relative z-10 px-4 sm:px-6 lg:px-8">
           {/* Card Container */}
           <div 
