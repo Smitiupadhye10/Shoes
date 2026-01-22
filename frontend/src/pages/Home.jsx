@@ -77,20 +77,20 @@ const Home = ({ addToCart, addToWishlist }) => {
     <div className="space-y-0">
       {/* Video Hero Section - Mobile Only - Full Screen */}
       <section 
-        className="relative md:hidden overflow-hidden -mx-4 -mt-12 -mb-20" 
+        className="relative md:hidden overflow-hidden" 
         style={{ 
           backgroundColor: 'var(--bg-primary)', 
           margin: 0, 
           padding: 0,
           marginTop: '-3rem',
-          marginLeft: '-1rem',
-          marginRight: '-1rem',
-          marginBottom: '-5rem',
+          marginBottom: '2rem',
           position: 'relative',
-          width: 'calc(100% + 2rem)',
+          width: '100vw',
           height: '100vh',
-          left: 0,
-          top: 0,
+          left: '50%',
+          right: '50%',
+          marginLeft: '-50vw',
+          marginRight: '-50vw',
           zIndex: 1
         }}
       >
@@ -188,7 +188,7 @@ const Home = ({ addToCart, addToWishlist }) => {
       </section>
 
       {/* Categories Section - Explore Our Collections */}
-      <section className="relative pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <section className="relative pt-4 md:pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-center text-center mb-0">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-4" style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }}>
