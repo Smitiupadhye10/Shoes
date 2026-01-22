@@ -76,14 +76,41 @@ const Home = ({ addToCart, addToWishlist }) => {
   return (
     <div className="space-y-0">
       {/* Video Hero Section - Mobile Only - Full Screen */}
-      <section className="relative w-full h-screen md:hidden overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <section 
+        className="relative md:hidden overflow-hidden -mx-4 -mt-12 -mb-20" 
+        style={{ 
+          backgroundColor: 'var(--bg-primary)', 
+          margin: 0, 
+          padding: 0,
+          marginTop: '-3rem',
+          marginLeft: '-1rem',
+          marginRight: '-1rem',
+          marginBottom: '-5rem',
+          position: 'relative',
+          width: 'calc(100% + 2rem)',
+          height: '100vh',
+          left: 0,
+          top: 0,
+          zIndex: 1
+        }}
+      >
         <video
           autoPlay
           loop
           muted
           playsInline
           className="w-full h-full object-cover"
-          style={{ objectFit: 'cover' }}
+          style={{ 
+            objectFit: 'cover', 
+            margin: 0, 
+            padding: 0, 
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0
+          }}
         >
           <source src="https://res.cloudinary.com/dvkxgrcbv/video/upload/v1769062178/Black_White_Animated_Fashion_Shoes_Store_Promo_Instagram_Reel_Instagram_Post_45_vg4ina.mp4" type="video/mp4" />
           Your browser does not support the video tag.
