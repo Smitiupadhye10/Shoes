@@ -384,52 +384,52 @@ const About = () => {
       {/* CTA Section */}
       <section id="contact" className="py-16 md:py-24" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container-optic">
-          <div className="rounded-3xl p-12 lg:p-16 shadow-2xl" style={{ backgroundColor: 'var(--text-primary)' }}>
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                <h3 className="text-optic-heading text-3xl md:text-4xl" style={{ color: 'var(--bg-secondary)' }}>
+          <div className="rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16 shadow-2xl" style={{ backgroundColor: 'var(--text-primary)' }}>
+            <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
+              <div className="space-y-4 sm:space-y-6">
+                <h3 className="text-optic-heading text-2xl sm:text-3xl md:text-4xl" style={{ color: 'var(--bg-secondary)' }}>
                   Need help finding the perfect pair?
                 </h3>
-                <p className="text-optic-body text-lg md:text-xl leading-relaxed" style={{ color: 'var(--bg-secondary)' }}>
+                <p className="text-optic-body text-base sm:text-lg md:text-xl leading-relaxed" style={{ color: 'var(--bg-secondary)' }}>
                   Our specialists are happy to help — free consultation and size recommendations for men's, women's, and kids shoes.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <a
                     href="mailto:support@solemate.in"
-                    className="btn-secondary"
+                    className="btn-secondary text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-center gap-2"
                   >
-                    <Mail className="w-5 h-5" />
+                    <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                     Email Us
                   </a>
                   <Link
                     to="/shop"
-                    className="btn-accent"
+                    className="btn-accent text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-center gap-2"
                   >
                     Browse Shoes
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Link>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="rounded-2xl p-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="rounded-2xl p-4 sm:p-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 sm:mb-4"
                     style={{ backgroundColor: 'var(--text-heading)' }}
                   >
-                    <Phone className="w-6 h-6" style={{ color: 'var(--bg-primary)' }} />
+                    <Phone className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: 'var(--bg-primary)' }} />
                   </div>
-                  <h4 className="text-optic-heading text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Call Us</h4>
-                  <p className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>+91 98765 43210</p>
-                  <p className="text-optic-body text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Mon-Sat, 9AM-6PM</p>
+                  <h4 className="text-optic-heading text-base sm:text-lg font-semibold mb-1.5 sm:mb-2" style={{ color: 'var(--text-primary)' }}>Call Us</h4>
+                  <p className="text-optic-body text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>+91 98765 43210</p>
+                  <p className="text-optic-body text-xs sm:text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Mon-Sat, 9AM-6PM</p>
                 </div>
-                <div className="rounded-2xl p-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                <div className="rounded-2xl p-4 sm:p-6" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 sm:mb-4"
                     style={{ backgroundColor: 'var(--text-heading)' }}
                   >
-                    <MapPin className="w-6 h-6" style={{ color: 'var(--bg-primary)' }} />
+                    <MapPin className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: 'var(--bg-primary)' }} />
                   </div>
-                  <h4 className="text-optic-heading text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Visit Us</h4>
-                  <p className="text-optic-body" style={{ color: 'var(--text-secondary)' }}>Multiple Locations</p>
-                  <p className="text-optic-body text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Across India</p>
+                  <h4 className="text-optic-heading text-base sm:text-lg font-semibold mb-1.5 sm:mb-2" style={{ color: 'var(--text-primary)' }}>Visit Us</h4>
+                  <p className="text-optic-body text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>Multiple Locations</p>
+                  <p className="text-optic-body text-xs sm:text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Across India</p>
                 </div>
               </div>
             </div>
