@@ -84,6 +84,8 @@ const MobileBottomNav = () => {
   const allCategories = [
     { icon: Footprints, name: "Men's Shoes", link: "/category/Men's%20Shoes", subcategories: ["Formal", "Sneakers", "Boots", "Loafers", "Sandals"] },
     { icon: Footprints, name: "Women's Shoes", link: "/category/Women's%20Shoes", subcategories: ["Heels", "Flats", "Sneakers", "Boots", "Sandals", "Chappals"] },
+    { icon: Footprints, name: "Kids Shoes", link: "/category/Kids%20Shoes", subcategories: ["Boys Footwear", "Girls Footwear"] },
+    { icon: Footprints, name: "Shoes Accessories", link: "/category/Shoes%20Accessories", subcategories: ["Shoe Laces", "Shoe Polish", "Shoe Insoles", "Shoe Bags", "Shoe Trees", "Shoe Care Kits"] },
   ];
 
   const handleAccountClick = () => {
@@ -232,7 +234,7 @@ const MobileBottomNav = () => {
                 </div>
               ) : (
                 // Main Categories Grid
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   {allCategories.map((cat) => {
                     const Icon = cat.icon;
                     const isActive = location.pathname.includes(encodeURIComponent(cat.name));
