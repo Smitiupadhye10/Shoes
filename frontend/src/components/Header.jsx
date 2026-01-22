@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import CategoryBar from "./CategoryBar";
 import { CartContext } from "../context/CartContext";
@@ -282,7 +282,11 @@ const MensShoesDropdown = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const mensShoesRef = useRef(null);
+  
+  // Check if Men's Shoes category is active
+  const isActive = location.pathname.includes("Men's%20Shoes") || location.pathname.includes("Men's Shoes");
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -321,12 +325,16 @@ const MensShoesDropdown = () => {
     >
       <button
         onClick={handleMensShoesClick}
-        className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg sm:rounded-xl hover:border-red-800 hover:bg-red-50 hover:shadow-lg transition-all duration-300 text-xs sm:text-sm font-medium text-gray-700 shadow-sm min-w-[100px] sm:min-w-[140px] justify-between"
+        className={`group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 backdrop-blur-sm border rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm font-medium shadow-sm min-w-[100px] sm:min-w-[140px] justify-between ${
+          isActive 
+            ? 'bg-red-50 border-red-800 shadow-lg' 
+            : 'bg-white/80 border-gray-200 hover:border-red-800 hover:bg-red-50 hover:shadow-lg'
+        }`}
       >
-        <span className="group-hover:text-red-800 transition-colors truncate">
+        <span className={`transition-colors truncate ${isActive ? 'text-red-800 font-semibold' : 'text-gray-700 group-hover:text-red-800'}`}>
           <span>Men's Shoes</span>
         </span>
-        <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 flex-shrink-0 ${isHovered ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-all duration-200 flex-shrink-0 ${isHovered ? 'rotate-180' : ''} ${isActive ? 'text-red-800' : 'text-gray-400 group-hover:text-red-800'}`} />
       </button>
       {isHovered && (
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[90vw] max-w-4xl bg-white rounded-lg shadow-2xl z-[100] border border-gray-200 overflow-hidden">
@@ -399,7 +407,11 @@ const WomensShoesDropdown = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const womensShoesRef = useRef(null);
+  
+  // Check if Women's Shoes category is active
+  const isActive = location.pathname.includes("Women's%20Shoes") || location.pathname.includes("Women's Shoes");
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -438,12 +450,16 @@ const WomensShoesDropdown = () => {
     >
       <button
         onClick={handleWomensShoesClick}
-        className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg sm:rounded-xl hover:border-red-800 hover:bg-red-50 hover:shadow-lg transition-all duration-300 text-xs sm:text-sm font-medium text-gray-700 shadow-sm min-w-[100px] sm:min-w-[140px] justify-between"
+        className={`group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 backdrop-blur-sm border rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm font-medium shadow-sm min-w-[100px] sm:min-w-[140px] justify-between ${
+          isActive 
+            ? 'bg-red-50 border-red-800 shadow-lg' 
+            : 'bg-white/80 border-gray-200 hover:border-red-800 hover:bg-red-50 hover:shadow-lg'
+        }`}
       >
-        <span className="group-hover:text-red-800 transition-colors truncate">
+        <span className={`transition-colors truncate ${isActive ? 'text-red-800 font-semibold' : 'text-gray-700 group-hover:text-red-800'}`}>
           <span>Women's Shoes</span>
         </span>
-        <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-sky-600 transition-all duration-200 flex-shrink-0 ${isHovered ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-all duration-200 flex-shrink-0 ${isHovered ? 'rotate-180' : ''} ${isActive ? 'text-red-800' : 'text-gray-400 group-hover:text-red-800'}`} />
       </button>
       {isHovered && (
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[90vw] max-w-4xl bg-white rounded-lg shadow-2xl z-[100] border border-gray-200 overflow-hidden">
@@ -511,12 +527,40 @@ const WomensShoesDropdown = () => {
   );
 };
 
+// Shoes Accessories Button Component
+const ShoesAccessoriesButton = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if Shoes Accessories category is active
+  const isActive = location.pathname.includes("Shoes%20Accessories") || location.pathname.includes("Shoes Accessories");
+  
+  return (
+    <button
+      onClick={() => navigate(`/category/${encodeURIComponent("Shoes Accessories")}`)}
+      className={`group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 backdrop-blur-sm border rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm font-medium shadow-sm min-w-[100px] sm:min-w-[140px] ${
+        isActive 
+          ? 'bg-purple-50 border-purple-800 shadow-lg' 
+          : 'bg-white/80 border-gray-200 hover:border-purple-800 hover:bg-purple-50 hover:shadow-lg'
+      }`}
+    >
+      <span className={`transition-colors truncate ${isActive ? 'text-purple-800 font-semibold' : 'text-gray-700 group-hover:text-purple-800'}`}>
+        Shoes Accessories
+      </span>
+    </button>
+  );
+};
+
 // Kids Shoes Dropdown Component with Hover Modal
 const KidsShoesDropdown = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const kidsShoesRef = useRef(null);
+  
+  // Check if Kids Shoes category is active
+  const isActive = location.pathname.includes("Kids%20Shoes") || location.pathname.includes("Kids Shoes");
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -555,7 +599,11 @@ const KidsShoesDropdown = () => {
     >
       <button
         onClick={handleKidsShoesClick}
-        className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg sm:rounded-xl hover:border-red-800 hover:bg-red-50 hover:shadow-lg transition-all duration-300 text-xs sm:text-sm font-medium text-gray-700 shadow-sm min-w-[100px] sm:min-w-[140px] justify-between"
+        className={`group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 backdrop-blur-sm border rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm font-medium shadow-sm min-w-[100px] sm:min-w-[140px] justify-between ${
+          isActive 
+            ? 'bg-red-50 border-red-800 shadow-lg' 
+            : 'bg-white/80 border-gray-200 hover:border-red-800 hover:bg-red-50 hover:shadow-lg'
+        }`}
       >
         <span className="group-hover:text-red-800 transition-colors truncate">
           <span>Kids Shoes</span>
@@ -919,14 +967,7 @@ const Header = () => {
             <MensShoesDropdown />
             <WomensShoesDropdown />
             <KidsShoesDropdown />
-            <button
-              onClick={() => navigate(`/category/${encodeURIComponent("Shoes Accessories")}`)}
-              className="group flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg sm:rounded-xl hover:border-purple-800 hover:bg-purple-50 hover:shadow-lg transition-all duration-300 text-xs sm:text-sm font-medium text-gray-700 shadow-sm min-w-[100px] sm:min-w-[140px]"
-            >
-              <span className="group-hover:text-purple-800 transition-colors truncate">
-                Shoes Accessories
-              </span>
-            </button>
+            <ShoesAccessoriesButton />
           </div>
         </div>
       </div>
