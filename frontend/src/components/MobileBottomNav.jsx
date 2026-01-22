@@ -217,8 +217,30 @@ const MobileBottomNav = () => {
                               : 'border-gray-200 bg-white hover:shadow-md active:scale-95'
                           }`}
                           style={isActive ? { borderColor: 'var(--text-primary)', backgroundColor: 'var(--text-heading)' } : {}}
-                          onMouseEnter={(e) => !isActive && (e.target.style.borderColor = 'var(--text-primary)', e.target.style.backgroundColor = 'var(--text-heading)')}
-                          onMouseLeave={(e) => !isActive && (e.target.style.borderColor = '', e.target.style.backgroundColor = '')}
+                          onMouseEnter={(e) => {
+                            if (!isActive) {
+                              const button = e.currentTarget;
+                              button.style.borderColor = 'var(--text-primary)';
+                              button.style.backgroundColor = 'var(--text-heading)';
+                              // Change text color to be visible on dark background
+                              const textSpan = button.querySelector('span');
+                              if (textSpan) {
+                                textSpan.style.color = '#ffffff';
+                              }
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isActive) {
+                              const button = e.currentTarget;
+                              button.style.borderColor = '';
+                              button.style.backgroundColor = '';
+                              // Reset text color
+                              const textSpan = button.querySelector('span');
+                              if (textSpan) {
+                                textSpan.style.color = '';
+                              }
+                            }
+                          }}
                         >
                           <span 
                             className={`text-sm font-medium ${
@@ -250,8 +272,56 @@ const MobileBottomNav = () => {
                             : 'border-gray-200 bg-white hover:shadow-md active:scale-95'
                         }`}
                         style={isActive ? { borderColor: 'var(--text-primary)', backgroundColor: 'var(--text-heading)' } : { backgroundColor: 'var(--bg-primary)' }}
-                        onMouseEnter={(e) => !isActive && (e.target.style.borderColor = 'var(--text-primary)', e.target.style.backgroundColor = 'var(--text-heading)')}
-                        onMouseLeave={(e) => !isActive && (e.target.style.borderColor = '', e.target.style.backgroundColor = '')}
+                        onMouseEnter={(e) => {
+                          if (!isActive) {
+                            const button = e.currentTarget;
+                            button.style.borderColor = 'var(--text-primary)';
+                            button.style.backgroundColor = 'var(--text-heading)';
+                            // Change text colors to be visible on dark background
+                            const textSpans = button.querySelectorAll('span');
+                            textSpans.forEach(span => {
+                              if (span.textContent.includes('options')) {
+                                span.style.color = 'rgba(255, 255, 255, 0.8)';
+                              } else {
+                                span.style.color = '#ffffff';
+                              }
+                            });
+                            // Change icon color
+                            const iconDiv = button.querySelector('div');
+                            if (iconDiv) {
+                              iconDiv.style.backgroundColor = 'var(--text-primary)';
+                              const icon = iconDiv.querySelector('svg');
+                              if (icon) {
+                                icon.style.color = '#ffffff';
+                              }
+                            }
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isActive) {
+                            const button = e.currentTarget;
+                            button.style.borderColor = '';
+                            button.style.backgroundColor = '';
+                            // Reset text colors
+                            const textSpans = button.querySelectorAll('span');
+                            textSpans.forEach(span => {
+                              if (span.textContent.includes('options')) {
+                                span.style.color = '';
+                              } else {
+                                span.style.color = '';
+                              }
+                            });
+                            // Reset icon color
+                            const iconDiv = button.querySelector('div');
+                            if (iconDiv) {
+                              iconDiv.style.backgroundColor = '';
+                              const icon = iconDiv.querySelector('svg');
+                              if (icon) {
+                                icon.style.color = '';
+                              }
+                            }
+                          }
+                        }}
                       >
                         <div 
                           className="w-12 h-12 rounded-lg flex items-center justify-center mb-2"
