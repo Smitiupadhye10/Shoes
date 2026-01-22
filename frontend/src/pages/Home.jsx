@@ -160,7 +160,7 @@ const Home = ({ addToCart, addToWishlist }) => {
                 </div>
               </div>
 
-              {/* Right Product Image */}
+              {/* Right Product Video */}
               <div className="relative z-10 order-first lg:order-last">
                 <div 
                   className="relative rounded-xl sm:rounded-2xl overflow-hidden"
@@ -175,11 +175,20 @@ const Home = ({ addToCart, addToWishlist }) => {
                     e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
-                  <img 
-                    src="https://res.cloudinary.com/dvkxgrcbv/image/upload/v1767700197/b0a2ac7a6dfb3cae08ba547b8bc89381_uv6778.jpg" 
-                    alt="Featured Shoes"
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
                     className="w-full h-auto object-cover"
-                  />
+                    style={{ 
+                      objectFit: 'cover',
+                      display: 'block'
+                    }}
+                  >
+                    <source src="https://res.cloudinary.com/dvkxgrcbv/video/upload/v1769063191/Brown_and_Beige_Luxury_Shoe_Sale_Mobile_Video_1080_x_1080_px_d2x9sp.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
               </div>
             </div>
