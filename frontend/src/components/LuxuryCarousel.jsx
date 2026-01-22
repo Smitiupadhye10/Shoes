@@ -203,7 +203,6 @@ const LuxuryCarousel = ({ slides = [] }) => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -232,8 +231,8 @@ const LuxuryCarousel = ({ slides = [] }) => {
       </button>
 
       {/* Carousel Container */}
-      <div className="relative h-[400px] sm:h-[450px] md:h-[600px] lg:h-[700px] overflow-hidden pt-4 sm:pt-6 md:pt-8 lg:pt-12 pb-12 sm:pb-16 md:pb-20 lg:pb-24">
-        <div className="flex items-start justify-center h-full relative" style={{ paddingTop: '0' }}>
+      <div className="relative h-[400px] sm:h-[450px] md:h-[600px] lg:h-[700px] overflow-hidden pt-6 sm:pt-8 md:pt-10 lg:pt-12 pb-14 sm:pb-18 md:pb-22 lg:pb-24">
+        <div className="flex items-center justify-center h-full relative">
           {visibleSlides.map(({ index, position, slide }) => {
             const isCurrent = position === 'current';
             const isPrev = position === 'prev';
@@ -272,22 +271,21 @@ const LuxuryCarousel = ({ slides = [] }) => {
             const widthValue = parseFloat(width);
             const dragOffsetValue = isCurrent ? dragOffset : (isPrev ? dragOffset * 0.3 : dragOffset * 0.3);
             
-            // Calculate vertical offset - move shoes up more on mobile
-            const verticalOffset = isMobile ? (isCurrent ? -40 : -30) : (isCurrent ? -20 : -15);
+            // Calculate vertical offset - move shoes up to prevent overlap
+            const verticalOffset = isMobile ? (isCurrent ? -30 : -20) : (isCurrent ? -15 : -10);
             
             return (
               <div
                 key={`slide-${index}`}
-                className="absolute h-full flex items-start justify-center"
+                className="absolute h-full flex items-center justify-center"
                 style={{
                   transform: `translateX(calc(${translateX}% + ${dragOffsetValue}px)) translateY(${verticalOffset}px) scale(${scale})`,
-                  transformOrigin: 'center top',
+                  transformOrigin: 'center center',
                   opacity,
                   zIndex,
                   width,
                   maxWidth,
                   left: `calc(50% - ${widthValue / 2}vw)`,
-                  top: isMobile ? '10%' : '15%',
                   transition: isDragging 
                     ? 'none' 
                     : 'transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), scale 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -309,7 +307,7 @@ const LuxuryCarousel = ({ slides = [] }) => {
       </div>
 
       {/* Navigation Dots */}
-      <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex gap-1.5 sm:gap-2 items-center">
+      <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-1.5 sm:gap-2 items-center">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -334,14 +332,15 @@ const LuxuryCarousel = ({ slides = [] }) => {
 // Slide Content Component
 const SlideContent = ({ slide, isActive, colors, isPrev, isNext }) => {
   return (
-    <div className="relative w-full h-full flex items-start justify-center px-2 sm:px-4 md:px-8 pt-0">
-      {/* Shoe Image - No card/panel, just the shoe */}
+    <div className="relative w-full h-full flex flex-col items-center justify-center px-2 sm:px-4 md:px-8">
+      {/* Shoe Image - Centered and properly sized */}
       <div
-        className="relative z-10 w-full h-full flex items-start justify-center"
+        className="relative z-10 w-full flex items-center justify-center"
         style={{
           transform: isActive ? 'scale(1)' : 'scale(0.95)',
           transition: 'transform 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          paddingTop: '0',
+          flex: '1 1 auto',
+          minHeight: 0,
         }}
       >
         <img
@@ -352,8 +351,11 @@ const SlideContent = ({ slide, isActive, colors, isPrev, isNext }) => {
           style={{
             filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.1))',
             transition: 'all 0.3s ease-in-out',
-            maxHeight: '85%',
-            maxWidth: '100%',
+            maxHeight: isActive ? '90%' : '85%',
+            maxWidth: '95%',
+            width: 'auto',
+            height: 'auto',
+            objectFit: 'contain',
           }}
         />
       </div>
