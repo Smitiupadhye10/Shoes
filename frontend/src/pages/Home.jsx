@@ -198,20 +198,32 @@ const Home = ({ addToCart, addToWishlist }) => {
 
       {/* Categories Section - Explore Our Collections */}
       <section className="relative pt-4 md:pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10" style={{ backgroundColor: 'var(--bg-primary)' }}>
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-center text-center mb-0">
+        {/* Heading Section - With Container */}
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8">
+          <div className="flex flex-col items-center justify-center text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-4" style={{ backgroundColor: 'var(--text-primary)', color: 'var(--bg-primary)' }}>
               <TrendingUp className="w-4 h-4" />
               Trending Categories
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-0 font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif' }}>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif" style={{ color: 'var(--text-primary)', fontFamily: 'Georgia, serif' }}>
               Explore Our Collections
             </h2>
           </div>
-          
-          {/* Luxury Carousel */}
-          <div className="w-full">
-            <LuxuryCarousel
+        </div>
+        
+        {/* Luxury Carousel - Full Width */}
+        <div 
+          className="w-full" 
+          style={{ 
+            width: '100vw',
+            position: 'relative',
+            left: '50%',
+            right: '50%',
+            marginLeft: '-50vw',
+            marginRight: '-50vw'
+          }}
+        >
+          <LuxuryCarousel
               slides={[
                 // Men's Shoes Subcategories
                 {
@@ -309,7 +321,6 @@ const Home = ({ addToCart, addToWishlist }) => {
                 }
               ]}
             />
-          </div>
         </div>
       </section>
 
